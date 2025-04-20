@@ -4,7 +4,7 @@
 
 ### Production
 
-* The application should be able to take pictures assigned/ or assign them to an order number. (Clarification needen)
+* The application should be able to take pictures assigned/ or assign them to an order number. (Clarification needed)
 * Automatically save those picture to a Database.
 
 ### Quality assurance
