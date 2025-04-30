@@ -11,5 +11,5 @@ public interface IProductsDataAccess {
     // Method to get all products
     List<Products> getAllProducts() throws SQLException;
 
-
+    void updateProduct(Products product) throws SQLException;
 }

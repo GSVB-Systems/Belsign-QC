@@ -43,4 +43,27 @@ public class ProductsDAO implements IProductsDataAccess {
             throw new SQLException("Error fetching products from database", e);
         }
     }
+
+    @Override
+    public void updateProduct(Products product) throws SQLException {
+
+        String sql = "UPDATE products SET quantity = ?, photoId = ?, productName = ? WHERE productId = ?";
+
+        try(Connection conn = dbConnector.getConnection()) {
+            conn.setAutoCommit(false);
+
+            try (PreparedStatement statement = conn.prepareStatement(sql)) {
+                statement.setInt(1, product.getQuantity());
+                statement.setInt(2, product.getPhotoId());
+                statement.setString(3, product.getProductName());
+                statement.setInt(4, product.getProductId());
+
+                statement.executeUpdate();
+            } catch (SQLException e) {
+                conn.rollback();
+                throw new SQLException("Error updating product in database", e);
+            }
+            conn.commit();
+        }
+    }
 }

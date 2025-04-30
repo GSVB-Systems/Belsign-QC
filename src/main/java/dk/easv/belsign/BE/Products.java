@@ -8,6 +8,45 @@ public class Products {
     private String productName;
     private int quantity;
 
+    public int getProductId() {
+        return productId;
+    }
+
+    public void setProductId(int productId) {
+        this.productId = productId;
+    }
+
+    public int getPhotoId() {
+        return photoId;
+    }
+
+    public void setPhotoId(int photoId) {
+        this.photoId = photoId;
+    }
+
+    public int getOrderId() {
+        return orderId;
+    }
+
+    public void setOrderId(int orderId) {
+        this.orderId = orderId;
+    }
+
+    public String getProductName() {
+        return productName;
+    }
+
+    public void setProductName(String productName) {
+        this.productName = productName;
+    }
+
+    public int getQuantity() {
+        return quantity;
+    }
+
+    public void setQuantity(int quantity) {
+        this.quantity = quantity;
+    }
 
     public Products(int productId, int photoId, int orderId, String productName, int quantity) {
         this.productId = productId;

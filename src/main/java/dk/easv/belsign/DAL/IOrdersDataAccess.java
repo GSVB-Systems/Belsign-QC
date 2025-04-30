@@ -8,4 +8,6 @@ import java.util.List;
 public interface IOrdersDataAccess {
 
     List<Orders> getAllOrders() throws SQLException;
+
+    void updateOrder(Orders order) throws SQLException;
 }
