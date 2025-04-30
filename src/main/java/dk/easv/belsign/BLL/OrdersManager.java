@@ -5,6 +5,7 @@ import dk.easv.belsign.DAL.IOrdersDataAccess;
 import dk.easv.belsign.DAL.OrdersDAO;
 
 import java.io.IOException;
+import java.sql.SQLException;
 import java.util.List;
 
 public class OrdersManager {
@@ -15,7 +16,11 @@ public class OrdersManager {
         ordersDataAccess = new OrdersDAO();
     }
 
-    public List<Orders> getAllOrders() throws Exception {
+    public List<Orders> getAllOrders() throws SQLException {
         return ordersDataAccess.getAllOrders();
+    }
+
+    public void updateOrder(Orders order) throws SQLException {
+        ordersDataAccess.updateOrder(order);
     }
 }

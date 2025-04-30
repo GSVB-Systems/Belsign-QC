@@ -20,4 +20,7 @@ public class ProductsManager {
         return productsDataAccess.getAllProducts();
     }
 
+    public void updateProduct(Products product) throws SQLException {
+        productsDataAccess.updateProduct(product);
+    }
 }

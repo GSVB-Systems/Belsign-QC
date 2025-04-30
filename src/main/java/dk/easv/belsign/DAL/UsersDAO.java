@@ -41,4 +41,27 @@ public class UsersDAO implements IUsersDataAccess {
             throw new SQLException("Error fetching users from database", e);
         }
     }
+
+    @Override
+    public void updateUser(Users user) throws SQLException {
+        String sql = "UPDATE users SET roleId = ?, firstName = ?, lastName = ?, hashedPassword = ?, email = ? WHERE userId = ?";
+        try (Connection conn = dbConnector.getConnection()) {
+            conn.setAutoCommit(false);
+
+            try (PreparedStatement statement = conn.prepareStatement(sql)) {
+                statement.setInt(1, user.getRoleId());
+                statement.setString(2, user.getFirstName());
+                statement.setString(3, user.getLastName());
+                statement.setString(4, user.getHashedPassword());
+                statement.setString(5, user.getEmail());
+                statement.setInt(6, user.getUserId());
+
+                statement.executeUpdate();
+            } catch (SQLException e) {
+                conn.rollback();
+                throw new SQLException("Error updating user in database", e);
+            }
+            conn.commit();
+        }
+    }
 }

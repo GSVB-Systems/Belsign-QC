@@ -9,4 +9,6 @@ public interface IUsersDataAccess {
 
     List<Users> getAllUsers() throws SQLException;
 
+    void updateUser(Users user) throws SQLException;
+
 }

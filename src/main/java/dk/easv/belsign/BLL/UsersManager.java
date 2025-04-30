@@ -20,4 +20,8 @@ public class UsersManager {
         return usersDataAccess.getAllUsers();
     }
 
+    public void updateUser(Users user) throws SQLException {
+        usersDataAccess.updateUser(user);
+    }
+
 }

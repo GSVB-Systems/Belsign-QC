@@ -49,10 +49,10 @@ public class ProductsDAO implements IProductsDataAccess {
 
         String sql = "UPDATE products SET quantity = ?, photoId = ?, productName = ? WHERE productId = ?";
 
-        try(Connection conn = dbConnector.getConnection()) {
+        try(Connection conn = dbConnector.getConnection()){
             conn.setAutoCommit(false);
 
-            try (PreparedStatement statement = conn.prepareStatement(sql)) {
+            try(PreparedStatement statement = conn.prepareStatement(sql)){
                 statement.setInt(1, product.getQuantity());
                 statement.setInt(2, product.getPhotoId());
                 statement.setString(3, product.getProductName());
