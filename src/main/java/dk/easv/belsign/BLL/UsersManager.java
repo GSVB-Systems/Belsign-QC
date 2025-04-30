@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.sql.SQLException;
 import java.util.List;
 
+
 public class UsersManager {
 
     private final IUsersDataAccess usersDataAccess;
@@ -17,11 +18,15 @@ public class UsersManager {
     }
 
     public List<Users> getAllUsers() throws SQLException {
-        return usersDataAccess.getAllUsers();
+        return usersDataAccess.getAllUsers().join();
     }
 
     public void updateUser(Users user) throws SQLException {
         usersDataAccess.updateUser(user);
+    }
+
+    public Boolean checkUserCredentials(String email, String hashedPassword) throws SQLException {
+        return usersDataAccess.checkUserCredentials(email, hashedPassword).join();
     }
 
 }

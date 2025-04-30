@@ -5,10 +5,14 @@ import dk.easv.belsign.BE.Users;
 import java.sql.SQLException;
 import java.util.List;
 
+import java.util.concurrent.CompletableFuture;
+
 public interface IUsersDataAccess {
 
-    List<Users> getAllUsers() throws SQLException;
+    CompletableFuture<List<Users>> getAllUsers() throws SQLException;
 
-    void updateUser(Users user) throws SQLException;
+    CompletableFuture<Void> updateUser(Users user) throws SQLException;
+
+    CompletableFuture<Boolean> checkUserCredentials(String email, String hashedPassword) throws SQLException;
 
 }

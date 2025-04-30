@@ -28,4 +28,8 @@ public class UsersModel {
         usersManager.updateUser(user);
     }
 
+    public Boolean checkUserCredentials(Users user) throws SQLException {
+        return usersManager.checkUserCredentials(user);
+    }
+
 }

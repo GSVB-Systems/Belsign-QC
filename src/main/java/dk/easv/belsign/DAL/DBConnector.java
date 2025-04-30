@@ -11,10 +11,11 @@ import java.util.Properties;
 public class DBConnector {
 
     private static final String PROP_FILE = "config/config.settings";
-
+    private static DBConnector instance; // Singleton instance
     private final SQLServerDataSource dataSource;
 
-    public DBConnector() throws IOException {
+    // Private constructor to prevent instantiation
+    private DBConnector() throws IOException {
         Properties databaseProperties = new Properties();
         databaseProperties.load(new FileInputStream(PROP_FILE));
 
@@ -27,17 +28,15 @@ public class DBConnector {
         dataSource.setTrustServerCertificate(true);
     }
 
+    // Public static method to get the singleton instance
+    public static synchronized DBConnector getInstance() throws IOException {
+        if (instance == null) {
+            instance = new DBConnector();
+        }
+        return instance;
+    }
+
     public Connection getConnection() throws SQLServerException {
         return dataSource.getConnection();
     }
-
-    public static void main(String[] args) throws Exception {
-        // this method tests the connection to the sql server to see if a connection is possible
-        DBConnector databaseConnector = new DBConnector();
-
-        try (Connection connection = databaseConnector.getConnection()) {
-            System.out.println("Is it open? " + !connection.isClosed());
-        } //Connection gets closed here
-    }
-
 }

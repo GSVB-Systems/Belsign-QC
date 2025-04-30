@@ -12,10 +12,10 @@ import java.util.List;
 
 public class ProductsDAO implements IProductsDataAccess {
 
-    private DBConnector dbConnector = new DBConnector();
+    private DBConnector dbConnector;
 
     public ProductsDAO() throws IOException {
-        this.dbConnector = new DBConnector();
+        this.dbConnector = DBConnector.getInstance();
     }
 
     @Override
