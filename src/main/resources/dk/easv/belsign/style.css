@@ -1,0 +1,14 @@
+.top-bar {
+    -fx-background-color: #004B88;
+    -fx-padding: 10;
+}
+
+.top-bar .button {
+    -fx-background-color: #444;
+    -fx-text-fill: white;
+    -fx-font-size: 14px;
+}
+
+.image-background {
+    -fx-background-color: white;
+}

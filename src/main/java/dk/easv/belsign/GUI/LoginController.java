@@ -56,23 +56,28 @@ public class LoginController {
         Boolean success = loginValidator.validateLogin(txtEmail.getText(), txtPassword.getText());
 
         if (success) {
-            showError("Login successful!");
             goToApp();
         } else {
             showError("Invalid email or password.");
         }
-
-
     }
 
     //temp metode til at sende videre til main app
     private void goToApp() {
         try {
-            FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/dk/easv/belsign/Login.fxml"));
+            FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/dk/easv/belsign/Mainframe.fxml"));
             Parent root = fxmlLoader.load();
 
+            Scene scene = new Scene(root);
+            String cssPath = getClass().getResource("/dk/easv/belsign/style.css").toExternalForm();
+            if (cssPath != null) {
+                scene.getStylesheets().add(cssPath);
+            } else {
+                System.err.println("CSS file not found: /dk/easv/belsign/style.css");
+            }
+
             Stage stage = (Stage) txtEmail.getScene().getWindow();
-            stage.setScene(new Scene(root));
+            stage.setScene(scene);
             stage.show();
 
         } catch (IOException e) {
