@@ -2,7 +2,7 @@ package dk.easv.belsign.DAL;
 
 import at.favre.lib.crypto.bcrypt.BCrypt;
 import dk.easv.belsign.BE.Users;
-import dk.easv.belsign.BLL.UserSession;
+import dk.easv.belsign.BLL.Util.UserSession;
 
 import java.io.IOException;
 import java.sql.*;
@@ -83,7 +83,7 @@ public class UsersDAO implements IUsersDataAccess {
                 statement.setString(1, email);
                 ResultSet rs = statement.executeQuery();
 
-                if (!rs.next()) {
+                if (rs.next()) {
                     String storedPassword = rs.getString("hashedPassword");
                     if (BCrypt.verifyer().verify(hashedPassword.toCharArray(), storedPassword).verified) {
                         int userId = rs.getInt("userId");
@@ -94,10 +94,11 @@ public class UsersDAO implements IUsersDataAccess {
                         Users user = new Users(userId, roleId, firstName, lastName, email, hashedPassword);
                         UserSession.setLoggedInUser(user);
                         return true;
-                }
+                    }
                 }
             } catch (SQLException e) {
                 throw new RuntimeException("Error checking user credentials", e);
+
             }
             return false;
         }, executorService);
