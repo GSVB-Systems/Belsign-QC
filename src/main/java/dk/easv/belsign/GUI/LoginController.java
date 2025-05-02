@@ -81,6 +81,8 @@ public class LoginController {
             stage.setScene(scene);
             stage.setMaximized(true);
             stage.show();
+            MainframeController mainframeController = fxmlLoader.getController();
+            mainframeController.fillMainPane();
 
         } catch (IOException e) {
             showError("Failed to go to real app, sums up");

@@ -10,8 +10,9 @@
 <?import javafx.scene.layout.Pane?>
 <?import javafx.scene.layout.Region?>
 <?import javafx.scene.paint.Color?>
+<?import javafx.scene.text.Text?>
 
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="594.0" prefWidth="943.0" xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1" fx:controller="dk.easv.belsign.GUI.MainframeController">
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="594.0" prefWidth="943.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="dk.easv.belsign.GUI.MainframeController">
    <top>
       <HBox alignment="CENTER_LEFT" prefHeight="80.0" styleClass="top-bar" BorderPane.alignment="CENTER_LEFT">
          <children>
@@ -24,7 +25,9 @@
                   </ImageView>
                </children>
             </Pane>
-            <Region prefHeight="200.0" prefWidth="200.0" HBox.hgrow="ALWAYS" />
+            <Region prefHeight="70.0" prefWidth="211.0" HBox.hgrow="ALWAYS" />
+            <Text fx:id="txtOrder" strokeType="OUTSIDE" strokeWidth="0.0" text="Text" />
+            <Region prefHeight="70.0" prefWidth="211.0" HBox.hgrow="ALWAYS" />
             <Button fx:id="btnLogOut" mnemonicParsing="false" onAction="#handleLogOut" prefHeight="25.0" prefWidth="52.0" />
          </children>
          <BorderPane.margin>
