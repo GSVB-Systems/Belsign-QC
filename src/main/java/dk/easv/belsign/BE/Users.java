@@ -8,7 +8,7 @@ public class Users {
     private String email;
     private String hashedPassword;
 
-//Test
+
     public int getUserId() {
         return userId;
     }
