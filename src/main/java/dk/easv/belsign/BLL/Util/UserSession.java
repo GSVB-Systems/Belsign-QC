@@ -24,4 +24,9 @@ public class UserSession {
         UserSession userSession = getInstance();
         userSession.user = user;
     }
+
+    public static Users getLoggedInUser() {
+        UserSession userSession = getInstance();
+        return userSession.user;
+    }
 }

@@ -19,6 +19,10 @@ public class UsersDAO implements IUsersDataAccess {
         this.dbConnector = DBConnector.getInstance();
     }
 
+    public UsersDAO(DBConnector dbConnector) {
+        this.dbConnector = dbConnector;
+    }
+
     @Override
     public CompletableFuture<List<Users>> getAllUsers() {
         return CompletableFuture.supplyAsync(() -> {
