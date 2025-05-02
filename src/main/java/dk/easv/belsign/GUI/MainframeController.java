@@ -2,9 +2,7 @@ package dk.easv.belsign.GUI;
 
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-<<<<<<< Updated upstream
 import javafx.scene.layout.Pane;
-=======
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
@@ -14,7 +12,7 @@ import javafx.scene.text.Text;
 import javafx.stage.Stage;
 
 import java.io.IOException;
->>>>>>> Stashed changes
+
 
 public class MainframeController {
         @FXML
@@ -57,9 +55,6 @@ public class MainframeController {
         alert.setContentText(message);
         alert.showAndWait();
     }
-
-    @FXML
-    private Pane mainPane;
 
     @FXML
     private void handleLogOut(ActionEvent event) {
