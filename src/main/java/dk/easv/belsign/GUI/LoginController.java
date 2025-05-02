@@ -77,7 +77,9 @@ public class LoginController {
             }
 
             Stage stage = (Stage) txtEmail.getScene().getWindow();
+            stage.setTitle("Belsign");
             stage.setScene(scene);
+            stage.setMaximized(true);
             stage.show();
 
         } catch (IOException e) {
