@@ -13,11 +13,11 @@
 
 <BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="594.0" prefWidth="943.0" xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1" fx:controller="dk.easv.belsign.GUI.MainframeController">
    <top>
-      <HBox alignment="CENTER_LEFT" prefHeight="70.0" spacing="10.0" styleClass="top-bar" BorderPane.alignment="CENTER_LEFT">
+      <HBox alignment="CENTER_LEFT" prefHeight="80.0" styleClass="top-bar" BorderPane.alignment="CENTER_LEFT">
          <children>
-            <Pane prefHeight="50.0" prefWidth="50.0" styleClass="image-background">
+            <Pane prefHeight="80.0" prefWidth="80.0" styleClass="image-background">
                <children>
-                  <ImageView fitHeight="50.0" fitWidth="50.0" pickOnBounds="true" preserveRatio="true">
+                  <ImageView fitHeight="80.0" fitWidth="80.0" pickOnBounds="true" preserveRatio="true">
                      <image>
                         <Image url="@images/belmanlogo.png" />
                      </image>
@@ -28,10 +28,10 @@
             <Button fx:id="btnLogOut" mnemonicParsing="false" onAction="#handleLogOut" prefHeight="25.0" prefWidth="52.0" />
          </children>
          <BorderPane.margin>
-            <Insets bottom="15.0" left="15.0" right="15.0" top="15.0" />
+            <Insets bottom="15.0" left="20.0" right="20.0" top="15.0" />
          </BorderPane.margin>
          <effect>
-            <DropShadow height="10.0" offsetY="5.0" radius="5.75" width="15.0">
+            <DropShadow height="30.0" offsetY="4.0" radius="10.75" width="15.0">
                <color>
                   <Color opacity="0.23664121329784393" />
                </color>
@@ -40,6 +40,6 @@
       </HBox>
    </top>
    <center>
-      <Pane prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER" />
+      <Pane fx:id="mainPane" prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER" />
    </center>
 </BorderPane>
