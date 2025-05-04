@@ -9,6 +9,7 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.Pane?>
 <?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.paint.Color?>
 <?import javafx.scene.text.Text?>
 
@@ -43,6 +44,6 @@
       </HBox>
    </top>
    <center>
-      <Pane fx:id="mainPane" BorderPane.alignment="CENTER" />
+      <StackPane fx:id="mainPane" BorderPane.alignment="CENTER" />
    </center>
 </BorderPane>
