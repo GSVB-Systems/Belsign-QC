@@ -31,10 +31,13 @@ public class MainframeController {
 
         public void fillMainPane() {
             try {
-                FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/dk/easv/belsign/OrderSelection.fxml"));
+                FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/dk/easv/belsign/OperatorFrameTEMP.fxml"));
+                //FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/dk/easv/belsign/OrderSelection.fxml"));
+
                 Parent root = fxmlLoader.load();
 
-                OrderSelectionController controller = fxmlLoader.getController();
+                OperatorFrameController controller = fxmlLoader.getController();
+                //OrderSelectionController controller = fxmlLoader.getController();
                 controller.setParent(this);
 
                 mainPane.getChildren().clear();
