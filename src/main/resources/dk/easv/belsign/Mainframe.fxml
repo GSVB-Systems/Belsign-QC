@@ -27,9 +27,16 @@
                </children>
             </Pane>
             <Region prefHeight="70.0" prefWidth="211.0" HBox.hgrow="ALWAYS" />
-            <Text fx:id="txtOrder" strokeType="OUTSIDE" strokeWidth="0.0" text="Text" />
+            <Text fx:id="txtOrder" fill="WHITE" strokeType="OUTSIDE" strokeWidth="0.0" text="Text" textAlignment="RIGHT" />
             <Region prefHeight="70.0" prefWidth="211.0" HBox.hgrow="ALWAYS" />
-            <Button fx:id="btnLogOut" mnemonicParsing="false" onAction="#handleLogOut" prefHeight="25.0" prefWidth="52.0" />
+            <Button fx:id="btnLogOut" mnemonicParsing="false" onAction="#handleLogOut" prefHeight="70.0" prefWidth="70.0">
+               <graphic>
+                  <ImageView fx:id="imgLogout" fitHeight="48.0" fitWidth="48.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@images/logout.png" />
+                     </image>
+                  </ImageView>
+               </graphic></Button>
          </children>
          <BorderPane.margin>
             <Insets bottom="15.0" left="20.0" right="20.0" top="15.0" />
