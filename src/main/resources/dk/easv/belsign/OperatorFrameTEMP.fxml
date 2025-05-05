@@ -23,7 +23,7 @@
                      <children>
                         <StackPane fx:id="stkBackground" prefHeight="150.0" prefWidth="200.0" styleClass="stk-background">
                            <children>
-                              <ImageView pickOnBounds="true" preserveRatio="true" />
+                              <ImageView fx:id="imgFront" pickOnBounds="true" preserveRatio="true" />
                            </children>
                            <VBox.margin>
                               <Insets left="35.0" />
@@ -39,7 +39,7 @@
                      <children>
                         <StackPane fx:id="stkBackground01" prefHeight="150.0" prefWidth="200.0" styleClass="stk-background">
                            <children>
-                              <ImageView fitHeight="150.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true">
+                              <ImageView fx:id="imgRight" fitHeight="150.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true">
                                  <StackPane.margin>
                                     <Insets left="17.5" right="17.5" />
                                  </StackPane.margin>
@@ -59,7 +59,7 @@
                      <children>
                         <StackPane fx:id="stkBackground02" prefHeight="150.0" prefWidth="200.0" styleClass="stk-background">
                            <children>
-                              <ImageView fitHeight="150.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true" />
+                              <ImageView fx:id="imgLeft" fitHeight="150.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true" />
                            </children>
                            <VBox.margin>
                               <Insets left="35.0" />
@@ -79,7 +79,7 @@
                      <children>
                         <StackPane fx:id="stkBackground4" prefHeight="150.0" prefWidth="200.0" styleClass="stk-background">
                            <children>
-                              <ImageView pickOnBounds="true" preserveRatio="true" />
+                              <ImageView fx:id="imgBack" pickOnBounds="true" preserveRatio="true" />
                            </children>
                            <VBox.margin>
                               <Insets left="35.0" />
@@ -95,7 +95,7 @@
                      <children>
                         <StackPane fx:id="stkBackground05" prefHeight="150.0" prefWidth="200.0" styleClass="stk-background">
                            <children>
-                              <ImageView fitHeight="150.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true">
+                              <ImageView fx:id="imgTop" fitHeight="150.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true">
                                  <StackPane.margin>
                                     <Insets left="17.5" right="17.5" />
                                  </StackPane.margin>
