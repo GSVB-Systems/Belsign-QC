@@ -13,6 +13,6 @@ public interface IUsersDataAccess {
 
     CompletableFuture<Void> updateUser(Users user) throws SQLException;
 
-    CompletableFuture<Boolean> checkUserCredentials(String email, String hashedPassword) throws SQLException;
+    CompletableFuture<Users> getUserByEmail(String email) throws SQLException;
 
 }

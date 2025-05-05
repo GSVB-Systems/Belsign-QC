@@ -1,5 +1,7 @@
 package dk.easv.belsign.BLL.Util;
 
+import at.favre.lib.crypto.bcrypt.BCrypt;
+import dk.easv.belsign.BE.Users;
 import dk.easv.belsign.DAL.UsersDAO;
 
 import java.io.IOException;
@@ -14,16 +16,36 @@ public class LoginValidator {
     }
 
 
+    // In LoginValidator.java
     public boolean validateLogin(String email, String password) {
-        // Simple validation logic
-        if (email == null || email.isEmpty()) {
+        // Basic validation checks
+        if (email == null || email.isEmpty() || password == null || password.isEmpty()) {
             return false;
         }
-        if (password == null || password.isEmpty()) {
-            return false;
-        }
-        // Add more complex validation logic as needed
 
-        return usersDAO.checkUserCredentials(email, password).join();
+        try {
+            Users user = usersDAO.getUserByEmail(email).join();
+
+            // User not found
+            if (user == null) {
+                return false;
+            }
+
+            // Verify password
+            boolean verified = BCrypt.verifyer().verify(
+                    password.toCharArray(),
+                    user.getHashedPassword()
+            ).verified;
+
+            // Set session if verified
+            if (verified) {
+                UserSession.setLoggedInUser(user);
+            }
+
+            return verified;
+        } catch (Exception e) {
+            // Handle exceptions
+            return false;
+        }
     }
 }

@@ -78,8 +78,9 @@ public class UsersDAO implements IUsersDataAccess {
         }, executorService);
     }
 
+    // In UsersDAO.java
     @Override
-    public CompletableFuture<Boolean> checkUserCredentials(String email, String hashedPassword) {
+    public CompletableFuture<Users> getUserByEmail(String email) {
         return CompletableFuture.supplyAsync(() -> {
             String sql = "SELECT * FROM users WHERE email = ?";
             try (Connection conn = dbConnector.getConnection();
@@ -88,23 +89,18 @@ public class UsersDAO implements IUsersDataAccess {
                 ResultSet rs = statement.executeQuery();
 
                 if (rs.next()) {
+                    int userId = rs.getInt("userId");
+                    int roleId = rs.getInt("roleId");
+                    String firstName = rs.getString("firstName");
+                    String lastName = rs.getString("lastName");
                     String storedPassword = rs.getString("hashedPassword");
-                    if (BCrypt.verifyer().verify(hashedPassword.toCharArray(), storedPassword).verified) {
-                        int userId = rs.getInt("userId");
-                        int roleId = rs.getInt("roleId");
-                        String firstName = rs.getString("firstName");
-                        String lastName = rs.getString("lastName");
 
-                        Users user = new Users(userId, roleId, firstName, lastName, email, hashedPassword);
-                        UserSession.setLoggedInUser(user);
-                        return true;
-                    }
+                    return new Users(userId, roleId, firstName, lastName, email, storedPassword);
                 }
+                return null;
             } catch (SQLException e) {
-                throw new RuntimeException("Error checking user credentials", e);
-
+                throw new RuntimeException("Error retrieving user", e);
             }
-            return false;
         }, executorService);
     }
 
