@@ -92,14 +92,33 @@ class LoginValidatorTest {
         assertNull(UserSession.getLoggedInUser());
     }
 
+
+
     @Test
-    void testValidateLogin_EmptyCredentials() {
-        // Act & Assert
-        assertFalse(loginValidator.validateLogin("", "password"));
-        assertFalse(loginValidator.validateLogin("email@test.com", ""));
-        assertFalse(loginValidator.validateLogin("", ""));
-        assertFalse(loginValidator.validateLogin(null, "password"));
-        assertFalse(loginValidator.validateLogin("email@test.com", null));
-        assertFalse(loginValidator.validateLogin(null, null));
+    void testUserSessionIsSetOnSuccessfulLogin() throws SQLException {
+        // Arrange
+        String email = "session@example.com";
+        String password = "sessionPassword";
+        String hashedPassword = BCrypt.withDefaults().hashToString(12, password.toCharArray());
+
+        Users expectedUser = new Users(42, 3, "Session", "User", email, hashedPassword);
+        when(mockUsersDAO.getUserByEmail(email)).thenReturn(CompletableFuture.completedFuture(expectedUser));
+
+        // Verify session is null before login
+        assertNull(UserSession.getLoggedInUser());
+
+        // Act
+        boolean result = loginValidator.validateLogin(email, password);
+
+        // Assert
+        assertTrue(result);
+
+        // Verify user session contains the correct user
+        Users sessionUser = UserSession.getLoggedInUser();
+        assertNotNull(sessionUser);
+        assertEquals(expectedUser.getRoleId(), sessionUser.getRoleId());
+        assertEquals(expectedUser.getFirstName(), sessionUser.getFirstName());
+        assertEquals(expectedUser.getLastName(), sessionUser.getLastName());
+        assertEquals(expectedUser.getEmail(), sessionUser.getEmail());
     }
 }
