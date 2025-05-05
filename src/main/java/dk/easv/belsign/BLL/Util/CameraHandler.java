@@ -4,13 +4,14 @@ import javafx.scene.image.Image;
 import javafx.scene.image.PixelFormat;
 import javafx.scene.image.PixelWriter;
 import javafx.scene.image.WritableImage;
+import org.opencv.core.Core;
 import org.opencv.core.Mat;
 import org.opencv.imgproc.Imgproc;
 import org.opencv.videoio.VideoCapture;
 
 
-public class CameraHandler {
-    static {System.loadLibrary(org.opencv.core.Core.NATIVE_LIBRARY_NAME);}
+public class  CameraHandler {
+    static {System.loadLibrary(Core.NATIVE_LIBRARY_NAME); }
 
     private static CameraHandler instance;
 
@@ -19,6 +20,13 @@ public class CameraHandler {
 
     private CameraHandler() {
         capture = new VideoCapture();
+    }
+
+    public static synchronized CameraHandler getInstance() {
+        if (instance == null) {
+            instance = new CameraHandler();
+        }
+        return instance;
     }
 
     private Image matToImage(Mat frame) {
@@ -71,5 +79,5 @@ public class CameraHandler {
     public boolean isCamRunning() {
         return isRunning;
     }
-
+    
 }
