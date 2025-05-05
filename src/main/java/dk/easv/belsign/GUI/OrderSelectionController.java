@@ -42,35 +42,7 @@ public class OrderSelectionController implements IParentAware {
         parent.setOrder(order);
         parent.fillMainPane(new FXMLLoader(getClass().getResource("/dk/easv/belsign/OperatorFrameTEMP.fxml")));
     }
-    private void goToApp() {
-        try {
-            FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/dk/easv/belsign/OperatorFrameTEMP.fxml"));
-            Parent root = fxmlLoader.load();
 
-            Scene scene = new Scene(root);
-            String cssPath = getClass().getResource("/dk/easv/belsign/style.css").toExternalForm();
-            if (cssPath != null) {
-                scene.getStylesheets().add(cssPath);
-            } else {
-                System.err.println("CSS file not found: /dk/easv/belsign/style.css");
-            }
-
-            Stage stage = (Stage) txtSearch.getScene().getWindow();
-            stage.setScene(scene);
-            stage.show();
-
-        } catch (IOException e) {
-            showError("Failed to go to real app, sums up");
-        }
-    }
-    //Til Exception handeling - prompter en Alarm popup til GUI
-    private void showError(String message) {
-        Alert alert = new Alert(Alert.AlertType.ERROR);
-        alert.setTitle("Login Error");
-        alert.setHeaderText(null);
-        alert.setContentText(message);
-        alert.showAndWait();
-    }
 
 
 }
