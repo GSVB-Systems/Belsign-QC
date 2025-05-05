@@ -25,8 +25,8 @@ public class UsersManager {
         usersDataAccess.updateUser(user);
     }
 
-    public Boolean checkUserCredentials(String email, String hashedPassword) throws SQLException {
-        return usersDataAccess.checkUserCredentials(email, hashedPassword).join();
+    public Users getUserByEmail(String email) throws SQLException {
+        return usersDataAccess.getUserByEmail(email).join();
     }
 
 }
