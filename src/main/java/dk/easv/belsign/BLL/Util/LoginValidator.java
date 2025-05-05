@@ -3,12 +3,18 @@ package dk.easv.belsign.BLL.Util;
 import at.favre.lib.crypto.bcrypt.BCrypt;
 import dk.easv.belsign.BE.Users;
 import dk.easv.belsign.DAL.UsersDAO;
+import dk.easv.belsign.DAL.IUsersDataAccess;
 
 import java.io.IOException;
 
 public class LoginValidator {
 
-    private UsersDAO usersDAO ;
+
+    private IUsersDataAccess usersDAO;
+
+    public void setUsersDAO(IUsersDataAccess usersDAO) {
+        this.usersDAO = usersDAO;
+    }
 
     public LoginValidator() throws IOException {
         usersDAO = new UsersDAO();
@@ -16,7 +22,7 @@ public class LoginValidator {
     }
 
 
-    // In LoginValidator.java
+
     public boolean validateLogin(String email, String password) {
         // Basic validation checks
         if (email == null || email.isEmpty() || password == null || password.isEmpty()) {
