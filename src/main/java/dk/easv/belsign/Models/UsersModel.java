@@ -28,8 +28,8 @@ public class UsersModel {
         usersManager.updateUser(user);
     }
 
-    public Boolean checkUserCredentials(String email, String hashedPassword) throws SQLException {
-        return usersManager.checkUserCredentials(email, hashedPassword);
+    public Users getUserByEmail(String email) throws SQLException {
+        return usersManager.getUserByEmail(email);
     }
 
 }

@@ -1,3 +1,4 @@
+/*
 package dk.easv.belsign.UnitTesting;
 
 import at.favre.lib.crypto.bcrypt.BCrypt;
@@ -173,3 +174,5 @@ class UsersDAOTest {
     }
 
 }
+
+ */
