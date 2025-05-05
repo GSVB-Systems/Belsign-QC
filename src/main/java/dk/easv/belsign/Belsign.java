@@ -7,6 +7,8 @@ import javafx.stage.Stage;
 
 import java.io.IOException;
 
+import dk.easv.belsign.BLL.Util.ThreadShutdownUtil;
+
 public class Belsign extends Application {
     @Override
     public void start(Stage stage) throws IOException {
@@ -19,5 +21,12 @@ public class Belsign extends Application {
 
     public static void main(String[] args) {
         launch();
+    }
+
+    @Override
+    public void stop() {
+        // Explicitly shutdown all registered executor services
+        ThreadShutdownUtil.getInstance().shutdownAll();
+        System.out.println("Application stopped");
     }
 }

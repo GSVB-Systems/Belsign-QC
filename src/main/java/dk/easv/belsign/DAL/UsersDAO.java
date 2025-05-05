@@ -2,6 +2,7 @@ package dk.easv.belsign.DAL;
 
 import at.favre.lib.crypto.bcrypt.BCrypt;
 import dk.easv.belsign.BE.Users;
+import dk.easv.belsign.BLL.Util.ThreadShutdownUtil;
 import dk.easv.belsign.BLL.Util.UserSession;
 
 import java.io.IOException;
@@ -13,15 +14,17 @@ import java.util.concurrent.*;
 public class UsersDAO implements IUsersDataAccess {
 
     private final DBConnector dbConnector;
-    private final ExecutorService executorService = Executors.newCachedThreadPool();
+    private ExecutorService executorService;
+    private final ThreadShutdownUtil threadShutdownUtil;
 
     public UsersDAO() throws IOException {
         this.dbConnector = DBConnector.getInstance();
+        this.threadShutdownUtil = ThreadShutdownUtil.getInstance();
+        this.executorService = Executors.newFixedThreadPool(4);
+        threadShutdownUtil.registerExecutorService(executorService);
     }
 
-    public UsersDAO(DBConnector dbConnector) {
-        this.dbConnector = dbConnector;
-    }
+
 
     @Override
     public CompletableFuture<List<Users>> getAllUsers() {
