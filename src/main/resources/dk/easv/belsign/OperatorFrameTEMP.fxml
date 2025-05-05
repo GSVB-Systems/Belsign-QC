@@ -10,14 +10,14 @@
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
 
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1" fx:controller="dk.easv.belsign.GUI.OperatorFrameController">
+<BorderPane xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="dk.easv.belsign.GUI.OperatorFrameController">
    <center>
-      <VBox BorderPane.alignment="CENTER">
+      <VBox alignment="TOP_CENTER" BorderPane.alignment="CENTER">
          <BorderPane.margin>
             <Insets left="17.5" right="17.5" />
          </BorderPane.margin>
          <children>
-            <HBox alignment="CENTER_LEFT">
+            <HBox alignment="CENTER">
                <children>
                   <VBox alignment="CENTER" spacing="10.0">
                      <children>
