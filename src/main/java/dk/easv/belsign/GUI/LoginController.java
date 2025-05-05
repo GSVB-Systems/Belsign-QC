@@ -11,7 +11,7 @@ import javafx.scene.control.*;
 import javafx.stage.Stage;
 import java.io.IOException;
 
-public class LoginController {
+public class LoginController implements IParentAware {
     @FXML
     private PasswordField txtPassword;
     @FXML
@@ -23,6 +23,12 @@ public class LoginController {
 
     private boolean isPwShown = false;
 
+    private MainframeController parent;
+
+    @Override
+    public void setParent(MainframeController parent) {
+        this.parent = parent;
+    }
 
 
     public void initialize() {
@@ -82,7 +88,7 @@ public class LoginController {
             stage.setMaximized(true);
             stage.show();
             MainframeController mainframeController = fxmlLoader.getController();
-            mainframeController.fillMainPane();
+            mainframeController.fillMainPane(new FXMLLoader(getClass().getResource("/dk/easv/belsign/OrderSelection.fxml")));
 
         } catch (IOException e) {
             showError("Failed to go to real app, sums up");
