@@ -29,16 +29,18 @@ public class MainframeController {
             txtOrder.setText(order);
         }
 
-        public void fillMainPane() {
+        public void fillMainPane(FXMLLoader loader) {
             try {
-                FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/dk/easv/belsign/OperatorFrameTEMP.fxml"));
+
+                //FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/dk/easv/belsign/OperatorFrameTEMP.fxml"));
                 //FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/dk/easv/belsign/OrderSelection.fxml"));
 
-                Parent root = fxmlLoader.load();
+                Parent root = loader.load();
 
-                OperatorFrameController controller = fxmlLoader.getController();
-                //OrderSelectionController controller = fxmlLoader.getController();
-                controller.setParent(this);
+                Object controller = loader.getController();
+                if (controller instanceof IParentAware) {
+                    ((IParentAware) controller).setParent(this);
+                }
 
                 mainPane.getChildren().clear();
                 mainPane.getChildren().add(root);
