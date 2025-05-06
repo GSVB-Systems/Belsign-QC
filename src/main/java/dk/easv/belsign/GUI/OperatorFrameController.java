@@ -33,7 +33,7 @@ public class OperatorFrameController {
     @FXML
     private void onCapture() {
         Image snapshot = CameraHandler.getInstance().capturePic();
-
+            //commetn
         if(snapshot !=null) {
             imgFront.setImage(snapshot);
         } else {
