@@ -5,7 +5,6 @@ import dk.easv.belsign.DAL.IOrdersDataAccess;
 import dk.easv.belsign.DAL.OrdersDAO;
 
 import java.io.IOException;
-import java.sql.SQLException;
 import java.util.List;
 
 public class OrdersManager {
