@@ -5,7 +5,6 @@ import dk.easv.belsign.DAL.IProductsDataAccess;
 import dk.easv.belsign.DAL.ProductsDAO;
 
 import java.io.IOException;
-import java.sql.SQLException;
 import java.util.List;
 
 public class ProductsManager {
@@ -16,11 +15,11 @@ public class ProductsManager {
         productsDataAccess = new ProductsDAO();
     }
 
-    public List<Products> getAllProducts() throws SQLException {
-        return productsDataAccess.getAllProducts();
+    public List<Products> getAllProducts() {
+        return productsDataAccess.getAllProducts().join();
     }
 
-    public void updateProduct(Products product) throws SQLException {
+    public void updateProduct(Products product) {
         productsDataAccess.updateProduct(product);
     }
 }

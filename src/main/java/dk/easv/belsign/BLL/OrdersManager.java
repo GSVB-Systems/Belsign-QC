@@ -16,11 +16,11 @@ public class OrdersManager {
         ordersDataAccess = new OrdersDAO();
     }
 
-    public List<Orders> getAllOrders() throws SQLException {
-        return ordersDataAccess.getAllOrders();
+    public List<Orders> getAllOrders() {
+        return ordersDataAccess.getAllOrders().join();
     }
 
-    public void updateOrder(Orders order) throws SQLException {
+    public void updateOrder(Orders order) {
         ordersDataAccess.updateOrder(order);
     }
 }

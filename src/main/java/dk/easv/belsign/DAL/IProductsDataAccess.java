@@ -4,12 +4,9 @@ import dk.easv.belsign.BE.Products;
 
 import java.sql.SQLException;
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 
 public interface IProductsDataAccess {
-
-
-    // Method to get all products
-    List<Products> getAllProducts() throws SQLException;
-
-    void updateProduct(Products product) throws SQLException;
+    CompletableFuture<List<Products>> getAllProducts();
+    CompletableFuture<Void> updateProduct(Products product);
 }

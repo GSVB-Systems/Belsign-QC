@@ -1,9 +1,7 @@
 package dk.easv.belsign.DAL;
 
-import at.favre.lib.crypto.bcrypt.BCrypt;
 import dk.easv.belsign.BE.Users;
 import dk.easv.belsign.BLL.Util.ThreadShutdownUtil;
-import dk.easv.belsign.BLL.Util.UserSession;
 
 import java.io.IOException;
 import java.sql.*;

@@ -2,12 +2,10 @@ package dk.easv.belsign.DAL;
 
 import dk.easv.belsign.BE.Orders;
 
-import java.sql.SQLException;
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 
 public interface IOrdersDataAccess {
-
-    List<Orders> getAllOrders() throws SQLException;
-
-    void updateOrder(Orders order) throws SQLException;
+    CompletableFuture<List<Orders>> getAllOrders();
+    CompletableFuture<Void> updateOrder(Orders order);
 }
