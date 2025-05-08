@@ -13,7 +13,7 @@ public class OrdersModel {
     private final ObservableList<Orders> observableOrders;
     private final OrdersManager ordersManager;
 
-    public OrdersModel() throws SQLException, IOException {
+    public OrdersModel() throws Exception {
         this.ordersManager = new OrdersManager();
         observableOrders = FXCollections.observableArrayList();
         observableOrders.addAll(ordersManager.getAllOrders());
@@ -23,7 +23,7 @@ public class OrdersModel {
         return observableOrders;
     }
 
-    public void updateOrder(Orders order) throws SQLException {
+    public void updateOrder(Orders order) throws Exception {
         ordersManager.updateOrder(order);
     }
 }

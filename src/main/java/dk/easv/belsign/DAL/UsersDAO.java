@@ -1,9 +1,7 @@
 package dk.easv.belsign.DAL;
 
-import at.favre.lib.crypto.bcrypt.BCrypt;
 import dk.easv.belsign.BE.Users;
 import dk.easv.belsign.BLL.Util.ThreadShutdownUtil;
-import dk.easv.belsign.BLL.Util.UserSession;
 
 import java.io.IOException;
 import java.sql.*;
@@ -11,7 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.*;
 
-public class UsersDAO implements IUsersDataAccess {
+public class UsersDAO implements ICrudRepo<Users> {
 
     private final DBConnector dbConnector;
     private ExecutorService executorService;
@@ -25,9 +23,34 @@ public class UsersDAO implements IUsersDataAccess {
     }
 
 
+    @Override
+    public CompletableFuture<Void> create(Users user) throws Exception {
+        return CompletableFuture.runAsync(() -> {
+            String sql = "INSERT INTO users (userId, roleId, firstName, lastName, email, hashedPassword) VALUES (?, ?, ?)";
+
+            try (Connection conn = dbConnector.getConnection();
+                 PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+                stmt.setInt(1, user.getUserId());
+                stmt.setInt(2, user.getRoleId());
+                stmt.setString(3, user.getEmail());
+                stmt.setString(4, user.getFirstName());
+                stmt.setString(5, user.getLastName());
+                stmt.setString(6, user.getEmail());
+                stmt.setString(7, user.getHashedPassword());
+
+                stmt.executeUpdate();
+
+            } catch (SQLException e) {
+                throw new RuntimeException("Error inserting user into database", e);
+            }
+        });
+    }
+
+
 
     @Override
-    public CompletableFuture<List<Users>> getAllUsers() {
+    public CompletableFuture<List<Users>> readAll() {
         return CompletableFuture.supplyAsync(() -> {
             ArrayList<Users> users = new ArrayList<>();
             String sql = "SELECT * FROM users";
@@ -55,7 +78,7 @@ public class UsersDAO implements IUsersDataAccess {
     }
 
     @Override
-    public CompletableFuture<Void> updateUser(Users user) {
+    public CompletableFuture<Void> update(Users user) {
         return CompletableFuture.runAsync(() -> {
             String sql = "UPDATE users SET roleId = ?, firstName = ?, lastName = ?, hashedPassword = ?, email = ? WHERE userId = ?";
             try (Connection conn = dbConnector.getConnection()) {
@@ -81,14 +104,19 @@ public class UsersDAO implements IUsersDataAccess {
         }, executorService);
     }
 
+    @Override
+    public CompletableFuture<Void> delete(int id) throws Exception {
+        return null;
+    }
+
     // In UsersDAO.java
     @Override
-    public CompletableFuture<Users> getUserByEmail(String email) {
+    public CompletableFuture<Users> read(int UserId) {
         return CompletableFuture.supplyAsync(() -> {
-            String sql = "SELECT * FROM users WHERE email = ?";
+            String sql = "SELECT * FROM users WHERE UserId = ?";
             try (Connection conn = dbConnector.getConnection();
                  PreparedStatement statement = conn.prepareStatement(sql)) {
-                statement.setString(1, email);
+                statement.setInt(1, UserId);
                 ResultSet rs = statement.executeQuery();
 
                 if (rs.next()) {
@@ -97,6 +125,7 @@ public class UsersDAO implements IUsersDataAccess {
                     String firstName = rs.getString("firstName");
                     String lastName = rs.getString("lastName");
                     String storedPassword = rs.getString("hashedPassword");
+                    String email = rs.getString("email");
 
                     return new Users(userId, roleId, firstName, lastName, email, storedPassword);
                 }

@@ -13,7 +13,7 @@ public class ProductsModel {
     private final ObservableList<Products> observableProducts;
     private final ProductsManager productsManager;
 
-    public ProductsModel() throws SQLException, IOException {
+    public ProductsModel() throws Exception {
         this.productsManager = new ProductsManager();
         observableProducts = FXCollections.observableArrayList();
         observableProducts.addAll(productsManager.getAllProducts());
@@ -23,7 +23,7 @@ public class ProductsModel {
         return observableProducts;
     }
 
-    public void updateProduct(Products product) throws SQLException {
+    public void updateProduct(Products product) throws Exception {
         productsManager.updateProduct(product);
     }
 }

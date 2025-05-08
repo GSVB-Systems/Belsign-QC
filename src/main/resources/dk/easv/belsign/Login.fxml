@@ -10,7 +10,7 @@
    <center>
       <Pane prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER">
          <children>
-            <TextField fx:id="txtEmail" layoutX="217.0" layoutY="165.0" promptText="Username" />
+            <TextField fx:id="txtId" layoutX="217.0" layoutY="165.0" promptText="UserID" />
             <PasswordField fx:id="txtPassword" layoutX="217.0" layoutY="200.0" promptText="Password" />
             <Button fx:id="btnLogin" layoutX="268.0" layoutY="233.0" mnemonicParsing="false" onAction="#onLogin" text="Login" />
             <TextField fx:id="txtShowPassword" layoutX="216.0" layoutY="200.0" />
