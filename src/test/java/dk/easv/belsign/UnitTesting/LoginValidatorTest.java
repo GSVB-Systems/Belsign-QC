@@ -4,8 +4,7 @@ import at.favre.lib.crypto.bcrypt.BCrypt;
 import dk.easv.belsign.BE.Users;
 import dk.easv.belsign.BLL.Util.LoginValidator;
 import dk.easv.belsign.BLL.Util.UserSession;
-import dk.easv.belsign.DAL.IUsersDataAccess; // Make sure this interface exists
-import dk.easv.belsign.DAL.UsersDAO;
+import dk.easv.belsign.DAL.ICrudRepo;
 import org.junit.jupiter.api.*;
 import org.mockito.*;
 
@@ -19,7 +18,7 @@ import static org.mockito.Mockito.*;
 class LoginValidatorTest {
 
     @Mock
-    private IUsersDataAccess mockUsersDAO;
+    private ICrudRepo mockUsersDAO;
 
     private LoginValidator loginValidator;
 
@@ -40,12 +39,12 @@ class LoginValidatorTest {
     @Test
     void testValidateLogin_Success() throws SQLException {
         // Arrange
-        String email = "test@example.com";
+        int userId = 1;
         String password = "correctPassword";
         String hashedPassword = BCrypt.withDefaults().hashToString(12, password.toCharArray());
 
         Users mockUser = new Users(1, 2, "John", "Doe", email, hashedPassword);
-        when(mockUsersDAO.getUserByEmail(email)).thenReturn(CompletableFuture.completedFuture(mockUser));
+        when(mockUsersDAO.getUserById()).thenReturn(CompletableFuture.completedFuture(mockUser));
 
         // Act
         boolean result = loginValidator.validateLogin(email, password);

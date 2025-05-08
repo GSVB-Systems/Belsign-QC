@@ -14,7 +14,7 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-public class ProductsDAO implements IProductsDataAccess {
+public class ProductsDAO implements ICrudRepo<Products> {
 
     private DBConnector dbConnector;
     private ExecutorService executorService;
@@ -28,7 +28,101 @@ public class ProductsDAO implements IProductsDataAccess {
     }
 
     @Override
-    public CompletableFuture<List<Products>> getAllProducts() {
+    public CompletableFuture<Void> create(Products product) {
+        return CompletableFuture.runAsync(() -> {
+            String sql = "INSERT INTO products (photoId, orderId, productName, quantity) VALUES (?, ?, ?, ?)";
+            try (Connection conn = dbConnector.getConnection();
+                 PreparedStatement statement = conn.prepareStatement(sql)) {
+
+                conn.setAutoCommit(false); // Start transaktion
+
+                statement.setInt(1, product.getPhotoId());
+                statement.setInt(2, product.getOrderId());
+                statement.setString(3, product.getProductName());
+                statement.setInt(4, product.getQuantity());
+
+                statement.executeUpdate();
+                conn.commit(); // Commit transaktion hvis alt lykkes
+
+            } catch (SQLException e) {
+                try {
+                    Connection conn = dbConnector.getConnection();
+                    conn.rollback(); // Rollback ved fejl
+                } catch (SQLException rollbackEx) {
+                    throw new RuntimeException("Rollback failed after insert error", rollbackEx);
+                }
+                throw new RuntimeException("Error inserting product into database", e);
+            }
+        }, executorService);
+    }
+
+
+    @Override
+    public CompletableFuture<Void> delete(int id) throws Exception {
+        return CompletableFuture.runAsync(() -> {
+            String sql = "DELETE FROM products WHERE productId = ?";
+
+            try (Connection conn = dbConnector.getConnection();
+                 PreparedStatement statement = conn.prepareStatement(sql)) {
+
+                conn.setAutoCommit(false); // Start transaktion
+
+                statement.setInt(1, id);
+                int affectedRows = statement.executeUpdate();
+
+                if (affectedRows == 0) {
+                    conn.rollback();
+                    throw new RuntimeException("No product found with ID: " + id);
+                }
+
+                conn.commit(); // Commit hvis alt er ok
+
+            } catch (SQLException e) {
+                try {
+                    Connection conn = dbConnector.getConnection();
+                    conn.rollback(); // Rollback ved fejl
+                } catch (SQLException rollbackEx) {
+                    throw new RuntimeException("Rollback failed after delete error", rollbackEx);
+                }
+                throw new RuntimeException("Error deleting product with ID: " + id, e);
+            }
+        }, executorService);
+    }
+
+
+
+
+    @Override
+    public CompletableFuture<Products> read(int productId) {
+        return CompletableFuture.supplyAsync(() -> {
+            String sql = "SELECT * FROM products WHERE productId = ?";
+
+            try (Connection conn = dbConnector.getConnection();
+                 PreparedStatement statement = conn.prepareStatement(sql)) {
+
+                statement.setInt(1, productId);
+                ResultSet rs = statement.executeQuery();
+
+                if (rs.next()) {
+                    int photoId = rs.getInt("photoId");
+                    int orderId = rs.getInt("orderId");
+                    String productName = rs.getString("productName");
+                    int quantity = rs.getInt("quantity");
+
+                    return new Products(productId, photoId, orderId, productName, quantity);
+                } else {
+                    return null;
+                }
+
+            } catch (SQLException e) {
+                throw new RuntimeException("Error fetching product with ID " + productId, e);
+            }
+        }, executorService);
+    }
+
+
+    @Override
+    public CompletableFuture<List<Products>> readAll() {
         return CompletableFuture.supplyAsync(() -> {
             ArrayList<Products> products = new ArrayList<>();
             String sql = "SELECT * FROM products";
@@ -55,7 +149,7 @@ public class ProductsDAO implements IProductsDataAccess {
     }
 
     @Override
-    public CompletableFuture<Void> updateProduct(Products product) {
+    public CompletableFuture<Void> update(Products product) {
         return CompletableFuture.runAsync(() -> {
             String sql = "UPDATE products SET quantity = ?, photoId = ?, productName = ? WHERE productId = ?";
 

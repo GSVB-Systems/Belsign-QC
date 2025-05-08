@@ -2,17 +2,17 @@ package dk.easv.belsign.BLL.Util;
 
 import at.favre.lib.crypto.bcrypt.BCrypt;
 import dk.easv.belsign.BE.Users;
+import dk.easv.belsign.DAL.ICrudRepo;
 import dk.easv.belsign.DAL.UsersDAO;
-import dk.easv.belsign.DAL.IUsersDataAccess;
 
 import java.io.IOException;
 
 public class LoginValidator {
 
 
-    private IUsersDataAccess usersDAO;
+    private ICrudRepo usersDAO;
 
-    public void setUsersDAO(IUsersDataAccess usersDAO) {
+    public void setUsersDAO(ICrudRepo usersDAO) {
         this.usersDAO = usersDAO;
     }
 
@@ -23,14 +23,14 @@ public class LoginValidator {
 
 
 
-    public boolean validateLogin(String email, String password) {
+    public boolean validateLogin(int userId, String password) {
         // Basic validation checks
-        if (email == null || email.isEmpty() || password == null || password.isEmpty()) {
+        if (userId == 0|| password == null || password.isBlank()) {
             return false;
         }
 
         try {
-            Users user = usersDAO.getUserByEmail(email).join();
+            Users user = (Users) usersDAO.read(userId).join();
 
             // User not found
             if (user == null) {

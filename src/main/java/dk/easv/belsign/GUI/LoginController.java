@@ -15,7 +15,7 @@ public class LoginController implements IParentAware {
     @FXML
     private PasswordField txtPassword;
     @FXML
-    private TextField txtEmail;
+    private TextField txtId;
     @FXML
     private TextField txtShowPassword;
     @FXML
@@ -59,12 +59,12 @@ public class LoginController implements IParentAware {
     private void onLogin(ActionEvent event) throws IOException {
         LoginValidator loginValidator = new LoginValidator();
 
-        Boolean success = loginValidator.validateLogin(txtEmail.getText(), txtPassword.getText());
+        Boolean success = loginValidator.validateLogin(Integer.parseInt(txtId.getText()), txtPassword.getText());
 
         if (success) {
             goToApp();
         } else {
-            showError("Invalid email or password.");
+            showError("Invalid ID or password.");
         }
     }
 
@@ -82,7 +82,7 @@ public class LoginController implements IParentAware {
                 System.err.println("CSS file not found: /dk/easv/belsign/style.css");
             }
 
-            Stage stage = (Stage) txtEmail.getScene().getWindow();
+            Stage stage = (Stage) txtId.getScene().getWindow();
             stage.setTitle("Belsign");
             stage.setScene(scene);
             stage.setMaximized(true);

@@ -13,7 +13,7 @@ public class UsersModel {
     private final ObservableList<Users> observableUsers;
     private final UsersManager usersManager;
 
-    public UsersModel() throws SQLException, IOException {
+    public UsersModel() throws Exception {
         this.usersManager = new UsersManager();
         observableUsers   = FXCollections.observableArrayList();
         observableUsers.addAll(usersManager.getAllUsers());
@@ -24,12 +24,12 @@ public class UsersModel {
         return observableUsers;
     }
 
-    public void updateUser(Users user) throws SQLException {
+    public void updateUser(Users user) throws Exception {
         usersManager.updateUser(user);
     }
 
-    public Users getUserByEmail(String email) throws SQLException {
-        return usersManager.getUserByEmail(email);
+    public Users getUserByd(int userId) throws Exception {
+        return usersManager.getUserById(userId);
     }
 
 }
