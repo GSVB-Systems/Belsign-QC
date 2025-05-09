@@ -7,6 +7,7 @@ public class Products {
     private int orderId;
     private String productName;
     private int quantity;
+    private int size;
 
     public int getProductId() {
         return productId;
@@ -48,11 +49,20 @@ public class Products {
         this.quantity = quantity;
     }
 
-    public Products(int productId, int photoId, int orderId, String productName, int quantity) {
+    public int getSize() {
+        return size;
+    }
+
+    public void setSize(int size) {
+        this.size = size;
+    }
+
+    public Products(int productId, int photoId, int orderId, String productName, int quantity, int size) {
         this.productId = productId;
         this.photoId = photoId;
         this.orderId = orderId;
         this.productName = productName;
         this.quantity = quantity;
+        this.size = size;
     }
 }

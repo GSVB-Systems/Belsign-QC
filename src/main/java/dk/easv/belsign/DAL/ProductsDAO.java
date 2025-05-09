@@ -30,7 +30,7 @@ public class ProductsDAO implements ICrudRepo<Products> {
     @Override
     public CompletableFuture<Void> create(Products product) {
         return CompletableFuture.runAsync(() -> {
-            String sql = "INSERT INTO products (photoId, orderId, productName, quantity) VALUES (?, ?, ?, ?)";
+            String sql = "INSERT INTO products (photoId, orderId, productName, quantity, size) VALUES (?, ?, ?, ?, ?)";
             try (Connection conn = dbConnector.getConnection();
                  PreparedStatement statement = conn.prepareStatement(sql)) {
 
@@ -40,6 +40,7 @@ public class ProductsDAO implements ICrudRepo<Products> {
                 statement.setInt(2, product.getOrderId());
                 statement.setString(3, product.getProductName());
                 statement.setInt(4, product.getQuantity());
+                statement.setInt(5, product.getSize());
 
                 statement.executeUpdate();
                 conn.commit(); // Commit transaktion hvis alt lykkes
@@ -108,8 +109,9 @@ public class ProductsDAO implements ICrudRepo<Products> {
                     int orderId = rs.getInt("orderId");
                     String productName = rs.getString("productName");
                     int quantity = rs.getInt("quantity");
+                    int size = rs.getInt("size");
 
-                    return new Products(productId, photoId, orderId, productName, quantity);
+                    return new Products(productId, photoId, orderId, productName, quantity, size);
                 } else {
                     return null;
                 }
@@ -137,8 +139,9 @@ public class ProductsDAO implements ICrudRepo<Products> {
                     int orderId = rs.getInt("orderId");
                     String productName = rs.getString("productName");
                     int quantity = rs.getInt("quantity");
+                    int size = rs.getInt("size");
 
-                    Products product = new Products(productId, photoId, orderId, productName, quantity);
+                    Products product = new Products(productId, photoId, orderId, productName, quantity, size);
                     products.add(product);
                 }
                 return products;
