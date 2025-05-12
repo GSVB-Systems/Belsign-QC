@@ -30,7 +30,7 @@ public class OrderSelectionController implements IParentAware {
 
         order = txtSearch.getText();
         parent.setOrder(order);
-        parent.fillMainPane(new FXMLLoader(getClass().getResource("/dk/easv/belsign/OperatorFrame.fxml")));
+        parent.fillMainPane(new FXMLLoader(getClass().getResource("/dk/easv/belsign/ProductFrame.fxml")));
     }
 
 

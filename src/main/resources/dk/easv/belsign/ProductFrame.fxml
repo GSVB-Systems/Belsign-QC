@@ -1,19 +1,19 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.SplitPane?>
 <?import javafx.scene.effect.DropShadow?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.HBox?>
-<?import javafx.scene.layout.Pane?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.paint.Color?>
 <?import javafx.scene.shape.Line?>
 <?import javafx.scene.text.Font?>
 
-<BorderPane xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="dk.easv.belsign.GUI.ProductFrameController">
+<BorderPane style="-fx-background-color: f4f4f4;" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="dk.easv.belsign.GUI.ProductFrameController">
    <top>
       <HBox alignment="CENTER" prefHeight="55.0" BorderPane.alignment="CENTER">
          <children>
@@ -44,18 +44,51 @@
       </HBox>
    </top>
    <center>
-      <SplitPane dividerPositions="0.5" prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: white;" BorderPane.alignment="CENTER">
+      <SplitPane fx:id="spltPane" dividerPositions="0.3" style="-fx-background-color: f4f4f4;" BorderPane.alignment="CENTER">
          <items>
-            <ScrollPane>
+            <ScrollPane fx:id="scrPaneLeft" fitToWidth="true">
                <content>
-                  <VBox alignment="TOP_CENTER" />
+                  <VBox fx:id="vbLeft" alignment="CENTER" />
                </content>
             </ScrollPane>
-            <Pane>
-               <children>
-                  <VBox prefHeight="200.0" prefWidth="100.0" />
-               </children>
-            </Pane>
+            <BorderPane style="-fx-background-color: f4f4f4;">
+               <center>
+                  <ScrollPane fx:id="scrPaneRight" fitToWidth="true" BorderPane.alignment="CENTER">
+                     <content>
+                        <VBox fx:id="vbRight" />
+                     </content>
+                  </ScrollPane>
+               </center>
+               <bottom>
+                  <HBox prefHeight="200.0" VBox.vgrow="ALWAYS">
+                     <children>
+                        <VBox alignment="CENTER_LEFT" HBox.hgrow="ALWAYS">
+                           <children>
+                              <Label text="Not Approved">
+                                 <font>
+                                    <Font size="24.0" />
+                                 </font>
+                              </Label>
+                              <Label text="...">
+                                 <font>
+                                    <Font size="24.0" />
+                                 </font>
+                              </Label>
+                           </children>
+                        </VBox>
+                        <HBox alignment="BOTTOM_RIGHT" spacing="20.0">
+                           <children>
+                              <Button fx:id="btnGeneratePDF" alignment="CENTER" mnemonicParsing="false" onAction="#onPDFButtonPressed" prefHeight="50.0" prefWidth="150.0" style="-fx-background-color: D9D9D9;" text="Generate PDF" />
+                              <Button fx:id="btnOpen" alignment="CENTER" mnemonicParsing="false" onAction="#onOpenButtonPressed" prefHeight="50.0" prefWidth="150.0" style="-fx-background-color: D9D9D9;" text="Open Operator" />
+                           </children>
+                        </HBox>
+                     </children>
+                     <padding>
+                        <Insets bottom="10.0" left="50.0" right="10.0" />
+                     </padding>
+                  </HBox>
+               </bottom>
+            </BorderPane>
          </items>
       </SplitPane>
    </center>
