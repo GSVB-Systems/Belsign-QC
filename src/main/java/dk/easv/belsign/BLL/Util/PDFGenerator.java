@@ -7,6 +7,8 @@ import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.layout.Document;
 import com.itextpdf.layout.element.Image;
 import com.itextpdf.layout.element.Paragraph;
+import dk.easv.belsign.BE.Orders;
+import dk.easv.belsign.BE.Products;
 
 import java.io.File;
 
@@ -18,6 +20,7 @@ import java.util.Date;
 
 
 public class PDFGenerator {
+
     public static String convertDateToString(String date) {
     DateFormat df = new SimpleDateFormat(date);
 
@@ -28,7 +31,8 @@ public class PDFGenerator {
         return (dateToString);
     }
 
-    public class PDFHandler {
+
+
         public static void createPDF(String filepath) throws Exception {
             File file = new File(filepath);
             file.getParentFile().mkdirs();
@@ -37,20 +41,22 @@ public class PDFGenerator {
             Document document = new Document(pdf, PageSize.A4);
             pdf.addNewPage();
 
-            String date = "12-05-2025"; /*make a db pull instead or pull from a text field??*/
+            String date = "dd-MM-yyyy";
 
-           // document.add(new Paragraph(orderNumber /*pull from db*/).setFontSize(24).setBold());
-            document.add(new Paragraph("report made: " + convertDateToString(date)).setFontSize(16).setBold());
-          //  document.add(new Paragraph("QC: " + qcemployee/*pull from db*/).setFontSize(16).setBold());
+            document.add(new Paragraph("OrderNumber: " + OrderSession.getEnteredOrder().getOrderId()).setFontSize(24).setBold());
+            document.add(new Paragraph("Report made: " + convertDateToString(date)).setFontSize(16).setBold());
+            document.add(new Paragraph("QC: " + UserSession.getLoggedInUser().getFirstName() + " " + UserSession.getLoggedInUser().getLastName()).setFontSize(16).setBold());
 
-          /* for(Orders orders : products) {
+          /* for(Orders orders, OrderSession.getEnteredOrder().getProductQuantity()) {
                String product = pull productid from db;
                Image productImage = new Image(pull billeder fra db).setWidth(150).setHeight(150);
                document.add(productImage);
                String imageDirectoin = pull the image direction from db;
                String imageComment = pull comment from db if there is one;
                document.add(new Paragraph("- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -").setFontSize(14).setBold());
-            } */
+            }
+
+           */
 
 
             // Closing the document
@@ -58,4 +64,3 @@ public class PDFGenerator {
             System.out.println("PDF Created");
         }
     }
-}

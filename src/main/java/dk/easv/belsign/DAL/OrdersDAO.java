@@ -134,7 +134,7 @@ public class OrdersDAO implements ICrudRepo<Orders> {
     @Override
     public CompletableFuture<Orders> read(int id) throws Exception {
         return CompletableFuture.supplyAsync(() -> {
-            String sql = "SELECT * FROM orders WHERE orderNumber = ?";
+            String sql = "SELECT * FROM orders WHERE orderId = ?";
             try (Connection conn = dbConnector.getConnection();
                  PreparedStatement statement = conn.prepareStatement(sql)) {
 

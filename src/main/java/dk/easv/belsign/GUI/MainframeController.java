@@ -1,7 +1,11 @@
 package dk.easv.belsign.GUI;
 
+import dk.easv.belsign.Belsign;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.scene.control.Button;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.Pane;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -19,7 +23,8 @@ public class MainframeController {
         private Pane mainPane;
         @FXML
         private Text txtOrder;
-
+        @FXML
+        private Button btnLogout;
         public void initialize() {
             String orderText = "Belman";
             setOrder(orderText);
@@ -62,8 +67,15 @@ public class MainframeController {
     }
 
     @FXML
-    private void handleLogOut(ActionEvent event) {
+    private void handleLogOut(ActionEvent event) throws IOException {
+        FXMLLoader fxmlLoader = new FXMLLoader(Belsign.class.getResource("Login.fxml"));
+        Scene scene = new Scene(fxmlLoader.load());
 
+        Stage stage = (Stage) mainPane.getScene().getWindow();
+        stage.setTitle("TempLogin");
+        stage.setScene(scene);
+        stage.setMaximized(true);
+        stage.show();
     }
 }
 
