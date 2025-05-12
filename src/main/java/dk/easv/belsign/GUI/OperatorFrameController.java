@@ -104,7 +104,48 @@ public class OperatorFrameController {
            if (snapshot != null) {
                imageViewEvent.setImage(snapshot);
            }
+            createExtraPhotoBox();
+
        });
+    }
+
+    private void createExtraPhotoBox(){
+        // Create container for the custom pane
+        Pane customPane = new Pane();
+        customPane.setPrefSize(550, 310);
+        customPane.setStyle("-fx-background-color: #FFF; -fx-background-radius: 8px; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.2), 10, 0, 0, 0);");
+
+        // Create vertical layout
+        VBox vbox = new VBox();
+        vbox.setPrefWidth(customPane.getPrefWidth());
+        customPane.getChildren().add(vbox);
+
+        // Add ComboBox
+        ComboBox<String> comboBox = new ComboBox<>();
+        comboBox.getItems().addAll("Tag 1", "Tag 2", "Tag 3");
+        vbox.getChildren().add(comboBox);
+
+        // Add ImageView
+        ImageView imageView = new ImageView();
+        imageView.setFitWidth(customPane.getPrefWidth());
+        imageView.setFitHeight(260);
+        imageView.setImage(new Image(Objects.requireNonNull(getClass().getResourceAsStream("/dk/easv/belsign/images/belmanlogo.png"))));
+        vbox.getChildren().add(imageView);
+
+        // Set click handler that captures an image AND creates a new pane
+        customPane.setOnMouseClicked(event -> {
+            // Capture and set image
+            Image snapshot = CameraHandler.getInstance().capturePic();
+            if (snapshot != null) {
+                imageView.setImage(snapshot);
+            }
+
+
+            createExtraPhotoBox();
+        });
+
+        // Add to flow pane
+        fpFlowpane.getChildren().add(customPane);
     }
 
     @FXML

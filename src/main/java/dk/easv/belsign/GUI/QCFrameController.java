@@ -66,4 +66,9 @@ public class QCFrameController {
             vbox1.getChildren().add(imageViewEvent);
         }
     }
+
+    public void onGeneratePDFPressed(ActionEvent actionEvent) {
+
+
+    }
 }
