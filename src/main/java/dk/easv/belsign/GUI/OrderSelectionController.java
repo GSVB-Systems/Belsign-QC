@@ -1,6 +1,7 @@
 package dk.easv.belsign.GUI;
 
 import dk.easv.belsign.BLL.Util.OrderValidator;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.control.Alert;
@@ -26,6 +27,11 @@ public class OrderSelectionController implements IParentAware {
 
     public void initialize() {
         btnSearch.setText("🔍");
+        txtSearch.setOnKeyPressed(event -> {
+            if (event.getCode().toString().equals("ENTER")) {
+                onSearchButtonClick(new ActionEvent());
+            }
+        });
 
     }
     private String order;
@@ -40,11 +46,10 @@ public class OrderSelectionController implements IParentAware {
                 parent.setOrder(order);
                 parent.fillMainPane(new FXMLLoader(getClass().getResource("/dk/easv/belsign/QCFrame.fxml")));
 
-            }
+            } else throw new Exception();
 
 
         } catch (Exception e) {
-            e.printStackTrace();
             showError("order not found");
         }
     }
