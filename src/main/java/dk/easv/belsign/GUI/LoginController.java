@@ -51,9 +51,20 @@ public class LoginController implements IParentAware {
 
             btnShowPw.setText(isPwShown ? "👀" : "🫣");
         });
-}
+
+        txtPassword.setOnKeyPressed(event -> {
+            if (event.getCode().toString().equals("ENTER")) {
+                try {
+                    onLogin(new ActionEvent());
+                } catch (IOException e) {
+                    showError("Invalid ID or password.");
+                }
+            }
+        });
+    }
 
 
+    
     @FXML
     //
     private void onLogin(ActionEvent event) throws IOException {
