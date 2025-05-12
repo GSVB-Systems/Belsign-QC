@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.SplitPane?>
+<?import javafx.scene.effect.DropShadow?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.paint.Color?>
+<?import javafx.scene.shape.Line?>
+<?import javafx.scene.text.Font?>
+
+<BorderPane xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="dk.easv.belsign.GUI.ProductFrameController">
+   <top>
+      <HBox alignment="CENTER" prefHeight="55.0" BorderPane.alignment="CENTER">
+         <children>
+            <VBox alignment="TOP_CENTER" prefWidth="250.0" spacing="20.0" style="-fx-background-color: White; -fx-background-radius: 6;">
+               <children>
+                  <Label text="Photo Documentation" textFill="#004b88">
+                     <font>
+                        <Font name="System Bold" size="12.0" />
+                     </font>
+                  </Label>
+                   <Line endX="100.0" startX="-100.0" style="-fx-stroke: #004B88; -fx-stroke-width: 8; -fx-stroke-line-cap: Round;" />
+               </children>
+               <padding>
+                  <Insets top="5.0" />
+               </padding>
+                <effect>
+                    <DropShadow height="30.0" offsetY="4.0" radius="10.75" width="15.0">
+                        <color>
+                            <Color opacity="0.23664121329784393" />
+                        </color>
+                    </DropShadow>
+                </effect>
+            </VBox>
+         </children>
+         <padding>
+            <Insets bottom="20.0" />
+         </padding>
+      </HBox>
+   </top>
+   <center>
+      <SplitPane dividerPositions="0.5" prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: white;" BorderPane.alignment="CENTER">
+         <items>
+            <ScrollPane>
+               <content>
+                  <VBox alignment="TOP_CENTER" />
+               </content>
+            </ScrollPane>
+            <Pane>
+               <children>
+                  <VBox prefHeight="200.0" prefWidth="100.0" />
+               </children>
+            </Pane>
+         </items>
+      </SplitPane>
+   </center>
+</BorderPane>
