@@ -32,7 +32,7 @@ public class MainframeController {
         public void fillMainPane(FXMLLoader loader) {
             try {
 
-                //FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/dk/easv/belsign/OperatorFrameTEMP.fxml"));
+                //FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/dk/easv/belsign/OperatorFrame.fxml"));
                 //FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/dk/easv/belsign/OrderSelection.fxml"));
 
                 Parent root = loader.load();

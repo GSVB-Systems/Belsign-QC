@@ -1,123 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.geometry.Insets?>
-<?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
-<?import javafx.scene.control.TextField?>
-<?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.HBox?>
-<?import javafx.scene.layout.Region?>
-<?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
 
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.layout.FlowPane?>
 <BorderPane xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="dk.easv.belsign.GUI.QCFrameController">
-    <center>
-        <VBox alignment="TOP_CENTER" BorderPane.alignment="CENTER">
-            <BorderPane.margin>
-                <Insets left="17.5" right="17.5" />
-            </BorderPane.margin>
-            <children>
-                <HBox alignment="CENTER">
-                    <children>
-                        <VBox alignment="CENTER" spacing="10.0">
-                            <children>
-                                <StackPane fx:id="stkBackground" prefHeight="150.0" prefWidth="200.0" styleClass="stk-background">
-                                    <children>
-                                        <ImageView fx:id="imgFront" pickOnBounds="true" preserveRatio="true" />
-                                    </children>
-                                    <VBox.margin>
-                                        <Insets left="35.0" />
-                                    </VBox.margin>
-                                </StackPane>
-                                <Label text="Front" />
-                            </children>
-                            <HBox.margin>
-                                <Insets left="35.0" />
-                            </HBox.margin>
-                        </VBox>
-                        <VBox alignment="CENTER" spacing="10.0">
-                            <children>
-                                <StackPane fx:id="stkBackground01" prefHeight="150.0" prefWidth="200.0" styleClass="stk-background">
-                                    <children>
-                                        <ImageView fx:id="imgRight" fitHeight="150.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true">
-                                            <StackPane.margin>
-                                                <Insets left="17.5" right="17.5" />
-                                            </StackPane.margin>
-                                        </ImageView>
-                                    </children>
-                                    <VBox.margin>
-                                        <Insets left="35.0" />
-                                    </VBox.margin>
-                                </StackPane>
-                                <Label text="Right" />
-                            </children>
-                            <HBox.margin>
-                                <Insets />
-                            </HBox.margin>
-                        </VBox>
-                        <VBox alignment="CENTER" spacing="10.0">
-                            <children>
-                                <StackPane fx:id="stkBackground02" prefHeight="150.0" prefWidth="200.0" styleClass="stk-background">
-                                    <children>
-                                        <ImageView fx:id="imgLeft" fitHeight="150.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true" />
-                                    </children>
-                                    <VBox.margin>
-                                        <Insets left="35.0" />
-                                    </VBox.margin>
-                                </StackPane>
-                                <Label text="Left" />
-                            </children>
-                            <HBox.margin>
-                                <Insets />
-                            </HBox.margin>
-                        </VBox>
-                    </children>
-                </HBox>
-                <HBox alignment="CENTER">
-                    <children>
-                        <VBox alignment="CENTER" spacing="10.0">
-                            <children>
-                                <StackPane fx:id="stkBackground4" prefHeight="150.0" prefWidth="200.0" styleClass="stk-background">
-                                    <children>
-                                        <ImageView fx:id="imgBack" pickOnBounds="true" preserveRatio="true" />
-                                    </children>
-                                    <VBox.margin>
-                                        <Insets left="35.0" />
-                                    </VBox.margin>
-                                </StackPane>
-                                <Label text="Back" />
-                            </children>
-                            <HBox.margin>
-                                <Insets left="35.0" />
-                            </HBox.margin>
-                        </VBox>
-                        <VBox alignment="CENTER" spacing="10.0">
-                            <children>
-                                <StackPane fx:id="stkBackground05" prefHeight="150.0" prefWidth="200.0" styleClass="stk-background">
-                                    <children>
-                                        <ImageView fx:id="imgTop" fitHeight="150.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true">
-                                            <StackPane.margin>
-                                                <Insets left="17.5" right="17.5" />
-                                            </StackPane.margin>
-                                        </ImageView>
-                                    </children>
-                                    <VBox.margin>
-                                        <Insets left="35.0" />
-                                    </VBox.margin>
-                                </StackPane>
-                                <Label text="Top" />
-                            </children>
-                            <HBox.margin>
-                                <Insets />
-                            </HBox.margin>
-                        </VBox>
-                  <TextField prefHeight="115.0" prefWidth="149.0" promptText="Comments" />
-                    </children>
-                </HBox>
-            </children>
-        </VBox>
-    </center>
     <bottom>
         <HBox alignment="BOTTOM_LEFT" prefHeight="100.0" prefWidth="200.0" BorderPane.alignment="CENTER">
             <children>
@@ -136,12 +27,14 @@
                                 <Insets left="10.0" top="5.0" />
                             </VBox.margin></Label>
                     </children></VBox>
-                <Region prefHeight="100.0" prefWidth="701.0" />
-                <Button mnemonicParsing="false" text="Print">
-                    <HBox.margin>
-                        <Insets bottom="10.0" left="50.0" right="10.0" top="10.0" />
-                    </HBox.margin></Button>
             </children>
         </HBox>
     </bottom>
+    <center>
+        <ScrollPane fx:id="scrPane" pannable="true" BorderPane.alignment="CENTER">
+            <content>
+                <FlowPane fx:id="fpFlowpane" alignment="TOP_CENTER" />
+            </content>
+        </ScrollPane>
+    </center>
 </BorderPane>

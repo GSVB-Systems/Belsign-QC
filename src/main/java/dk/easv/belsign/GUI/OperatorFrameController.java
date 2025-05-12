@@ -5,6 +5,7 @@ import dk.easv.belsign.BLL.Util.CameraHandler;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.geometry.Insets;
+import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.image.Image;
@@ -16,9 +17,10 @@ import javafx.scene.layout.VBox;
 import java.util.Objects;
 
 public class OperatorFrameController {
-    public ScrollPane scrPane;
     private MainframeController mainframeController;
 
+    @FXML
+    public ScrollPane scrPane;
     @FXML
     private FlowPane fpFlowpane;
 
@@ -39,7 +41,7 @@ public class OperatorFrameController {
 
    private void showImages() {
        // Then use a regular for loop with the size
-       for(int i = 0; i < 150; i++) {
+       for(int i = 0; i < 15; i++) {
             // Create container for event card
             Pane customPane1 = new Pane();
             customPane1.setPrefSize(550, 310);
@@ -71,6 +73,38 @@ public class OperatorFrameController {
                 }
             });
         }
+
+
+       // Create container for event card
+       Pane customPane2 = new Pane();
+       customPane2.setPrefSize(550, 310);
+       fpFlowpane.getChildren().add(customPane2);
+       customPane2.setStyle("-fx-background-color: #FFF; -fx-background-radius: 8px; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.2), 10, 0, 0, 0);");
+
+
+       // Create vertical layout for event content
+       VBox vbox1 = new VBox();
+       vbox1.setPrefWidth(customPane2.getPrefWidth()); // Match the pane width
+       customPane2.getChildren().add(vbox1);
+
+       ComboBox comboBox = new ComboBox<>();
+       comboBox.getItems().addAll("Tag 1", "Tag 2", "Tag 3");
+       vbox1.getChildren().add(comboBox);
+
+
+       // Event image
+       ImageView imageViewEvent = new ImageView();
+       imageViewEvent.setFitWidth(customPane2.getPrefWidth());
+       imageViewEvent.setFitHeight(260);
+       imageViewEvent.setImage(new Image(Objects.requireNonNull(getClass().getResourceAsStream("/dk/easv/belsign/images/belmanlogo.png"))));
+       vbox1.getChildren().add(imageViewEvent);
+
+       customPane2.setOnMouseClicked(event -> {
+           Image snapshot = CameraHandler.getInstance().capturePic();
+           if (snapshot != null) {
+               imageViewEvent.setImage(snapshot);
+           }
+       });
     }
 
     @FXML
