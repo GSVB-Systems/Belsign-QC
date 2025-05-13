@@ -26,6 +26,11 @@ public class ProductsModel {
         return observableProducts;
     }
 
+    public ObservableList<Products> getProductsByOrder() {
+        return observableProducts;
+
+    }
+
     public void updateProduct(Products product) throws Exception {
         productsManager.updateProduct(product);
     }

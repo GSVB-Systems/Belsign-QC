@@ -8,6 +8,14 @@ public class Products {
     private String productName;
     private int quantity;
     private int size;
+    private String photoPath;
+
+    public String getPhotoPath() {
+        return photoPath;
+    }
+    public void setPhotoPath(String photoPath) {
+        this.photoPath = photoPath;
+    }
 
     public int getProductId() {
         return productId;
@@ -64,5 +72,15 @@ public class Products {
         this.productName = productName;
         this.quantity = quantity;
         this.size = size;
+    }
+
+    public Products(int productId, int photoId, int orderId, String productName, int quantity, int size, String photoPath) {
+        this.productId = productId;
+        this.photoId = photoId;
+        this.orderId = orderId;
+        this.productName = productName;
+        this.quantity = quantity;
+        this.size = size;
+        this.photoPath = photoPath;
     }
 }

@@ -1,5 +1,6 @@
 package dk.easv.belsign.GUI;
 
+import dk.easv.belsign.BE.Products;
 import dk.easv.belsign.BLL.Util.OrderSession;
 import dk.easv.belsign.Models.ProductsModel;
 import javafx.event.ActionEvent;
@@ -27,7 +28,7 @@ public class ProductFrameController {
     public void initialize() {
         try {
             productsModel = new ProductsModel();
-
+            productsModel.getObservableProducts(OrderSession.getEnteredOrder().getOrderId());
 
             vbLeft.setAlignment(javafx.geometry.Pos.CENTER);
             vbLeft.setSpacing(20);
@@ -44,13 +45,14 @@ public class ProductFrameController {
 
         try{
               for (int i = 0; i < productsModel.getObservableProducts(OrderSession.getEnteredOrder().getOrderId()).size(); i++) {
+                        Products products = productsModel.getProductsByOrder().get(i);
 
                       SVGPath svgPath = new SVGPath();
                       svgPath.setContent("M301 33.0001L279 0.890137L22 1.00006L0 32.5001L22 64.0001L279 64.11L301 33.0001Z");
                       svgPath.setFill(Color.valueOf("#4CAF50"));
 
 
-                      Label label = new Label(""+(i + 1));
+                      Label label = new Label(products.getProductName());
                       label.setStyle("-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: white;");
 
                       StackPane stack = new StackPane();
@@ -68,7 +70,11 @@ public class ProductFrameController {
     public void showImages() {
 
         try{
-            for (int i = 0; i < productsModel.getObservableProducts(OrderSession.getEnteredOrder().getOrderId()).size(); i++) {
+            for (int i = 0; i < productsModel.getProductsByOrder().size(); i++) {
+
+                Products products = productsModel.getProductsByOrder().get(i);
+                System.out.println(products.getPhotoPath());
+
                 HBox container = new HBox();
                 container.setSpacing(10);
                 container.setPadding(new Insets(0, 50, 0, 50));
@@ -81,7 +87,7 @@ public class ProductFrameController {
                 labelContainer.setSpacing(5);
 
                 ImageView imageView = new ImageView();
-                imageView.setImage(new Image(Objects.requireNonNull(getClass().getResourceAsStream("/dk/easv/belsign/images/belmanlogo.png"))));
+                imageView.setImage(new Image(products.getPhotoPath()));
                 imageView.setFitWidth(50);
                 imageView.setFitHeight(50);
                 imageView.setPreserveRatio(true);

@@ -185,7 +185,10 @@ public class ProductsDAO implements IProductDAO<Products> {
     public CompletableFuture<List<Products>> readAllByOrderId(int orderId) {
         return CompletableFuture.supplyAsync(() -> {
             ArrayList<Products> products = new ArrayList<>();
-            String sql = "SELECT * FROM products WHERE orderId = ?";
+            String sql = "SELECT p.*, ph.photoPath " +
+                    "FROM Products p " +
+                    "LEFT JOIN Photos ph ON p.photoId = ph.photoId " +
+                    "WHERE p.orderId = ?";
 
             try (Connection conn = dbConnector.getConnection();
                  PreparedStatement statement = conn.prepareStatement(sql)) {
@@ -199,8 +202,9 @@ public class ProductsDAO implements IProductDAO<Products> {
                     String productName = rs.getString("productName");
                     int quantity = rs.getInt("quantity");
                     int size = rs.getInt("size");
+                    String photoPath = rs.getString("photoPath"); // Get path from join
 
-                    Products product = new Products(productId, photoId, orderId, productName, quantity, size);
+                    Products product = new Products(productId, photoId, orderId, productName, quantity, size, photoPath);
                     products.add(product);
                 }
                 return products;
