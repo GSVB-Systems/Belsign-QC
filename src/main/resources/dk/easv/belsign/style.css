@@ -24,3 +24,20 @@
 #btnLogOut {
     -fx-background-color: #004B88;
 }
+.round-button {
+    -fx-background-color: transparent;
+    -fx-background-radius: 100%;
+    -fx-padding: 5;
+    -fx-border-color: transparent;
+    -fx-cursor: hand;
+}
+
+.invisible-button {
+    -fx-background-color: transparent;
+    -fx-border-color: transparent;
+    -fx-effect: none;
+    -fx-padding: 0;
+    -fx-background-insets: 0;
+    -fx-background-radius: 0;
+    -fx-border-radius: 0;
+}

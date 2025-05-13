@@ -6,6 +6,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 
 import java.net.URL;
@@ -15,12 +16,17 @@ public class CameraViewController implements Initializable {
 
     @FXML
     private ImageView camFeed;
-
+    @FXML
+    private StackPane feedPane;
     private AnimationTimer timer;
     private Image capturedImage;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
+
+        //Sizing til ImageView
+        camFeed.fitWidthProperty().bind(feedPane.widthProperty());
+        camFeed.fitHeightProperty().bind(feedPane.heightProperty());
 
         boolean opened = CameraHandler.getInstance().openCamera();
         if (!opened) {

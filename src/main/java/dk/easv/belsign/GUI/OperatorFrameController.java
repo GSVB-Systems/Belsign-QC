@@ -2,6 +2,7 @@ package dk.easv.belsign.GUI;
 
 import dk.easv.belsign.BE.Products;
 import dk.easv.belsign.BLL.Util.CameraHandler;
+import dk.easv.belsign.BLL.Util.SceneService;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.geometry.Insets;
@@ -39,9 +40,9 @@ public class OperatorFrameController {
         showImages();
     }
 
-   private void showImages() {
-       // Then use a regular for loop with the size
-       for(int i = 0; i < 15; i++) {
+    private void showImages() {
+        // Then use a regular for loop with the size
+        for (int i = 0; i < 15; i++) {
             // Create container for event card
             Pane customPane1 = new Pane();
             customPane1.setPrefSize(550, 310);
@@ -67,7 +68,8 @@ public class OperatorFrameController {
             vbox1.getChildren().add(imageViewEvent);
 
             customPane1.setOnMouseClicked(event -> {
-                Image snapshot = CameraHandler.getInstance().capturePic();
+                CameraViewController controller = SceneService.fullscreen("CameraView.fxml", "Camera");
+                Image snapshot = controller.getCapturedImage();
                 if (snapshot != null) {
                     imageViewEvent.setImage(snapshot);
                 }
@@ -75,41 +77,41 @@ public class OperatorFrameController {
         }
 
 
-       // Create container for event card
-       Pane customPane2 = new Pane();
-       customPane2.setPrefSize(550, 310);
-       fpFlowpane.getChildren().add(customPane2);
-       customPane2.setStyle("-fx-background-color: #FFF; -fx-background-radius: 8px; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.2), 10, 0, 0, 0);");
+        // Create container for event card
+        Pane customPane2 = new Pane();
+        customPane2.setPrefSize(550, 310);
+        fpFlowpane.getChildren().add(customPane2);
+        customPane2.setStyle("-fx-background-color: #FFF; -fx-background-radius: 8px; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.2), 10, 0, 0, 0);");
 
 
-       // Create vertical layout for event content
-       VBox vbox1 = new VBox();
-       vbox1.setPrefWidth(customPane2.getPrefWidth()); // Match the pane width
-       customPane2.getChildren().add(vbox1);
+        // Create vertical layout for event content
+        VBox vbox1 = new VBox();
+        vbox1.setPrefWidth(customPane2.getPrefWidth()); // Match the pane width
+        customPane2.getChildren().add(vbox1);
 
-       ComboBox comboBox = new ComboBox<>();
-       comboBox.getItems().addAll("Tag 1", "Tag 2", "Tag 3");
-       vbox1.getChildren().add(comboBox);
+        ComboBox comboBox = new ComboBox<>();
+        comboBox.getItems().addAll("Tag 1", "Tag 2", "Tag 3");
+        vbox1.getChildren().add(comboBox);
 
 
-       // Event image
-       ImageView imageViewEvent = new ImageView();
-       imageViewEvent.setFitWidth(customPane2.getPrefWidth());
-       imageViewEvent.setFitHeight(260);
-       imageViewEvent.setImage(new Image(Objects.requireNonNull(getClass().getResourceAsStream("/dk/easv/belsign/images/belmanlogo.png"))));
-       vbox1.getChildren().add(imageViewEvent);
+        // Event image
+        ImageView imageViewEvent = new ImageView();
+        imageViewEvent.setFitWidth(customPane2.getPrefWidth());
+        imageViewEvent.setFitHeight(260);
+        imageViewEvent.setImage(new Image(Objects.requireNonNull(getClass().getResourceAsStream("/dk/easv/belsign/images/belmanlogo.png"))));
+        vbox1.getChildren().add(imageViewEvent);
 
-       customPane2.setOnMouseClicked(event -> {
-           Image snapshot = CameraHandler.getInstance().capturePic();
-           if (snapshot != null) {
-               imageViewEvent.setImage(snapshot);
-           }
+        customPane2.setOnMouseClicked(event -> {
+            Image snapshot = openCameraAndCaptureImage();
+            if (snapshot != null) {
+                imageViewEvent.setImage(snapshot);
+            }
             createExtraPhotoBox();
 
-       });
+        });
     }
 
-    private void createExtraPhotoBox(){
+    private void createExtraPhotoBox() {
         // Create container for the custom pane
         Pane customPane = new Pane();
         customPane.setPrefSize(550, 310);
@@ -135,13 +137,12 @@ public class OperatorFrameController {
         // Set click handler that captures an image AND creates a new pane
         customPane.setOnMouseClicked(event -> {
             // Capture and set image
-            Image snapshot = CameraHandler.getInstance().capturePic();
+            CameraViewController controller = SceneService.fullscreen("CameraView.fxml", "Camera");
+            Image snapshot = openCameraAndCaptureImage();
             if (snapshot != null) {
                 imageView.setImage(snapshot);
+                createExtraPhotoBox();
             }
-
-
-            createExtraPhotoBox();
         });
 
         // Add to flow pane
@@ -158,6 +159,28 @@ public class OperatorFrameController {
 
     @FXML
     private void onCapture(ActionEvent actionEvent) {
+        CameraViewController controller = SceneService.fullscreen("CameraView.fxml", "Camera");
+        if (controller != null) {
+            // Optionally: handle the image if the camera captured one
+            Image captured = controller.getCapturedImage();
+            if (captured != null) {
+                System.out.println("Captured image successfully.");
+                // Do something with the image, e.g., update a view or save it
+            } else {
+                System.out.println("No image captured.");
+            }
+        } else {
+            System.out.println("Failed to load CameraView.fxml");
+        }
+    }
+
+    private Image openCameraAndCaptureImage() {
+        CameraViewController controller = SceneService.fullscreen("CameraView.fxml", "Camera");
+        if (controller == null) {
+            System.err.println("CameraViewController was not initialized.");
+            return null;
+        }
+        return controller.getCapturedImage();
     }
 }
 

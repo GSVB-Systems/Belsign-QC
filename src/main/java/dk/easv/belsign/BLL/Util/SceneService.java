@@ -7,6 +7,7 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 
 import java.io.IOException;
+import java.net.URL;
 
 public class SceneService {
 
@@ -46,14 +47,26 @@ public class SceneService {
 
     //til fullscreen, kommer til at blive brugt sammen med cam.
     public static <T> T fullscreen(String fxmlPath, String title) {
-        ViewTuple<T> tuple = load(fxmlPath);
-        Stage stage = new Stage();
-        stage.setTitle(title);
-        stage.setScene(new Scene(tuple.view));
-        stage.setFullScreen(true);
-        stage.initModality(Modality.APPLICATION_MODAL);
-        stage.showAndWait();
-        return tuple.controller;
+        try {
+            URL resource = SceneService.class.getResource("/dk/easv/belsign/" + fxmlPath);
+            if (resource == null) {
+                throw new RuntimeException("FXML file not found: " + fxmlPath);
+            }
+            FXMLLoader loader = new FXMLLoader(resource);
+            Parent root = loader.load();
+            T controller = loader.getController();
+
+            Stage stage = new Stage();
+            stage.setTitle(title);
+            stage.setScene(new Scene(root));
+            stage.initModality(Modality.APPLICATION_MODAL);
+            stage.setMaximized(true);
+            stage.showAndWait();
+
+            return controller;
+        } catch (IOException e) {
+            throw new RuntimeException("Error loading FXML: " + fxmlPath, e);
+        }
     }
 
 }
