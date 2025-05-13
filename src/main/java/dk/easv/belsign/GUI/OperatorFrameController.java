@@ -27,6 +27,9 @@ public class OperatorFrameController {
 
     private Products products;
 
+
+
+
     public void initialize() {
         // Set appropriate properties for better layout behavior
         fpFlowpane.setHgap(10);
@@ -37,12 +40,19 @@ public class OperatorFrameController {
             fpFlowpane.setPrefWidth(newVal.doubleValue() - 20);
         });
 
+
+    }
+
+    public void setProduct(Products selectedProduct) {
+        this.products = selectedProduct;
         showImages();
     }
 
+
+
     private void showImages() {
         // Then use a regular for loop with the size
-        for (int i = 0; i < 15; i++) {
+        for (int i = 0; i < products.getSize(); i++) {
             // Create container for event card
             Pane customPane1 = new Pane();
             customPane1.setPrefSize(550, 310);
@@ -182,5 +192,7 @@ public class OperatorFrameController {
         }
         return controller.getCapturedImage();
     }
+
+
 }
 

@@ -31,6 +31,7 @@ public class QCFrameController {
         this.pdfGenerator = new PDFGenerator();
     }
 
+
     public void initialize() {
         // Set appropriate properties for better layout behavior
         fpFlowpane.setHgap(10);
@@ -41,8 +42,14 @@ public class QCFrameController {
             fpFlowpane.setPrefWidth(newVal.doubleValue() - 20);
         });
 
+
+    }
+
+    public void setProduct(Products selectedProduct) {
+        this.products = selectedProduct;
         showImages();
     }
+
 
     private void showImages() {
         // Then use a regular for loop with the size
@@ -140,4 +147,6 @@ public class QCFrameController {
         alert.setContentText(message);
         alert.showAndWait();
     }
+
+
 }

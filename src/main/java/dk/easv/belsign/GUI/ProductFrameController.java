@@ -6,23 +6,28 @@ import dk.easv.belsign.Models.ProductsModel;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Insets;
+import javafx.scene.Scene;
 import javafx.scene.control.Alert;
-import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.SVGPath;
 import javafx.scene.image.Image;
+import dk.easv.belsign.BLL.Util.UserSession;
+import javafx.stage.Stage;
 
-import java.util.Objects;
 
-public class ProductFrameController {
+public class ProductFrameController implements IParentAware {
     public VBox vbLeft;
     public VBox vbRight;
     public ProductsModel productsModel;
-
     private MainframeController parent;
+
+    @Override
+    public void setParent(MainframeController parent) {
+        this.parent = parent;
+    }
 
 
     public void initialize() {
@@ -57,6 +62,11 @@ public class ProductFrameController {
 
                       StackPane stack = new StackPane();
                       stack.getChildren().addAll(svgPath, label);
+
+                      stack.setUserData(products);
+
+                      stack.setOnMouseClicked(event -> openAppropriateFrame((Products) stack.getUserData()));
+                      stack.setOnMouseEntered(e -> stack.setCursor(javafx.scene.Cursor.HAND));
 
                       vbLeft.getChildren().add(stack);
         }
@@ -100,6 +110,41 @@ public class ProductFrameController {
             }
         } catch (Exception e) {
             showError("Error loading images: " + e.getMessage());
+            e.printStackTrace();
+        }
+    }
+
+
+    private void openAppropriateFrame(Products selectedProduct) {
+        try {
+            FXMLLoader loader = null;
+
+            int roleId = UserSession.getLoggedInUser().getRoleId();
+
+            if (roleId == 1) {
+                loader = new FXMLLoader(getClass().getResource("/dk/easv/belsign/OperatorFrame.fxml"));
+            } else if(roleId == 2) {
+                loader = new FXMLLoader(getClass().getResource("/dk/easv/belsign/QCFrame.fxml"));
+            }
+
+            if (loader == null) {
+                showError("Invalid role ID");
+                return;
+            }
+
+            parent.fillMainPane(loader);
+
+            if (roleId == 1) {
+                OperatorFrameController controller = loader.getController();
+                controller.setProduct(selectedProduct);
+            } else if(roleId == 2) {
+                QCFrameController controller = loader.getController();
+                controller.setProduct(selectedProduct);
+            }
+
+
+        } catch (Exception e) {
+            showError("Error opening frame: " + e.getMessage());
             e.printStackTrace();
         }
     }
