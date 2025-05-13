@@ -6,13 +6,11 @@ import dk.easv.belsign.BLL.Util.PDFGenerator;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.geometry.Insets;
-import javafx.scene.control.Alert;
-import javafx.scene.control.ComboBox;
-import javafx.scene.control.Label;
-import javafx.scene.control.ScrollPane;
+import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.FlowPane;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 
@@ -50,7 +48,7 @@ public class QCFrameController {
         // Then use a regular for loop with the size
         Pane customPane1 = null;
         Image image = null;
-        for (int i = 0; i < 10; i++) {
+        for (int i = 0; i < products.getSize(); i++) {
             // Create container for event card
             customPane1 = new Pane();
             customPane1.setPrefSize(550, 310);
@@ -63,10 +61,25 @@ public class QCFrameController {
             vbox1.setPrefWidth(customPane1.getPrefWidth()); // Match the pane width
             customPane1.getChildren().add(vbox1);
 
+            HBox hbox1 = new HBox(15);
+            hbox1.setPrefWidth(customPane1.getPrefWidth());
+            hbox1.setPadding(new Insets(8));
+            vbox1.getChildren().add(hbox1);
+
             Label label = new Label("Event " + (i + 1));
             label.setStyle("-fx-font-size: 20px; -fx-text-fill: #000;");
             label.setPadding(new Insets(10));
-            vbox1.getChildren().add(label);
+            hbox1.getChildren().add(label);
+
+
+
+            Button btnApprove = new Button("Approve");
+            Button btnDecline = new Button("Decline");
+            btnApprove.setStyle("-fx-background-color: #008000; -fx-text-fill: #FFF;");
+            btnDecline.setStyle("-fx-background-color: #FF0000; -fx-text-fill: #FFF;");
+            btnApprove.setPadding(new Insets(10));
+            btnDecline.setPadding(new Insets(10));
+            hbox1.getChildren().addAll(btnApprove, btnDecline);
 
             // Event image
             ImageView imageViewEvent = new ImageView();

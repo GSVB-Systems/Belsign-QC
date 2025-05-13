@@ -44,7 +44,7 @@ public class OrderSelectionController implements IParentAware {
             order = txtSearch.getText();
             if (orderValidator.validateOrder(Integer.parseInt(order))) {
                 parent.setOrder(order);
-                parent.fillMainPane(new FXMLLoader(getClass().getResource("/dk/easv/belsign/QCFrame.fxml")));
+                parent.fillMainPane(new FXMLLoader(getClass().getResource("/dk/easv/belsign/ProductFrame.fxml")));
 
             } else throw new Exception();
 

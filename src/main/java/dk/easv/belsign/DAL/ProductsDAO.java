@@ -14,7 +14,7 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-public class ProductsDAO implements ICrudRepo<Products> {
+public class ProductsDAO implements IProductDAO<Products> {
 
     private DBConnector dbConnector;
     private ExecutorService executorService;
@@ -177,6 +177,35 @@ public class ProductsDAO implements ICrudRepo<Products> {
                 }
             } catch (SQLException e) {
                 throw new RuntimeException("Database connection error", e);
+            }
+        }, executorService);
+    }
+
+    @Override
+    public CompletableFuture<List<Products>> readAllByOrderId(int orderId) {
+        return CompletableFuture.supplyAsync(() -> {
+            ArrayList<Products> products = new ArrayList<>();
+            String sql = "SELECT * FROM products WHERE orderId = ?";
+
+            try (Connection conn = dbConnector.getConnection();
+                 PreparedStatement statement = conn.prepareStatement(sql)) {
+
+                statement.setInt(1, orderId);
+                ResultSet rs = statement.executeQuery();
+
+                while (rs.next()) {
+                    int productId = rs.getInt("productId");
+                    int photoId = rs.getInt("photoId");
+                    String productName = rs.getString("productName");
+                    int quantity = rs.getInt("quantity");
+                    int size = rs.getInt("size");
+
+                    Products product = new Products(productId, photoId, orderId, productName, quantity, size);
+                    products.add(product);
+                }
+                return products;
+            } catch (SQLException e) {
+                throw new RuntimeException("Error fetching products by order ID", e);
             }
         }, executorService);
     }

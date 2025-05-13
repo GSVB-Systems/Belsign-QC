@@ -16,10 +16,13 @@ public class ProductsModel {
     public ProductsModel() throws Exception {
         this.productsManager = new ProductsManager();
         observableProducts = FXCollections.observableArrayList();
-        observableProducts.addAll(productsManager.getAllProducts());
+
     }
 
-    public ObservableList<Products> getObservableProducts() {
+
+    public ObservableList<Products> getObservableProducts(int orderId) throws Exception {
+        observableProducts.clear();
+        observableProducts.addAll(productsManager.getAllProductsByOrderId(orderId));
         return observableProducts;
     }
 
