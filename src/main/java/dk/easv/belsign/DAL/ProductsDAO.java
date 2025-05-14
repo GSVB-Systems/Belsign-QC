@@ -202,9 +202,11 @@ public class ProductsDAO implements IProductDAO<Products> {
                     String productName = rs.getString("productName");
                     int quantity = rs.getInt("quantity");
                     int size = rs.getInt("size");
-                    String photoPath = rs.getString("photoPath"); // Get path from join
+                    String photoPath = rs.getString("photoPath");
+                    String photoName = rs.getString("photoName");
+                    String photoStatus = rs.getString("photoStatus");
 
-                    Products product = new Products(productId, photoId, orderId, productName, quantity, size, photoPath);
+                    Products product = new Products(productId, photoId, orderId, productName, quantity, size, photoPath, photoName, photoStatus);
                     products.add(product);
                 }
                 return products;
