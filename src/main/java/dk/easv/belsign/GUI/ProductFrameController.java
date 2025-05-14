@@ -8,6 +8,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
@@ -22,7 +23,9 @@ public class ProductFrameController implements IParentAware {
     public VBox vbLeft;
     public VBox vbRight;
     public ProductsModel productsModel;
+    public Button btnOpen;
     private MainframeController parent;
+    private Products selectedProduct;
 
     @Override
     public void setParent(MainframeController parent) {
@@ -39,7 +42,7 @@ public class ProductFrameController implements IParentAware {
             vbLeft.setSpacing(20);
 
             showProducts();
-            showImages();
+            // Don't show images on init - wait for selection
         } catch (Exception e) {
             showError("Error initializing: " + e.getMessage());
             e.printStackTrace();
@@ -47,78 +50,94 @@ public class ProductFrameController implements IParentAware {
     }
 
     public void showProducts() {
+        try {
+            for (int i = 0; i < productsModel.getObservableProducts(OrderSession.getEnteredOrder().getOrderId()).size(); i++) {
+                Products products = productsModel.getProductsByOrder().get(i);
 
-        try{
-              for (int i = 0; i < productsModel.getObservableProducts(OrderSession.getEnteredOrder().getOrderId()).size(); i++) {
-                        Products products = productsModel.getProductsByOrder().get(i);
+                SVGPath svgPath = new SVGPath();
+                svgPath.setContent("M301 33.0001L279 0.890137L22 1.00006L0 32.5001L22 64.0001L279 64.11L301 33.0001Z");
+                svgPath.setFill(Color.valueOf("#4CAF50"));
 
-                      SVGPath svgPath = new SVGPath();
-                      svgPath.setContent("M301 33.0001L279 0.890137L22 1.00006L0 32.5001L22 64.0001L279 64.11L301 33.0001Z");
-                      svgPath.setFill(Color.valueOf("#4CAF50"));
+                Label label = new Label(products.getProductName());
+                label.setStyle("-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: white;");
 
+                StackPane stack = new StackPane();
+                stack.getChildren().addAll(svgPath, label);
 
-                      Label label = new Label(products.getProductName());
-                      label.setStyle("-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: white;");
+                stack.setUserData(products);
 
-                      StackPane stack = new StackPane();
-                      stack.getChildren().addAll(svgPath, label);
+                stack.setOnMouseClicked(event -> selectProduct((Products) stack.getUserData()));
+                stack.setOnMouseEntered(e -> stack.setCursor(javafx.scene.Cursor.HAND));
 
-                      stack.setUserData(products);
-
-                      stack.setOnMouseClicked(event -> openAppropriateFrame((Products) stack.getUserData()));
-                      stack.setOnMouseEntered(e -> stack.setCursor(javafx.scene.Cursor.HAND));
-
-                      vbLeft.getChildren().add(stack);
-        }
+                vbLeft.getChildren().add(stack);
+            }
         } catch (Exception e) {
             showError("Error loading products: " + e.getMessage());
             e.printStackTrace();
         }
+    }
 
+    private void selectProduct(Products product) {
+        // Set the selected product
+        this.selectedProduct = product;
+        // Show its image
+        showImages();
+        // Optionally highlight the selected product in UI
     }
 
     public void showImages() {
+        try {
+            // Clear previous images
+            vbRight.getChildren().clear();
 
-        try{
-            for (int i = 0; i < productsModel.getProductsByOrder().size(); i++) {
+            // If no product is selected, return
+            if (selectedProduct == null) return;
 
-                Products products = productsModel.getProductsByOrder().get(i);
+            // Show only the selected product's image
+            HBox container = new HBox();
+            container.setSpacing(10);
+            container.setPadding(new Insets(0, 50, 0, 50));
 
+            Label label1 = new Label(selectedProduct.getPhotoName());
+            Label label2 = new Label(selectedProduct.getProductName());
 
-                HBox container = new HBox();
-                container.setSpacing(10);
-                container.setPadding(new Insets(0, 50, 0, 50));
+            /* TODO Add getPhotoComment() to Products class
+            // If photo status is not "Approved", show the comment instead of status
+            String statusOrComment = "Approved".equals(selectedProduct.getPhotoStatus())
+                    ? selectedProduct.getPhotoStatus()
+                    : selectedProduct.getPhotoComment();
+            Label label2 = new Label(statusOrComment);
+             */
 
-                Label label1 = new Label("Label 1: " + (i + 1));
-                Label label2 = new Label("Label 2: " + (i + 1));
+            VBox labelContainer = new VBox();
+            labelContainer.getChildren().addAll(label1, label2);
+            labelContainer.setSpacing(5);
 
-                VBox labelContainer = new VBox();
-                labelContainer.getChildren().addAll(label1, label2);
-                labelContainer.setSpacing(5);
+            ImageView imageView = new ImageView();
+            imageView.setImage(new Image(selectedProduct.getPhotoPath()));
+            imageView.setFitWidth(50);
+            imageView.setFitHeight(50);
+            imageView.setPreserveRatio(true);
 
-                ImageView imageView = new ImageView();
-                imageView.setImage(new Image(products.getPhotoPath()));
-                imageView.setFitWidth(50);
-                imageView.setFitHeight(50);
-                imageView.setPreserveRatio(true);
+            container.getChildren().addAll(labelContainer, imageView);
+            HBox.setHgrow(labelContainer, Priority.ALWAYS);
 
-                container.getChildren().addAll(labelContainer, imageView);
+            vbRight.getChildren().add(container);
 
-                HBox.setHgrow(labelContainer, Priority.ALWAYS);
-
-                vbRight.getChildren().add(container);
-            }
         } catch (Exception e) {
-            showError("Error loading images: " + e.getMessage());
+            showError("Error loading image: " + e.getMessage());
             e.printStackTrace();
         }
     }
 
+    public void onOpenButtonPressed(ActionEvent actionEvent) {
+        if (selectedProduct == null) {
+            showError("Please select a product first");
+            return;
+        }
 
-    private void openAppropriateFrame(Products selectedProduct) {
         try {
             FXMLLoader loader = null;
-
             int roleId = UserSession.getLoggedInUser().getRoleId();
 
             if (roleId == 1) {
@@ -142,15 +161,10 @@ public class ProductFrameController implements IParentAware {
                 controller.setProduct(selectedProduct);
             }
 
-
         } catch (Exception e) {
             showError("Error opening frame: " + e.getMessage());
             e.printStackTrace();
         }
-    }
-
-    public void onOpenButtonPressed(ActionEvent actionEvent) {
-
     }
 
     public void onPDFButtonPressed(ActionEvent actionEvent) {

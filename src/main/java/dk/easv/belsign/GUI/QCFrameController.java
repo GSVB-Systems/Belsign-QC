@@ -15,6 +15,7 @@ import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 
 import java.util.Objects;
+import java.util.Optional;
 
 public class QCFrameController {
     public ScrollPane scrPane;
@@ -80,14 +81,30 @@ public class QCFrameController {
 
 
 
-            Button btnApprove = new Button("Approve");
-            Button btnDecline = new Button("Decline");
-            btnApprove.setStyle("-fx-background-color: #008000; -fx-text-fill: #FFF;");
-            btnDecline.setStyle("-fx-background-color: #FF0000; -fx-text-fill: #FFF;");
+            Button btnApprove = new Button("✔");
+            Button btnDecline = new Button("✖");
+            btnApprove.setStyle("-fx-background-color: #008000; -fx-text-fill: #FFF; -fx-font: 20px;");
+            btnDecline.setStyle("-fx-background-color: #FF0000; -fx-text-fill: #FFF; -fx-font: 20px;");
             btnApprove.setPadding(new Insets(10));
             btnDecline.setPadding(new Insets(10));
             hbox1.getChildren().addAll(btnApprove, btnDecline);
 
+            Button btnComment = new Button("🗒🖋");
+            btnComment.setStyle("-fx-background-color: #ffff00; -fx-text-fill: #000; -fx-font: 20px;");
+            btnComment.setPadding(new Insets(10));
+            hbox1.getChildren().add(btnComment);
+
+            btnComment.setOnAction(event -> {
+              TextInputDialog tiDialog = new TextInputDialog();
+              tiDialog.setTitle("Text Input Dialog");
+              tiDialog.setHeaderText("Enter new Comment: ");
+              tiDialog.setContentText("Enter comment");
+
+              Optional<String> result = tiDialog.showAndWait();
+              if (result.isPresent()) {
+                  //bll til dal kald til at gemme kommentar
+              }
+            });
             // Event image
             ImageView imageViewEvent = new ImageView();
             imageViewEvent.setFitWidth(customPane1.getPrefWidth());
@@ -95,6 +112,7 @@ public class QCFrameController {
             image = new Image(Objects.requireNonNull(getClass().getResourceAsStream("/dk/easv/belsign/images/belmanlogo.png")));
             imageViewEvent.setImage(image);
             vbox1.getChildren().add(imageViewEvent);
+
 
             Image finalImage = image;
             customPane1.setOnMouseClicked(event -> openImageInLargeWindow(finalImage));
