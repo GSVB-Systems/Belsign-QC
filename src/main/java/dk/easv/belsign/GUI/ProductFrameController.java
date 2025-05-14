@@ -83,7 +83,7 @@ public class ProductFrameController implements IParentAware {
             for (int i = 0; i < productsModel.getProductsByOrder().size(); i++) {
 
                 Products products = productsModel.getProductsByOrder().get(i);
-                System.out.println(products.getPhotoPath());
+
 
                 HBox container = new HBox();
                 container.setSpacing(10);
