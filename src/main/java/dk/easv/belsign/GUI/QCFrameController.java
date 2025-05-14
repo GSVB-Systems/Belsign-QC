@@ -73,7 +73,7 @@ public class QCFrameController {
             hbox1.setPadding(new Insets(8));
             vbox1.getChildren().add(hbox1);
 
-            Label label = new Label("Event " + (i + 1));
+            Label label = new Label(products.getPhotoName());
             label.setStyle("-fx-font-size: 20px; -fx-text-fill: #000;");
             label.setPadding(new Insets(10));
             hbox1.getChildren().add(label);
