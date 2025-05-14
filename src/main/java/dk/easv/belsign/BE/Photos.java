@@ -4,14 +4,13 @@ public class Photos {
     private int photoId;
     private String photoName;
     private String photoPath;
-    private int orderId;
+
     private String photoStatus;
 
-    public Photos(int photoId, String photoName, String photoPath, int orderId, String photoStatus) {
+    public Photos(int photoId, String photoName, String photoPath, String photoStatus) {
         this.photoId = photoId;
         this.photoName = photoName;
         this.photoPath = photoPath;
-        this.orderId = orderId;
         this.photoStatus = photoStatus;
     }
 
@@ -47,11 +46,5 @@ public class Photos {
         this.photoPath = photoPath;
     }
 
-    public int getOrderId() {
-        return orderId;
-    }
 
-    public void setOrderId(int orderId) {
-        this.orderId = orderId;
-    }
 }

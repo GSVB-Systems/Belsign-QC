@@ -1,5 +1,6 @@
 package dk.easv.belsign.GUI;
 
+import dk.easv.belsign.BE.Photos;
 import dk.easv.belsign.BE.Products;
 import dk.easv.belsign.BLL.Util.OrderSession;
 import dk.easv.belsign.Models.ProductsModel;
@@ -93,13 +94,33 @@ public class ProductFrameController implements IParentAware {
             // If no product is selected, return
             if (selectedProduct == null) return;
 
-            // Show only the selected product's image
-            HBox container = new HBox();
-            container.setSpacing(10);
-            container.setPadding(new Insets(0, 50, 0, 50));
+          for(Photos photo : selectedProduct.getPhotos()) {
+              HBox container = new HBox();
+              container.setSpacing(10);
+              container.setPadding(new Insets(0, 50, 0, 50));
 
-            Label label1 = new Label(selectedProduct.getPhotoName());
-            Label label2 = new Label(selectedProduct.getProductName());
+
+              Label label1 = new Label(photo.getPhotoName());
+              Label label2 = new Label(selectedProduct.getProductName());
+
+
+              VBox labelContainer = new VBox();
+              labelContainer.getChildren().addAll(label1, label2);
+              labelContainer.setSpacing(5);
+
+              ImageView imageView = new ImageView();
+              imageView.setImage(new Image(photo.getPhotoPath()));
+              imageView.setFitWidth(50);
+              imageView.setFitHeight(50);
+              imageView.setPreserveRatio(true);
+
+              container.getChildren().addAll(labelContainer, imageView);
+              HBox.setHgrow(labelContainer, Priority.ALWAYS);
+
+              vbRight.getChildren().add(container);
+          }
+
+
 
             /* TODO Add getPhotoComment() to Products class
             // If photo status is not "Approved", show the comment instead of status
@@ -108,21 +129,6 @@ public class ProductFrameController implements IParentAware {
                     : selectedProduct.getPhotoComment();
             Label label2 = new Label(statusOrComment);
              */
-
-            VBox labelContainer = new VBox();
-            labelContainer.getChildren().addAll(label1, label2);
-            labelContainer.setSpacing(5);
-
-            ImageView imageView = new ImageView();
-            imageView.setImage(new Image(selectedProduct.getPhotoPath()));
-            imageView.setFitWidth(50);
-            imageView.setFitHeight(50);
-            imageView.setPreserveRatio(true);
-
-            container.getChildren().addAll(labelContainer, imageView);
-            HBox.setHgrow(labelContainer, Priority.ALWAYS);
-
-            vbRight.getChildren().add(container);
 
         } catch (Exception e) {
             showError("Error loading image: " + e.getMessage());

@@ -230,7 +230,7 @@ public class ProductsDAO implements IProductDAO<Products> {
                         String photoName = rs.getString("photoName");
                         String photoStatus = rs.getString("photoStatus");
 
-                        Photos photo = new Photos(photoId, photoName, photoPath, orderId, photoStatus);
+                        Photos photo = new Photos(photoId, photoName, photoPath, photoStatus);
                         product.getPhotos().add(photo);
 
                         // For backward compatibility, set first photo's info on the product
