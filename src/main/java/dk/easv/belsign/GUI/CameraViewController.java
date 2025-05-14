@@ -1,6 +1,8 @@
 package dk.easv.belsign.GUI;
 
 import dk.easv.belsign.BLL.Util.CameraHandler;
+import dk.easv.belsign.BLL.Util.OrderSession;
+import dk.easv.belsign.BLL.Util.ProductSession;
 import javafx.animation.AnimationTimer;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -20,6 +22,8 @@ public class CameraViewController implements Initializable {
     private StackPane feedPane;
     private AnimationTimer timer;
     private Image capturedImage;
+    private String orderId;
+    private String productId;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -50,8 +54,15 @@ public class CameraViewController implements Initializable {
 
     @FXML
     private void onCap() {
+        orderId = String.valueOf(OrderSession.getEnteredOrder().getOrderId());
+        productId = String.valueOf(ProductSession.getEnteredProduct().getProductId());
+
+
+
+
         timer.stop();
         capturedImage = camFeed.getImage();
+        CameraHandler.getInstance().saveImagesToOrders(capturedImage, orderId, productId);
         CameraHandler.getInstance().releaseCam();
         close();
     }

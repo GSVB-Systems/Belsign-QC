@@ -2,6 +2,7 @@ package dk.easv.belsign.GUI;
 
 import dk.easv.belsign.BE.Products;
 import dk.easv.belsign.BLL.Util.CameraHandler;
+import dk.easv.belsign.BLL.Util.ProductSession;
 import dk.easv.belsign.BLL.Util.SceneService;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -45,6 +46,7 @@ public class OperatorFrameController {
 
     public void setProduct(Products selectedProduct) {
         this.products = selectedProduct;
+        ProductSession.setEnteredProduct(selectedProduct);
         showImages();
     }
 
@@ -167,29 +169,13 @@ public class OperatorFrameController {
         this.mainframeController = mainframeController;
     }
 
-    @FXML
-    private void onCapture(ActionEvent actionEvent) {
-        CameraViewController controller = SceneService.fullscreen("CameraView.fxml", "Camera");
-        if (controller != null) {
-            // Optionally: handle the image if the camera captured one
-            Image captured = controller.getCapturedImage();
-            if (captured != null) {
-                System.out.println("Captured image successfully.");
-                // Do something with the image, e.g., update a view or save it
-            } else {
-                System.out.println("No image captured.");
-            }
-        } else {
-            System.out.println("Failed to load CameraView.fxml");
-        }
-    }
-
     private Image openCameraAndCaptureImage() {
         CameraViewController controller = SceneService.fullscreen("CameraView.fxml", "Camera");
         if (controller == null) {
             System.err.println("CameraViewController was not initialized.");
             return null;
         }
+
         return controller.getCapturedImage();
     }
 

@@ -10,7 +10,7 @@
 <?import javafx.scene.layout.Region?>
 <?import javafx.scene.layout.VBox?>
 
-<BorderPane xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="dk.easv.belsign.GUI.OperatorFrameController">
+<BorderPane xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1" fx:controller="dk.easv.belsign.GUI.OperatorFrameController">
    <bottom>
       <HBox alignment="BOTTOM_LEFT" prefHeight="100.0" prefWidth="200.0" BorderPane.alignment="CENTER">
          <children>
@@ -29,7 +29,6 @@
                         <Insets left="10.0" top="5.0" />
                      </VBox.margin></Label>
                </children></VBox>
-            <Button fx:id="btnTakePic" mnemonicParsing="false" onAction="#onCapture" prefHeight="25.0" prefWidth="182.0" text="take picture" />
             <Region prefHeight="100.0" prefWidth="701.0" />
             <Button mnemonicParsing="false" onAction="#handleUpload" text="Upload">
                <HBox.margin>

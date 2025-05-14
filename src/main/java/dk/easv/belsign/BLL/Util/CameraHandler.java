@@ -1,5 +1,6 @@
 package dk.easv.belsign.BLL.Util;
 
+import javafx.embed.swing.SwingFXUtils;
 import javafx.scene.image.Image;
 import javafx.scene.image.PixelFormat;
 import javafx.scene.image.PixelWriter;
@@ -8,6 +9,11 @@ import org.opencv.core.Core;
 import org.opencv.core.Mat;
 import org.opencv.imgproc.Imgproc;
 import org.opencv.videoio.VideoCapture;
+
+import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
 
 
 public class  CameraHandler {
@@ -56,6 +62,26 @@ public class  CameraHandler {
             return null;
         }
         return matToImage(frame);
+    }
+
+    public void saveImagesToOrders(Image image, String orderId, String productId) {
+        BufferedImage bufferedImage = SwingFXUtils.fromFXImage(image, null);
+        String basePath = "src/main/resources/dk/easv/belsign/images/Orders";
+
+        String path = basePath + File.separator + OrderSession.getEnteredOrder().getOrderId();
+        File folder = new File(path);
+        if (!folder.exists()) folder.mkdirs();
+
+        String imgName = productId + "_" + System.currentTimeMillis() + ".png";
+        File truefile = new File(folder, imgName);
+
+        try{
+            ImageIO.write(bufferedImage, "png", truefile);
+            System.out.println("Success! Saved to: " + truefile.getAbsolutePath());
+        } catch (IOException e) {
+            System.err.println("Error saving image " + e.getMessage());
+        }
+
     }
 
     public boolean openCamera() {
