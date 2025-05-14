@@ -185,7 +185,7 @@ public class ProductsDAO implements IProductDAO<Products> {
     public CompletableFuture<List<Products>> readAllByOrderId(int orderId) {
         return CompletableFuture.supplyAsync(() -> {
             ArrayList<Products> products = new ArrayList<>();
-            String sql = "SELECT p.*, ph.photoPath " +
+            String sql = "SELECT p.*, ph.photoPath, ph.photoName, ph.photoStatus " +
                     "FROM Products p " +
                     "LEFT JOIN Photos ph ON p.photoId = ph.photoId " +
                     "WHERE p.orderId = ?";
