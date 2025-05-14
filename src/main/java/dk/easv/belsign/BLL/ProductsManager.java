@@ -1,5 +1,6 @@
 package dk.easv.belsign.BLL;
 
+import dk.easv.belsign.BE.Photos;
 import dk.easv.belsign.BE.Products;
 import dk.easv.belsign.DAL.IProductDAO;
 import dk.easv.belsign.DAL.ProductsDAO;
@@ -23,5 +24,6 @@ public class ProductsManager {
 
     public void updateProduct(Products product) throws Exception {
         productsDataAccess.update(product);
+
     }
 }

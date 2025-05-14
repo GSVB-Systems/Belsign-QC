@@ -31,13 +31,12 @@ public class ProductsDAO implements IProductDAO<Products> {
     @Override
     public CompletableFuture<Void> create(Products product) {
         return CompletableFuture.runAsync(() -> {
-            String sql = "INSERT INTO products (photoId, orderId, productName, quantity, size) VALUES (?, ?, ?, ?, ?)";
+            String sql = "INSERT INTO products ( orderId, productName, quantity, size) VALUES (?, ?, ?, ?, ?)";
             try (Connection conn = dbConnector.getConnection();
                  PreparedStatement statement = conn.prepareStatement(sql)) {
 
                 conn.setAutoCommit(false); // Start transaktion
 
-                statement.setInt(1, product.getPhotoId());
                 statement.setInt(2, product.getOrderId());
                 statement.setString(3, product.getProductName());
                 statement.setInt(4, product.getQuantity());
@@ -112,7 +111,7 @@ public class ProductsDAO implements IProductDAO<Products> {
                     int quantity = rs.getInt("quantity");
                     int size = rs.getInt("size");
 
-                    return new Products(productId, photoId, orderId, productName, quantity, size);
+                    return new Products(productId, orderId, productName, quantity, size);
                 } else {
                     return null;
                 }
@@ -136,13 +135,12 @@ public class ProductsDAO implements IProductDAO<Products> {
 
                 while (rs.next()) {
                     int productId = rs.getInt("productId");
-                    int photoId = rs.getInt("photoId");
                     int orderId = rs.getInt("orderId");
                     String productName = rs.getString("productName");
                     int quantity = rs.getInt("quantity");
                     int size = rs.getInt("size");
 
-                    Products product = new Products(productId, photoId, orderId, productName, quantity, size);
+                    Products product = new Products(productId, orderId, productName, quantity, size);
                     products.add(product);
                 }
                 return products;
@@ -155,26 +153,52 @@ public class ProductsDAO implements IProductDAO<Products> {
     @Override
     public CompletableFuture<Void> update(Products product) {
         return CompletableFuture.runAsync(() -> {
-            String sql = "UPDATE products SET quantity = ?, photoId = ?, productName = ? WHERE productId = ?";
+            String productSql = "UPDATE products SET quantity = ?, productName = ?, size = ? WHERE productId = ?";
+            String photoSql = "UPDATE Photos SET photoName = ?, photoPath = ?, photoStatus = ? WHERE productId = ? AND photoId = ?";
+            String commentSql = "INSERT INTO PhotoComments (photoId,photoComment ) VALUES (?, ?) ON DUPLICATE KEY UPDATE photoComment = VALUES(photoComment)";
 
-            try(Connection conn = dbConnector.getConnection()){
-                conn.setAutoCommit(false);
+            try (Connection conn = dbConnector.getConnection()) {
+                conn.setAutoCommit(false); // Start transaction
 
-                try(PreparedStatement statement = conn.prepareStatement(sql)){
-                    statement.setInt(1, product.getQuantity());
-                    statement.setInt(2, product.getPhotoId());
-                    statement.setString(3, product.getProductName());
-                    statement.setInt(4, product.getProductId());
-
-                    statement.executeUpdate();
-                    conn.commit();
-                } catch (SQLException e) {
-                    try {
-                        conn.rollback();
-                    } catch (SQLException ex) {
-                        throw new RuntimeException("Error rolling back transaction", ex);
+                try {
+                    // Update product information
+                    try (PreparedStatement productStatement = conn.prepareStatement(productSql)) {
+                        productStatement.setInt(1, product.getQuantity());
+                        productStatement.setString(2, product.getProductName());
+                        productStatement.setInt(3, product.getSize());
+                        productStatement.setInt(4, product.getProductId());
+                        productStatement.executeUpdate();
                     }
-                    throw new RuntimeException("Error updating product in database", e);
+
+                    // Update each photo in the product's photos list
+                    if (product.getPhotos() != null && !product.getPhotos().isEmpty()) {
+                        try (PreparedStatement photoStatement = conn.prepareStatement(photoSql);
+                             PreparedStatement commentStatement = conn.prepareStatement(commentSql)) {
+
+                            for (Photos photo : product.getPhotos()) {
+                                System.out.println(photo.getPhotoComment() + " " + photo.getPhotoId());
+                                // Update photo information
+                                photoStatement.setString(3, photo.getPhotoName());
+                                photoStatement.setString(2, photo.getPhotoPath());
+                                photoStatement.setString(4, photo.getPhotoStatus());
+                                photoStatement.setInt(1, photo.getPhotoId());
+                                photoStatement.setInt(5, photo.getProductId());
+                                photoStatement.executeUpdate();
+
+                                // Update photo comment
+                                if(photo.getPhotoComment() != null) {
+                                commentStatement.setString(2, photo.getPhotoComment());
+                                commentStatement.setInt(1, photo.getPhotoId());
+                                commentStatement.executeUpdate();
+                                }
+                            }
+                        }
+                    }
+
+                    conn.commit(); // Commit all changes
+                } catch (SQLException e) {
+                    conn.rollback(); // Rollback on any error
+                    throw new RuntimeException("Error updating product or photos in database", e);
                 }
             } catch (SQLException e) {
                 throw new RuntimeException("Database connection error", e);
@@ -188,9 +212,11 @@ public class ProductsDAO implements IProductDAO<Products> {
             List<Products> products = new ArrayList<>();
             List<Integer> processedProductIds = new ArrayList<>();
 
-            String sql = "SELECT p.*, ph.photoPath, ph.photoName, ph.photoStatus, ph.photoId AS photo_id " +
+            String sql = "SELECT p.*, ph.photoPath, ph.photoName, ph.photoStatus, ph.photoId AS photo_id, " +
+                    "pc.photoComment AS photoComment " +
                     "FROM Products p " +
                     "LEFT JOIN Photos ph ON p.productId = ph.productId " +
+                    "LEFT JOIN PhotoComments pc ON ph.photoId = pc.photoId " +
                     "WHERE p.orderId = ?";
 
             try (Connection conn = dbConnector.getConnection();
@@ -208,13 +234,11 @@ public class ProductsDAO implements IProductDAO<Products> {
                     // Find or create the product
                     Products product = null;
                     if (!processedProductIds.contains(productId)) {
-                        // First time seeing this product, create it
-                        product = new Products(productId, 0, orderId, productName, quantity, size);
+                        product = new Products(productId, orderId, productName, quantity, size);
                         product.setPhotos(new ArrayList<>());
                         products.add(product);
                         processedProductIds.add(productId);
                     } else {
-                        // Find the existing product
                         for (Products p : products) {
                             if (p.getProductId() == productId) {
                                 product = p;
@@ -229,13 +253,14 @@ public class ProductsDAO implements IProductDAO<Products> {
                         String photoPath = rs.getString("photoPath");
                         String photoName = rs.getString("photoName");
                         String photoStatus = rs.getString("photoStatus");
+                        String photoComment = rs.getString("photoComment");
 
-                        Photos photo = new Photos(photoId, photoName, photoPath, photoStatus);
+                        // Create photo with comment
+                        Photos photo = new Photos(photoId, productId, photoName, photoPath, photoStatus, photoComment);
                         product.getPhotos().add(photo);
 
-                        // For backward compatibility, set first photo's info on the product
+                        // For backward compatibility
                         if (product.getPhotoPath() == null) {
-                            product.setPhotoId(photoId);
                             product.setPhotoPath(photoPath);
                             product.setPhotoName(photoName);
                             product.setPhotoStatus(photoStatus);

@@ -6,7 +6,7 @@ import java.util.List;
 public class Products {
 
     private int productId;
-    private int photoId;
+
     private int orderId;
     private String productName;
     private int quantity;
@@ -51,13 +51,6 @@ public class Products {
         this.productId = productId;
     }
 
-    public int getPhotoId() {
-        return photoId;
-    }
-
-    public void setPhotoId(int photoId) {
-        this.photoId = photoId;
-    }
 
     public int getOrderId() {
         return orderId;
@@ -91,18 +84,16 @@ public class Products {
         this.size = size;
     }
 
-    public Products(int productId, int photoId, int orderId, String productName, int quantity, int size) {
+    public Products(int productId, int orderId, String productName, int quantity, int size) {
         this.productId = productId;
-        this.photoId = photoId;
         this.orderId = orderId;
         this.productName = productName;
         this.quantity = quantity;
         this.size = size;
     }
 
-    public Products(int productId, int photoId, int orderId, String productName, int quantity, int size, String photoPath, String photoName, String photoStatus) {
+    public Products(int productId, int orderId, String productName, int quantity, int size, String photoPath, String photoName, String photoStatus) {
         this.productId = productId;
-        this.photoId = photoId;
         this.orderId = orderId;
         this.productName = productName;
         this.quantity = quantity;

@@ -4,14 +4,33 @@ public class Photos {
     private int photoId;
     private String photoName;
     private String photoPath;
-
     private String photoStatus;
+    private String photoComment;
+    private int productId;
 
-    public Photos(int photoId, String photoName, String photoPath, String photoStatus) {
+    public Photos(int photoId, int productId, String photoName, String photoPath, String photoStatus, String photoComment) {
         this.photoId = photoId;
         this.photoName = photoName;
         this.photoPath = photoPath;
         this.photoStatus = photoStatus;
+        this.photoComment = photoComment;
+        this.productId = productId;
+    }
+
+    public int getProductId() {
+        return productId;
+    }
+
+    public void setProductId(int productId) {
+        this.productId = productId;
+    }
+
+    public String getPhotoComment() {
+        return photoComment;
+    }
+
+    public void setPhotoComment(String photoComment) {
+        this.photoComment = photoComment;
     }
 
     public String getPhotoStatus() {

@@ -1,5 +1,6 @@
 package dk.easv.belsign.Models;
 
+import dk.easv.belsign.BE.Photos;
 import dk.easv.belsign.BE.Products;
 import dk.easv.belsign.BLL.ProductsManager;
 import javafx.collections.FXCollections;
@@ -33,5 +34,6 @@ public class ProductsModel {
 
     public void updateProduct(Products product) throws Exception {
         productsManager.updateProduct(product);
+
     }
 }

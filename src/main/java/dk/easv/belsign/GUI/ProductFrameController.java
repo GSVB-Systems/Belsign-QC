@@ -7,7 +7,6 @@ import dk.easv.belsign.Models.ProductsModel;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Insets;
-import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
@@ -17,7 +16,7 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.SVGPath;
 import javafx.scene.image.Image;
 import dk.easv.belsign.BLL.Util.UserSession;
-import javafx.stage.Stage;
+import javafx.scene.shape.StrokeType;
 
 
 public class ProductFrameController implements IParentAware {
@@ -27,12 +26,12 @@ public class ProductFrameController implements IParentAware {
     public Button btnOpen;
     private MainframeController parent;
     private Products selectedProduct;
+    private StackPane previouslySelectedStack = null;
 
     @Override
     public void setParent(MainframeController parent) {
         this.parent = parent;
     }
-
 
     public void initialize() {
         try {
@@ -79,11 +78,37 @@ public class ProductFrameController implements IParentAware {
     }
 
     private void selectProduct(Products product) {
-        // Set the selected product
         this.selectedProduct = product;
-        // Show its image
         showImages();
-        // Optionally highlight the selected product in UI
+
+        // Clear previous selection highlight
+        if (previouslySelectedStack != null) {
+            for (javafx.scene.Node node : previouslySelectedStack.getChildren()) {
+                if (node instanceof SVGPath) {
+                    ((SVGPath) node).setStroke(null);
+                    ((SVGPath) node).setStrokeWidth(0);
+                }
+            }
+        }
+
+        // Highlight the newly selected product
+        for (javafx.scene.Node node : vbLeft.getChildren()) {
+            if (node instanceof StackPane) {
+                StackPane stack = (StackPane) node;
+                if (stack.getUserData() == product) {
+                    for (javafx.scene.Node child : stack.getChildren()) {
+                        if (child instanceof SVGPath) {
+                            SVGPath svg = (SVGPath) child;
+                            svg.setStroke(Color.web("#004B88"));
+                            svg.setStrokeWidth(3);
+                            svg.setStrokeType(StrokeType.INSIDE);  // Set stroke to render inside
+                        }
+                    }
+                    previouslySelectedStack = stack;
+                    break;
+                }
+            }
+        }
     }
 
     public void showImages() {
@@ -101,12 +126,18 @@ public class ProductFrameController implements IParentAware {
 
 
               Label label1 = new Label(photo.getPhotoName());
-              Label label2 = new Label(selectedProduct.getProductName());
+
+                // If photo status is not "Approved", show the comment instead of status
+                String statusOrComment = "Approved".equals(photo.getPhotoStatus())
+                    ? photo.getPhotoStatus()
+                    : photo.getPhotoComment();
+                Label label2 = new Label(statusOrComment);
 
 
               VBox labelContainer = new VBox();
               labelContainer.getChildren().addAll(label1, label2);
               labelContainer.setSpacing(5);
+
 
               ImageView imageView = new ImageView();
               imageView.setImage(new Image(photo.getPhotoPath()));
@@ -122,13 +153,7 @@ public class ProductFrameController implements IParentAware {
 
 
 
-            /* TODO Add getPhotoComment() to Products class
-            // If photo status is not "Approved", show the comment instead of status
-            String statusOrComment = "Approved".equals(selectedProduct.getPhotoStatus())
-                    ? selectedProduct.getPhotoStatus()
-                    : selectedProduct.getPhotoComment();
-            Label label2 = new Label(statusOrComment);
-             */
+
 
         } catch (Exception e) {
             showError("Error loading image: " + e.getMessage());
