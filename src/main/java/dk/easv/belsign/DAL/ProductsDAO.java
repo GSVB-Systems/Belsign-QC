@@ -2,6 +2,7 @@ package dk.easv.belsign.DAL;
 
 import dk.easv.belsign.BE.Products;
 import dk.easv.belsign.BLL.Util.ThreadShutdownUtil;
+import dk.easv.belsign.BE.Photos;
 
 import java.io.IOException;
 import java.sql.Connection;
@@ -184,10 +185,12 @@ public class ProductsDAO implements IProductDAO<Products> {
     @Override
     public CompletableFuture<List<Products>> readAllByOrderId(int orderId) {
         return CompletableFuture.supplyAsync(() -> {
-            ArrayList<Products> products = new ArrayList<>();
-            String sql = "SELECT p.*, ph.photoPath, ph.photoName, ph.photoStatus " +
+            List<Products> products = new ArrayList<>();
+            List<Integer> processedProductIds = new ArrayList<>();
+
+            String sql = "SELECT p.*, ph.photoPath, ph.photoName, ph.photoStatus, ph.photoId AS photo_id " +
                     "FROM Products p " +
-                    "LEFT JOIN Photos ph ON p.photoId = ph.photoId " +
+                    "LEFT JOIN Photos ph ON p.productId = ph.productId " +
                     "WHERE p.orderId = ?";
 
             try (Connection conn = dbConnector.getConnection();
@@ -198,17 +201,48 @@ public class ProductsDAO implements IProductDAO<Products> {
 
                 while (rs.next()) {
                     int productId = rs.getInt("productId");
-                    int photoId = rs.getInt("photoId");
                     String productName = rs.getString("productName");
                     int quantity = rs.getInt("quantity");
                     int size = rs.getInt("size");
-                    String photoPath = rs.getString("photoPath");
-                    String photoName = rs.getString("photoName");
-                    String photoStatus = rs.getString("photoStatus");
 
-                    Products product = new Products(productId, photoId, orderId, productName, quantity, size, photoPath, photoName, photoStatus);
-                    products.add(product);
+                    // Find or create the product
+                    Products product = null;
+                    if (!processedProductIds.contains(productId)) {
+                        // First time seeing this product, create it
+                        product = new Products(productId, 0, orderId, productName, quantity, size);
+                        product.setPhotos(new ArrayList<>());
+                        products.add(product);
+                        processedProductIds.add(productId);
+                    } else {
+                        // Find the existing product
+                        for (Products p : products) {
+                            if (p.getProductId() == productId) {
+                                product = p;
+                                break;
+                            }
+                        }
+                    }
+
+                    // Add photo if it exists
+                    if (product != null && rs.getObject("photo_id") != null) {
+                        int photoId = rs.getInt("photo_id");
+                        String photoPath = rs.getString("photoPath");
+                        String photoName = rs.getString("photoName");
+                        String photoStatus = rs.getString("photoStatus");
+
+                        Photos photo = new Photos(photoId, photoName, photoPath, orderId, photoStatus);
+                        product.getPhotos().add(photo);
+
+                        // For backward compatibility, set first photo's info on the product
+                        if (product.getPhotoPath() == null) {
+                            product.setPhotoId(photoId);
+                            product.setPhotoPath(photoPath);
+                            product.setPhotoName(photoName);
+                            product.setPhotoStatus(photoStatus);
+                        }
+                    }
                 }
+
                 return products;
             } catch (SQLException e) {
                 throw new RuntimeException("Error fetching products by order ID", e);

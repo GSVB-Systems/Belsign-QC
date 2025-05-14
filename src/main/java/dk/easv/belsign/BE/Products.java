@@ -1,5 +1,8 @@
 package dk.easv.belsign.BE;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class Products {
 
     private int productId;
@@ -11,6 +14,14 @@ public class Products {
     private String photoPath;
     private String photoName;
     private String photoStatus;
+    private List<Photos> photos;
+
+    public List<Photos> getPhotos() {
+        return photos;
+    }
+    public void setPhotos(List<Photos> photos) {
+        this.photos = photos;
+    }
 
     public String getPhotoName() {
         return photoName;
@@ -99,5 +110,6 @@ public class Products {
         this.photoPath = photoPath;
         this.photoName = photoName;
         this.photoStatus = photoStatus;
+        this.photos = new ArrayList<>();
     }
 }
