@@ -3,6 +3,7 @@ package dk.easv.belsign.GUI;
 import dk.easv.belsign.BE.Photos;
 import dk.easv.belsign.BE.Products;
 import dk.easv.belsign.BLL.Util.CameraHandler;
+import dk.easv.belsign.BLL.Util.PhotoSession;
 import dk.easv.belsign.BLL.Util.ProductSession;
 import dk.easv.belsign.BLL.Util.SceneService;
 import javafx.event.ActionEvent;
@@ -57,7 +58,7 @@ public class OperatorFrameController {
         fpFlowpane.getChildren().clear();
         for(int i= 0; i < products.getSize(); i++) {
             Photos photo = products.getPhotos().get(i);
-            Pane imageBox = createImageBox(false,false);
+            Pane imageBox = createImageBox(false,false, photo);
             Label label = new Label(photo.getPhotoName());
             label.setPadding(new Insets(10));
 
@@ -66,7 +67,7 @@ public class OperatorFrameController {
 
             fpFlowpane.getChildren().add(imageBox);
         }
-        fpFlowpane.getChildren().add(createImageBox(true,true));
+        fpFlowpane.getChildren().add(createImageBox(true,true, null));
     }
 
     @FXML
@@ -87,7 +88,7 @@ public class OperatorFrameController {
         return controller.getCapturedImage();
     }
 
-    private Pane createImageBox(boolean includeComboBox, boolean allowAddNewBox) {
+    private Pane createImageBox(boolean includeComboBox, boolean allowAddNewBox, Photos photo) {
         Pane customPane = new Pane();
         customPane.setPrefSize(550,310);
         customPane.getStyleClass().add("custom-pane");
@@ -109,11 +110,12 @@ public class OperatorFrameController {
         vbox.getChildren().add(imageView);
 
         customPane.setOnMouseClicked(event -> {
+            PhotoSession.setCurrentPhoto(photo);
             Image snapshot = openCameraAndCaptureImage();
             if (snapshot != null) {
                 imageView.setImage(snapshot);
                 if(allowAddNewBox) {
-                    Pane newBox = createImageBox(true,true);
+                    Pane newBox = createImageBox(true,true, photo);
                     fpFlowpane.getChildren().add(newBox);
                 }
             }
