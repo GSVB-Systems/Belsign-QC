@@ -127,11 +127,13 @@ public class ProductFrameController implements IParentAware {
 
               Label label1 = new Label(photo.getPhotoName());
 
-                // If photo status is not "Approved", show the comment instead of status
-                String statusOrComment = "Approved".equals(photo.getPhotoStatus())
-                    ? photo.getPhotoStatus()
-                    : photo.getPhotoComment();
-                Label label2 = new Label(statusOrComment);
+              String statusOrComment;
+              if ("Approved".equals(photo.getPhotoStatus()) || "Declined".equals(photo.getPhotoStatus())) {
+                  statusOrComment = photo.getPhotoStatus();
+              } else {
+                  statusOrComment = photo.getPhotoComment();
+              }
+              Label label2 = new Label(statusOrComment);
 
 
               VBox labelContainer = new VBox();
