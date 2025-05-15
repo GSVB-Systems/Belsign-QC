@@ -95,14 +95,14 @@ public class QCFrameController {
 
             Button btnApprove = new Button("✔");
             Button btnDecline = new Button("✖");
-            btnApprove.setStyle("-fx-background-color: #008000; -fx-text-fill: #FFF; -fx-font: 20px;");
-            btnDecline.setStyle("-fx-background-color: #FF0000; -fx-text-fill: #FFF; -fx-font: 20px;");
+            btnApprove.setStyle("-fx-background-color: #008000; -fx-text-fill: #FFF; -fx-font-size: 20px;");
+            btnDecline.setStyle("-fx-background-color: #FF0000; -fx-text-fill: #FFF; -fx-font-size: 20px;");
             btnApprove.setPadding(new Insets(10));
             btnDecline.setPadding(new Insets(10));
             hbox1.getChildren().addAll(btnApprove, btnDecline);
 
             Button btnComment = new Button("🗒🖋");
-            btnComment.setStyle("-fx-background-color: #ffff00; -fx-text-fill: #000; -fx-font: 20px;");
+            btnComment.setStyle("-fx-background-color: #ffff00; -fx-text-fill: #000; -fx-font-size: 20px;");
             btnComment.setPadding(new Insets(10));
             hbox1.getChildren().add(btnComment);
 
