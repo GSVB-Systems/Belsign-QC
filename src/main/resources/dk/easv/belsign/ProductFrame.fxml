@@ -64,12 +64,12 @@
                      <children>
                         <VBox alignment="CENTER_LEFT" HBox.hgrow="ALWAYS">
                            <children>
-                              <Label text="Not Approved">
+                              <Label fx:id="lblApproval" text="Not Approved">
                                  <font>
                                     <Font size="24.0" />
                                  </font>
                               </Label>
-                              <Label text="...">
+                              <Label fx:id="lblApprovedBy" text="...">
                                  <font>
                                     <Font size="24.0" />
                                  </font>

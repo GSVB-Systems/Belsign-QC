@@ -5,6 +5,7 @@ import dk.easv.belsign.BE.Products;
 import dk.easv.belsign.BLL.Util.OrderSession;
 import dk.easv.belsign.Models.ProductsModel;
 import javafx.event.ActionEvent;
+import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Insets;
 import javafx.scene.control.Alert;
@@ -27,6 +28,10 @@ public class ProductFrameController implements IParentAware {
     private MainframeController parent;
     private Products selectedProduct;
     private StackPane previouslySelectedStack = null;
+    @FXML
+    private Label lblApprovedBy;
+    @FXML
+    private Label lblApproval;
 
     @Override
     public void setParent(MainframeController parent) {
@@ -56,10 +61,10 @@ public class ProductFrameController implements IParentAware {
 
                 SVGPath svgPath = new SVGPath();
                 svgPath.setContent("M301 33.0001L279 0.890137L22 1.00006L0 32.5001L22 64.0001L279 64.11L301 33.0001Z");
-                svgPath.setFill(Color.valueOf("#4CAF50"));
+                svgPath.setFill(Color.valueOf("#B6D7A8"));
 
                 Label label = new Label(products.getProductName());
-                label.setStyle("-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: white;");
+                label.setStyle("-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: black;");
 
                 StackPane stack = new StackPane();
                 stack.getChildren().addAll(svgPath, label);
@@ -80,6 +85,15 @@ public class ProductFrameController implements IParentAware {
     private void selectProduct(Products product) {
         this.selectedProduct = product;
         showImages();
+
+        // Update the mainframe title to show order + product name
+        try {
+            String orderNumber = OrderSession.getEnteredOrder().getOrderId() + "";
+            String productName = product.getProductName();
+            parent.setOrder(orderNumber + " - " + productName);
+        } catch (Exception e) {
+            showError("Error updating order title: " + e.getMessage());
+        }
 
         // Clear previous selection highlight
         if (previouslySelectedStack != null) {
