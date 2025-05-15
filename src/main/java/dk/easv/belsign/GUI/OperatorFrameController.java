@@ -53,112 +53,18 @@ public class OperatorFrameController {
 
 
     private void showImages() {
-        // Then use a regular for loop with the size
-        for (int i = 0; i < products.getSize(); i++) {
-            // Create container for event card
-            Pane customPane1 = new Pane();
-            customPane1.setPrefSize(550, 310);
-            fpFlowpane.getChildren().add(customPane1);
-            customPane1.setStyle("-fx-background-color: #FFF; -fx-background-radius: 8px; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.2), 10, 0, 0, 0);");
-
-
-            // Create vertical layout for event content
-            VBox vbox1 = new VBox();
-            vbox1.setPrefWidth(customPane1.getPrefWidth()); // Match the pane width
-            customPane1.getChildren().add(vbox1);
-
+        fpFlowpane.getChildren().clear();
+        for(int i= 0; i < products.getSize(); i++) {
+            Pane imageBox = createImageBox(false,false);
             Label label = new Label(products.getPhotoName());
-            label.setStyle("-fx-font-size: 20px; -fx-text-fill: #000;");
             label.setPadding(new Insets(10));
-            vbox1.getChildren().add(label);
 
-            // Event image
-            ImageView imageViewEvent = new ImageView();
-            imageViewEvent.setFitWidth(customPane1.getPrefWidth());
-            imageViewEvent.setFitHeight(260);
-            imageViewEvent.setImage(new Image(Objects.requireNonNull(getClass().getResourceAsStream("/dk/easv/belsign/images/belmanlogo.png"))));
-            vbox1.getChildren().add(imageViewEvent);
+            VBox vbox = (VBox) imageBox.getChildren().get(0);
+            vbox.getChildren().add(0,label);
 
-            customPane1.setOnMouseClicked(event -> {
-                CameraViewController controller = SceneService.fullscreen("CameraView.fxml", "Camera");
-                Image snapshot = controller.getCapturedImage();
-                if (snapshot != null) {
-                    imageViewEvent.setImage(snapshot);
-                }
-            });
+            fpFlowpane.getChildren().add(imageBox);
         }
-
-
-        // Create container for event card
-        Pane customPane2 = new Pane();
-        customPane2.setPrefSize(550, 310);
-        fpFlowpane.getChildren().add(customPane2);
-        customPane2.setStyle("-fx-background-color: #FFF; -fx-background-radius: 8px; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.2), 10, 0, 0, 0);");
-
-
-        // Create vertical layout for event content
-        VBox vbox1 = new VBox();
-        vbox1.setPrefWidth(customPane2.getPrefWidth()); // Match the pane width
-        customPane2.getChildren().add(vbox1);
-
-        ComboBox comboBox = new ComboBox<>();
-        comboBox.getItems().addAll("Tag 1", "Tag 2", "Tag 3");
-        vbox1.getChildren().add(comboBox);
-
-
-        // Event image
-        ImageView imageViewEvent = new ImageView();
-        imageViewEvent.setFitWidth(customPane2.getPrefWidth());
-        imageViewEvent.setFitHeight(260);
-        imageViewEvent.setImage(new Image(Objects.requireNonNull(getClass().getResourceAsStream("/dk/easv/belsign/images/belmanlogo.png"))));
-        vbox1.getChildren().add(imageViewEvent);
-
-        customPane2.setOnMouseClicked(event -> {
-            Image snapshot = openCameraAndCaptureImage();
-            if (snapshot != null) {
-                imageViewEvent.setImage(snapshot);
-            }
-            createExtraPhotoBox();
-
-        });
-    }
-
-    private void createExtraPhotoBox() {
-        // Create container for the custom pane
-        Pane customPane = new Pane();
-        customPane.setPrefSize(550, 310);
-        customPane.setStyle("-fx-background-color: #FFF; -fx-background-radius: 8px; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.2), 10, 0, 0, 0);");
-
-        // Create vertical layout
-        VBox vbox = new VBox();
-        vbox.setPrefWidth(customPane.getPrefWidth());
-        customPane.getChildren().add(vbox);
-
-        // Add ComboBox
-        ComboBox<String> comboBox = new ComboBox<>();
-        comboBox.getItems().addAll("Tag 1", "Tag 2", "Tag 3");
-        vbox.getChildren().add(comboBox);
-
-        // Add ImageView
-        ImageView imageView = new ImageView();
-        imageView.setFitWidth(customPane.getPrefWidth());
-        imageView.setFitHeight(260);
-        imageView.setImage(new Image(Objects.requireNonNull(getClass().getResourceAsStream("/dk/easv/belsign/images/belmanlogo.png"))));
-        vbox.getChildren().add(imageView);
-
-        // Set click handler that captures an image AND creates a new pane
-        customPane.setOnMouseClicked(event -> {
-            // Capture and set image
-            CameraViewController controller = SceneService.fullscreen("CameraView.fxml", "Camera");
-            Image snapshot = openCameraAndCaptureImage();
-            if (snapshot != null) {
-                imageView.setImage(snapshot);
-                createExtraPhotoBox();
-            }
-        });
-
-        // Add to flow pane
-        fpFlowpane.getChildren().add(customPane);
+        fpFlowpane.getChildren().add(createImageBox(true,true));
     }
 
     @FXML
@@ -172,13 +78,46 @@ public class OperatorFrameController {
     private Image openCameraAndCaptureImage() {
         CameraViewController controller = SceneService.fullscreen("CameraView.fxml", "Camera");
         if (controller == null) {
-            System.err.println("CameraViewController was not initialized.");
+            System.err.println("Failed to load Camera view.");
             return null;
         }
 
         return controller.getCapturedImage();
     }
 
+    private Pane createImageBox(boolean includeComboBox, boolean allowAddNewBox) {
+        Pane customPane = new Pane();
+        customPane.setPrefSize(550,310);
+        customPane.getStyleClass().add("custom-pane");
+
+        VBox vbox = new VBox();
+        vbox.setPrefWidth(customPane.getPrefWidth());
+        customPane.getChildren().add(vbox);
+
+        if(includeComboBox) {
+            ComboBox<String> comboBox = new ComboBox<>();
+            comboBox.getItems().addAll("tag1","tag2", "tag3");
+            vbox.getChildren().add(comboBox);
+        }
+
+        ImageView imageView = new ImageView();
+        imageView.setFitWidth(customPane.getPrefWidth());
+        imageView.setFitHeight(260);
+        imageView.setImage(new Image(Objects.requireNonNull(getClass().getResourceAsStream("/dk/easv/belsign/images/belmanlogo.png"))));
+        vbox.getChildren().add(imageView);
+
+        customPane.setOnMouseClicked(event -> {
+            Image snapshot = openCameraAndCaptureImage();
+            if (snapshot != null) {
+                imageView.setImage(snapshot);
+                if(allowAddNewBox) {
+                    Pane newBox = createImageBox(true,true);
+                    fpFlowpane.getChildren().add(newBox);
+                }
+            }
+        });
+        return customPane;
+    }
 
 }
 
