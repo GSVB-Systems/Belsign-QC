@@ -37,9 +37,6 @@ public class MainframeController {
         public void fillMainPane(FXMLLoader loader) {
             try {
 
-                //FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/dk/easv/belsign/OperatorFrame.fxml"));
-                //FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/dk/easv/belsign/OrderSelection.fxml"));
-
                 Parent root = loader.load();
 
                 Object controller = loader.getController();
@@ -49,8 +46,6 @@ public class MainframeController {
 
                 mainPane.getChildren().clear();
                 mainPane.getChildren().add(root);
-
-
 
             } catch (
                     IOException e) {
@@ -68,14 +63,13 @@ public class MainframeController {
 
     @FXML
     private void handleLogOut(ActionEvent event) throws IOException {
-        FXMLLoader fxmlLoader = new FXMLLoader(Belsign.class.getResource("Login.fxml"));
-        Scene scene = new Scene(fxmlLoader.load());
+        try {
+            fillMainPane(new FXMLLoader(getClass().getResource("/dk/easv/belsign/Login.fxml")));
 
-        Stage stage = (Stage) mainPane.getScene().getWindow();
-        stage.setTitle("TempLogin");
-        stage.setScene(scene);
-        stage.setMaximized(true);
-        stage.show();
+            setOrder("Belman");
+        } catch (Exception e) {
+            showError("Failed to log out: " + e.getMessage());
+        }
     }
 }
 
