@@ -203,4 +203,8 @@ public class QCFrameController {
             showError("Failed to update photo status: " + e.getMessage());
         }
     }
+
+    @FXML
+    private void onUploadPressed(ActionEvent actionEvent) {
+    }
 }
