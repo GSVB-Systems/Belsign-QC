@@ -1,7 +1,9 @@
 package dk.easv.belsign.GUI;
 
+import dk.easv.belsign.BE.Photos;
 import dk.easv.belsign.BLL.Util.CameraHandler;
 import dk.easv.belsign.BLL.Util.OrderSession;
+import dk.easv.belsign.BLL.Util.PhotoSession;
 import dk.easv.belsign.BLL.Util.ProductSession;
 import javafx.animation.AnimationTimer;
 import javafx.fxml.FXML;
@@ -10,6 +12,7 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
+import org.opencv.photo.Photo;
 
 import java.net.URL;
 import java.util.ResourceBundle;
@@ -24,6 +27,8 @@ public class CameraViewController implements Initializable {
     private Image capturedImage;
     private String orderId;
     private String productId;
+    private String photoType;
+
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -56,13 +61,14 @@ public class CameraViewController implements Initializable {
     private void onCap() {
         orderId = String.valueOf(OrderSession.getEnteredOrder().getOrderId());
         productId = String.valueOf(ProductSession.getEnteredProduct().getProductId());
+        photoType = String.valueOf(PhotoSession.getCurrentPhoto().getPhotoName());
 
 
 
 
         timer.stop();
         capturedImage = camFeed.getImage();
-        CameraHandler.getInstance().saveImagesToOrders(capturedImage, orderId, productId);
+        CameraHandler.getInstance().saveImagesToOrders(capturedImage, orderId, productId, photoType);
         CameraHandler.getInstance().releaseCam();
         close();
     }

@@ -64,7 +64,7 @@ public class  CameraHandler {
         return matToImage(frame);
     }
 
-    public void saveImagesToOrders(Image image, String orderId, String productId) {
+    public void saveImagesToOrders(Image image, String orderId, String productId, String photo) {
         BufferedImage bufferedImage = SwingFXUtils.fromFXImage(image, null);
         String basePath = "src/main/resources/dk/easv/belsign/images/Orders";
 
@@ -72,7 +72,7 @@ public class  CameraHandler {
         File folder = new File(path);
         if (!folder.exists()) folder.mkdirs();
 
-        String imgName = productId + "_" + System.currentTimeMillis() + ".png";
+        String imgName = productId + "_" + PhotoSession.getCurrentPhoto().getPhotoName() + ".png";
         File truefile = new File(folder, imgName);
 
         try{
