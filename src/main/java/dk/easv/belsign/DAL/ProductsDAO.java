@@ -163,11 +163,12 @@ public class ProductsDAO implements IProductDAO<Products> {
                             "  UPDATE SET target.photoComment = source.photoComment " +
                             "WHEN NOT MATCHED THEN " +
                             "  INSERT (photoId, photoComment) VALUES (source.photoId, source.photoComment);";
+            String approvalDateSql = "UPDATE ProductApproval SET approvalDate = CURRENT_TIMESTAMP WHERE productId = ?";
 
             try (Connection conn = dbConnector.getConnection()) {
                 // Update product information
+                conn.setAutoCommit(false); // Start transaction for product update
                 try {
-                    conn.setAutoCommit(false);
                     try (PreparedStatement productStatement = conn.prepareStatement(productSql)) {
                         productStatement.setInt(1, product.getQuantity());
                         productStatement.setString(2, product.getProductName());
@@ -175,16 +176,24 @@ public class ProductsDAO implements IProductDAO<Products> {
                         productStatement.setInt(4, product.getProductId());
                         productStatement.executeUpdate();
                     }
+
+                    try (PreparedStatement approvalDateStatement = conn.prepareStatement(approvalDateSql)) {
+                        approvalDateStatement.setInt(1, product.getProductId());
+                        approvalDateStatement.executeUpdate();
+                    }
+
                     conn.commit();
                 } catch (SQLException e) {
                     conn.rollback();
-                    // Continue to photo updates even if product update fails
+                    throw new RuntimeException("Failed to update product information", e);
+                } finally {
+                    conn.setAutoCommit(true); // Reset for next transaction
                 }
 
                 // Process each photo in a separate transaction
                 if (product.getPhotos() != null && !product.getPhotos().isEmpty()) {
                     for (Photos photo : product.getPhotos()) {
-                        conn.setAutoCommit(false);
+                        conn.setAutoCommit(false); // Start transaction for each photo
                         try {
                             // Update photo information
                             try (PreparedStatement photoStatement = conn.prepareStatement(photoSql)) {
@@ -207,12 +216,14 @@ public class ProductsDAO implements IProductDAO<Products> {
                             conn.commit();
                         } catch (SQLException e) {
                             conn.rollback();
-                            // Continue to next photo even if this one fails
+                            throw new RuntimeException("Failed to update photo ID: " + photo.getPhotoId(), e);
+                        } finally {
+                            conn.setAutoCommit(true); // Reset for next photo
                         }
                     }
                 }
             } catch (SQLException e) {
-                throw new RuntimeException("Database connection error", e);
+                throw new RuntimeException("Database connection error during product update", e);
             }
         }, executorService);
     }
