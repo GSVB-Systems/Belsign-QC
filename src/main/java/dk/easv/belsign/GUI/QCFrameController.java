@@ -93,6 +93,8 @@ public class QCFrameController {
             Image finalImage = new Image(Objects.requireNonNull(getClass().getResourceAsStream(imagePath)));
 
 
+            Photos currentPhoto = photo;
+
             Button btnApprove = new Button("✔");
             Button btnDecline = new Button("✖");
             btnApprove.setStyle("-fx-background-color: #008000; -fx-text-fill: #FFF; -fx-font-size: 20px;");
@@ -100,6 +102,14 @@ public class QCFrameController {
             btnApprove.setPadding(new Insets(10));
             btnDecline.setPadding(new Insets(10));
             hbox1.getChildren().addAll(btnApprove, btnDecline);
+
+            btnApprove.setOnAction(event -> {
+                updatePhotoStatus(currentPhoto, "Approved");
+            });
+
+            btnDecline.setOnAction(event -> {
+                updatePhotoStatus(currentPhoto, "Declined");
+            });
 
             Button btnComment = new Button("🗒🖋");
             btnComment.setStyle("-fx-background-color: #ffff00; -fx-text-fill: #000; -fx-font-size: 20px;");
@@ -183,5 +193,14 @@ public class QCFrameController {
         alert.setHeaderText(null);
         alert.setContentText(message);
         alert.showAndWait();
+    }
+
+    private void updatePhotoStatus(Photos photo, String status) {
+        try {
+            photo.setPhotoStatus(status);
+            productsModel.updateProduct(products);
+        } catch (Exception e) {
+            showError("Failed to update photo status: " + e.getMessage());
+        }
     }
 }
