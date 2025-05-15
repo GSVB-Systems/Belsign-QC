@@ -108,14 +108,21 @@ public class QCFrameController {
 
             String finalImagePath = imagePath;
             btnComment.setOnAction(event -> {
-                TextInputDialog tiDialog = new TextInputDialog();
-                tiDialog.setTitle("Text Input Dialog");
-                tiDialog.setHeaderText("Enter new Comment: ");
+
+                String existingComment = photo.getPhotoComment();
+                if (existingComment == null) {
+                    existingComment = "";
+                }
+
+                TextInputDialog tiDialog = new TextInputDialog(existingComment);
+                tiDialog.setTitle("Comment");
+                tiDialog.setHeaderText("Edit, enter new, or delete the comment:");
                 tiDialog.setContentText("Enter comment for image: " + photo.getPhotoName());
 
                 Optional<String> result = tiDialog.showAndWait();
-                String comment = result.orElse("");
-                if (!comment.isEmpty()) {
+                String comment = result.orElse(null);
+
+                if (comment != null) {
                     photo.setPhotoComment(comment);
                     try {
                         productsModel.updateProduct(products);
