@@ -1,5 +1,6 @@
 package dk.easv.belsign.BE;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -15,6 +16,9 @@ public class Products {
     private String photoName;
     private String photoStatus;
     private List<Photos> photos;
+    private LocalDateTime approvalDate;
+    private String productStatus;
+    private int approvedBy;
 
     public List<Photos> getPhotos() {
         return photos;
@@ -51,6 +55,29 @@ public class Products {
         this.productId = productId;
     }
 
+    public LocalDateTime getApprovalDate() {
+        return approvalDate;
+    }
+
+    public void setApprovalDate(LocalDateTime approvalDate) {
+        this.approvalDate = approvalDate;
+    }
+
+    public String getProductStatus() {
+        return productStatus;
+    }
+
+    public void setProductStatus(String productStatus) {
+        this.productStatus = productStatus;
+    }
+
+    public int getApprovedBy() {
+        return approvedBy;
+    }
+
+    public void setApprovedBy(int approvedBy) {
+        this.approvedBy = approvedBy;
+    }
 
     public int getOrderId() {
         return orderId;

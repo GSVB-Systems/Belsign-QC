@@ -61,7 +61,23 @@ public class ProductFrameController implements IParentAware {
 
                 SVGPath svgPath = new SVGPath();
                 svgPath.setContent("M301 33.0001L279 0.890137L22 1.00006L0 32.5001L22 64.0001L279 64.11L301 33.0001Z");
-                svgPath.setFill(Color.valueOf("#B6D7A8"));
+
+                String status = products.getProductStatus();
+                Color fillColor;
+
+                if ("Approved".equals(status)) {
+                    fillColor = Color.valueOf("#B6D7A8"); // Green for approved
+                } else if ("Declined".equals(status)) {
+                    fillColor = Color.valueOf("#F4B6B6"); // Red for declined/disapproved
+                } else if (status != null && !status.isEmpty()) {
+                    fillColor = Color.valueOf("#FFF2B2"); // Yellow for pending approval
+                } else if (products.getPhotos() == null || products.getPhotos().isEmpty()) {
+                    fillColor = Color.valueOf("#D9D9D9"); // Gray for products without photos
+                } else {
+                    fillColor = Color.valueOf("#FFF2B2"); // Default to yellow for other cases
+                }
+
+                svgPath.setFill(fillColor);
 
                 Label label = new Label(products.getProductName());
                 label.setStyle("-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: black;");
@@ -90,7 +106,8 @@ public class ProductFrameController implements IParentAware {
         try {
             String orderNumber = OrderSession.getEnteredOrder().getOrderId() + "";
             String productName = product.getProductName();
-            parent.setOrder(orderNumber + " - " + productName);
+            parent.setOrder(orderNumber + "-" + productName);
+            lblApproval.setText(product.getProductStatus());
         } catch (Exception e) {
             showError("Error updating order title: " + e.getMessage());
         }

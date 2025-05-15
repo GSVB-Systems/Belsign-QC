@@ -235,10 +235,12 @@ public class ProductsDAO implements IProductDAO<Products> {
             List<Integer> processedProductIds = new ArrayList<>();
 
             String sql = "SELECT p.*, ph.photoPath, ph.photoName, ph.photoStatus, ph.photoId AS photo_id, " +
-                    "pc.photoComment AS photoComment " +
+                    "pc.photoComment AS photoComment, " +
+                    "pa.approvalDate, pa.productStatus, pa.userId " +
                     "FROM Products p " +
                     "LEFT JOIN Photos ph ON p.productId = ph.productId " +
                     "LEFT JOIN PhotoComments pc ON ph.photoId = pc.photoId " +
+                    "LEFT JOIN ProductApproval pa ON p.productId = pa.productId " +
                     "WHERE p.orderId = ?";
 
             try (Connection conn = dbConnector.getConnection();
@@ -253,11 +255,24 @@ public class ProductsDAO implements IProductDAO<Products> {
                     int quantity = rs.getInt("quantity");
                     int size = rs.getInt("size");
 
+                    // Get approval date and product status
+                    java.sql.Timestamp approvalDate = rs.getTimestamp("approvalDate");
+                    String productStatus = rs.getString("productStatus");
+                    int userId = rs.getInt("userId");
+
                     // Find or create the product
                     Products product = null;
                     if (!processedProductIds.contains(productId)) {
                         product = new Products(productId, orderId, productName, quantity, size);
                         product.setPhotos(new ArrayList<>());
+
+                        // Set approval date and product status
+                        if (approvalDate != null) {
+                            product.setApprovalDate(approvalDate.toLocalDateTime());
+                        }
+                        product.setProductStatus(productStatus);
+                        product.setApprovedBy(userId);
+
                         products.add(product);
                         processedProductIds.add(productId);
                     } else {
