@@ -155,13 +155,19 @@ public class ProductsDAO implements IProductDAO<Products> {
         return CompletableFuture.runAsync(() -> {
             String productSql = "UPDATE products SET quantity = ?, productName = ?, size = ? WHERE productId = ?";
             String photoSql = "UPDATE Photos SET photoName = ?, photoPath = ?, photoStatus = ? WHERE productId = ? AND photoId = ?";
-            String commentSql = "INSERT INTO PhotoComments (photoId,photoComment ) VALUES (?, ?) ON DUPLICATE KEY UPDATE photoComment = VALUES(photoComment)";
+            String commentSql =
+                    "MERGE INTO PhotoComments AS target " +
+                            "USING (VALUES(?, ?)) AS source(photoId, photoComment) " +
+                            "ON target.photoId = source.photoId " +
+                            "WHEN MATCHED THEN " +
+                            "  UPDATE SET target.photoComment = source.photoComment " +
+                            "WHEN NOT MATCHED THEN " +
+                            "  INSERT (photoId, photoComment) VALUES (source.photoId, source.photoComment);";
 
             try (Connection conn = dbConnector.getConnection()) {
-                conn.setAutoCommit(false); // Start transaction
-
+                // Update product information
                 try {
-                    // Update product information
+                    conn.setAutoCommit(false);
                     try (PreparedStatement productStatement = conn.prepareStatement(productSql)) {
                         productStatement.setInt(1, product.getQuantity());
                         productStatement.setString(2, product.getProductName());
@@ -169,36 +175,41 @@ public class ProductsDAO implements IProductDAO<Products> {
                         productStatement.setInt(4, product.getProductId());
                         productStatement.executeUpdate();
                     }
+                    conn.commit();
+                } catch (SQLException e) {
+                    conn.rollback();
+                    // Continue to photo updates even if product update fails
+                }
 
-                    // Update each photo in the product's photos list
-                    if (product.getPhotos() != null && !product.getPhotos().isEmpty()) {
-                        try (PreparedStatement photoStatement = conn.prepareStatement(photoSql);
-                             PreparedStatement commentStatement = conn.prepareStatement(commentSql)) {
-
-                            for (Photos photo : product.getPhotos()) {
-                                System.out.println(photo.getPhotoComment() + " " + photo.getPhotoId());
-                                // Update photo information
-                                photoStatement.setString(3, photo.getPhotoName());
+                // Process each photo in a separate transaction
+                if (product.getPhotos() != null && !product.getPhotos().isEmpty()) {
+                    for (Photos photo : product.getPhotos()) {
+                        conn.setAutoCommit(false);
+                        try {
+                            // Update photo information
+                            try (PreparedStatement photoStatement = conn.prepareStatement(photoSql)) {
+                                photoStatement.setString(1, photo.getPhotoName());
                                 photoStatement.setString(2, photo.getPhotoPath());
-                                photoStatement.setString(4, photo.getPhotoStatus());
-                                photoStatement.setInt(1, photo.getPhotoId());
-                                photoStatement.setInt(5, photo.getProductId());
+                                photoStatement.setString(3, photo.getPhotoStatus());
+                                photoStatement.setInt(4, photo.getProductId());
+                                photoStatement.setInt(5, photo.getPhotoId());
                                 photoStatement.executeUpdate();
+                            }
 
-                                // Update photo comment
-                                if(photo.getPhotoComment() != null) {
-                                commentStatement.setString(2, photo.getPhotoComment());
-                                commentStatement.setInt(1, photo.getPhotoId());
-                                commentStatement.executeUpdate();
+                            // Update photo comment
+                            if (photo.getPhotoComment() != null) {
+                                try (PreparedStatement commentStatement = conn.prepareStatement(commentSql)) {
+                                    commentStatement.setInt(1, photo.getPhotoId());
+                                    commentStatement.setString(2, photo.getPhotoComment());
+                                    commentStatement.executeUpdate();
                                 }
                             }
+                            conn.commit();
+                        } catch (SQLException e) {
+                            conn.rollback();
+                            // Continue to next photo even if this one fails
                         }
                     }
-
-                    conn.commit(); // Commit all changes
-                } catch (SQLException e) {
-                    conn.rollback(); // Rollback on any error
-                    throw new RuntimeException("Error updating product or photos in database", e);
                 }
             } catch (SQLException e) {
                 throw new RuntimeException("Database connection error", e);
