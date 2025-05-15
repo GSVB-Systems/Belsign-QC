@@ -71,7 +71,7 @@ public class ProductFrameController implements IParentAware {
                     fillColor = Color.valueOf("#F4B6B6"); // Red for declined/disapproved
                 } else if (status != null && !status.isEmpty()) {
                     fillColor = Color.valueOf("#FFF2B2"); // Yellow for pending approval
-                } else if (products.getPhotos() == null || products.getPhotos().isEmpty()) {
+                } else if (products.getPhotos() == null || products.getPhotos().isEmpty()) { // Might need to be changed to if photoPath is null
                     fillColor = Color.valueOf("#D9D9D9"); // Gray for products without photos
                 } else {
                     fillColor = Color.valueOf("#FFF2B2"); // Default to yellow for other cases
