@@ -1,5 +1,6 @@
 package dk.easv.belsign.GUI;
 
+import dk.easv.belsign.BE.Photos;
 import dk.easv.belsign.BE.Products;
 import dk.easv.belsign.BLL.Util.CameraHandler;
 import dk.easv.belsign.BLL.Util.ProductSession;
@@ -55,8 +56,9 @@ public class OperatorFrameController {
     private void showImages() {
         fpFlowpane.getChildren().clear();
         for(int i= 0; i < products.getSize(); i++) {
+            Photos photo = products.getPhotos().get(i);
             Pane imageBox = createImageBox(false,false);
-            Label label = new Label(products.getPhotoName());
+            Label label = new Label(photo.getPhotoName());
             label.setPadding(new Insets(10));
 
             VBox vbox = (VBox) imageBox.getChildren().get(0);
