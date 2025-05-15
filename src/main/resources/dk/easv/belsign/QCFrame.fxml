@@ -9,7 +9,7 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 
-<BorderPane xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="dk.easv.belsign.GUI.QCFrameController">
+<BorderPane xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1" fx:controller="dk.easv.belsign.GUI.QCFrameController">
     <bottom>
         <HBox alignment="BOTTOM_LEFT" prefHeight="100.0" prefWidth="200.0" BorderPane.alignment="CENTER">
             <children>
@@ -29,6 +29,7 @@
                             </VBox.margin></Label>
                     </children></VBox>
             <Button mnemonicParsing="false" onAction="#onGeneratePDFPressed" text="Generate PDF" />
+            <Button mnemonicParsing="false" onAction="#onUploadPressed" text="Upload" />
             </children>
         </HBox>
     </bottom>
