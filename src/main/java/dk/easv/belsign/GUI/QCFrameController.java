@@ -119,7 +119,7 @@ public class QCFrameController {
             String finalImagePath = imagePath;
             btnComment.setOnAction(event -> {
 
-                String existingComment = photo.getPhotoComment();
+                String existingComment = photo.getPhotoComments();
                 if (existingComment == null) {
                     existingComment = "";
                 }

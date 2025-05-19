@@ -162,7 +162,7 @@ public class ProductFrameController implements IParentAware {
               if ("Approved".equals(photo.getPhotoStatus()) || "Declined".equals(photo.getPhotoStatus())) {
                   statusOrComment = photo.getPhotoStatus();
               } else {
-                  statusOrComment = photo.getPhotoComment();
+                  statusOrComment = photo.getPhotoComments();
               }
               Label label2 = new Label(statusOrComment);
 

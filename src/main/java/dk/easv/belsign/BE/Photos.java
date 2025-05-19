@@ -1,19 +1,22 @@
 package dk.easv.belsign.BE;
 
+import java.util.List;
+
 public class Photos {
     private int photoId;
     private String photoName;
     private String photoPath;
     private String photoStatus;
-    private String photoComment;
+    private String photoComments;
     private int productId;
+    private List<Photos> photos;
 
-    public Photos(int photoId, int productId, String photoName, String photoPath, String photoStatus, String photoComment) {
+    public  Photos(int photoId, String photoName, String photoPath, String photoStatus, int productId, String photoComments) {
         this.photoId = photoId;
         this.photoName = photoName;
         this.photoPath = photoPath;
         this.photoStatus = photoStatus;
-        this.photoComment = photoComment;
+        this.photoComments = photoComments;
         this.productId = productId;
     }
 
@@ -25,12 +28,12 @@ public class Photos {
         this.productId = productId;
     }
 
-    public String getPhotoComment() {
-        return photoComment;
+    public String getPhotoComments() {
+        return photoComments;
     }
 
-    public void setPhotoComment(String photoComment) {
-        this.photoComment = photoComment;
+    public void setPhotoComment(String photoComments) {
+        this.photoComments = photoComments;
     }
 
     public String getPhotoStatus() {
@@ -65,5 +68,11 @@ public class Photos {
         this.photoPath = photoPath;
     }
 
+    public List<Photos> getPhotos() {
+        return photos;
+    }
 
+    public void setPhotos(List<Photos> photos) {
+        this.photos = photos;
+    }
 }
