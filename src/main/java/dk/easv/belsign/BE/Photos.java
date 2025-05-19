@@ -17,6 +17,9 @@ public class Photos {
         this.productId = productId;
     }
 
+    public Photos(int photoId, int productId, String pending) {
+    }
+
     public int getProductId() {
         return productId;
     }

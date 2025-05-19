@@ -20,6 +20,9 @@ public class Products {
     private String productStatus;
     private int approvedBy;
 
+    public Products(int i, int i1, String testProduct, int i2, int i3, String pending) {
+    }
+
     public List<Photos> getPhotos() {
         return photos;
     }
