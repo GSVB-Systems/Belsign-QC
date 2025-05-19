@@ -1,9 +1,11 @@
 package dk.easv.belsign.GUI;
 
+import com.itextpdf.io.image.ImageDataFactory;
 import dk.easv.belsign.BE.Photos;
 import dk.easv.belsign.BE.Products;
 import dk.easv.belsign.BLL.Util.CameraHandler;
 import dk.easv.belsign.BLL.Util.PDFGenerator;
+import dk.easv.belsign.BLL.Util.ProductSession;
 import dk.easv.belsign.Models.ProductsModel;
 
 import javafx.event.ActionEvent;
@@ -181,7 +183,8 @@ public class QCFrameController {
 
     public void onGeneratePDFPressed(ActionEvent actionEvent) {
         try{
-        pdfGenerator.createPDF("src/main/resources/dk/easv/belsign/PDF/QCReport.pdf");
+
+        pdfGenerator.createPDF("src/main/resources/dk/easv/belsign/PDF/QCReport.pdf", products);
         }catch (Exception e){
             showError("PDF generation failed: " + e.getMessage());
         }
