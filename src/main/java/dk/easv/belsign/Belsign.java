@@ -5,6 +5,7 @@ import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.image.Image;
 import javafx.stage.Stage;
 
 import java.io.IOException;
@@ -28,6 +29,7 @@ public class Belsign extends Application {
             }
 
             stage.setTitle("Belsign");
+            stage.getIcons().add(new Image(getClass().getResourceAsStream("/dk/easv/belsign/images/BelmanLogoLines.png")));
             stage.setScene(scene);
             stage.setMaximized(true);
             stage.show();
