@@ -20,6 +20,8 @@ import javafx.scene.image.Image;
 import dk.easv.belsign.BLL.Util.UserSession;
 import javafx.scene.shape.StrokeType;
 
+import java.io.File;
+
 
 public class ProductFrameController implements IParentAware {
     public VBox vbLeft;
@@ -183,7 +185,10 @@ public class ProductFrameController implements IParentAware {
 
 
               ImageView imageView = new ImageView();
-              imageView.setImage(new Image(photo.getPhotoPath()));
+              String photoPath = photo.getPhotoPath();
+              if( photoPath != null) {
+                  imageView.setImage(new Image(new File(photoPath).toURI().toString()));
+              }
               imageView.setFitWidth(50);
               imageView.setFitHeight(50);
               imageView.setPreserveRatio(true);

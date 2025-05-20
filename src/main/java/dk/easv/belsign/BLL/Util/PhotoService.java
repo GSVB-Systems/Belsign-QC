@@ -67,4 +67,12 @@ public class PhotoService {
     public CompletableFuture<List<Photos>> getPhotosByProductId(int productId) {
         return photoDAO.getPhotosByProductId(productId);
     }
+
+    public CompletableFuture<Void> savePhotos(List<Photos> photos) {
+        CompletableFuture<?>[] futures = photos.stream()
+                .map(photoDAO::create)
+                .toArray(CompletableFuture[]::new);
+        return CompletableFuture.allOf(futures);
+    }
 }
+

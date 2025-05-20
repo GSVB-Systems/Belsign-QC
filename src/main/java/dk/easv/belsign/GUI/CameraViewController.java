@@ -25,9 +25,10 @@ public class CameraViewController implements Initializable {
     private StackPane feedPane;
     private AnimationTimer timer;
     private Image capturedImage;
-    private String orderId;
-    private String productId;
+    private int orderId;
+    private int productId;
     private String photoType;
+    private Photos capturedPhoto;
 
 
     @Override
@@ -59,19 +60,30 @@ public class CameraViewController implements Initializable {
 
     @FXML
     private void onCap() {
-        orderId = String.valueOf(OrderSession.getEnteredOrder().getOrderId());
-        productId = String.valueOf(ProductSession.getEnteredProduct().getProductId());
-        photoType = String.valueOf(PhotoSession.getCurrentPhoto().getPhotoName());
-
-
-
-
         timer.stop();
         capturedImage = camFeed.getImage();
-        CameraHandler.getInstance().saveImagesToOrders(capturedImage, orderId, productId, photoType);
-        CameraHandler.getInstance().releaseCam();
+
+        int orderId = OrderSession.getEnteredOrder().getOrderId();
+        int productId = ProductSession.getEnteredProduct().getProductId();
+        String photoName = "photo_" + PhotoSession.getCurrentPhoto().getPhotoName();
+
+        String path = CameraHandler.getInstance().saveImagesToOrders(capturedImage, orderId, productId, photoName);
         close();
+
+        if (path != null) {
+            Photos photo = new Photos();
+            photo.setPhotoName(photoName);
+            photo.setPhotoPath(path);
+            photo.setProductId(productId);
+
+            // 1. Save to session list (IMPORTANT!)
+            ProductSession.getEnteredProduct().getPhotos().add(photo);
+
+            // 2. Optional: store in controller too
+            this.capturedPhoto = photo;
+        }
     }
+
 
     private void close() {
         Stage stage = (Stage) camFeed.getScene().getWindow();
@@ -81,4 +93,9 @@ public class CameraViewController implements Initializable {
     public Image getCapturedImage() {
         return capturedImage;
     }
+
+    public Photos getCapturedPhoto() {
+        return capturedPhoto;
+    }
+
 }

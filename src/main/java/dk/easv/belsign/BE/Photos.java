@@ -23,6 +23,10 @@ public class Photos {
     public Photos(int photoId, int productId, String pending) {
     }
 
+    public Photos() {
+
+    }
+
     public int getProductId() {
         return productId;
     }

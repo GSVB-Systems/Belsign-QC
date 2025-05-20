@@ -1,14 +1,17 @@
 package dk.easv.belsign;
 
+import dk.easv.belsign.BLL.Util.CameraHandler;
 import dk.easv.belsign.GUI.MainframeController;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
+import javafx.scene.Camera;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.image.Image;
 import javafx.stage.Stage;
 
 import java.io.IOException;
+import java.util.List;
 
 import dk.easv.belsign.BLL.Util.ThreadShutdownUtil;
 
@@ -17,6 +20,7 @@ public class Belsign extends Application {
     @Override
     public void start(Stage stage) throws IOException {
         try {
+            CameraHandler.getInstance().openCamera();
             FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/dk/easv/belsign/Mainframe.fxml"));
             Parent root = fxmlLoader.load();
 
