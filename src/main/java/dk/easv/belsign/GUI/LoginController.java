@@ -63,8 +63,6 @@ public class LoginController implements IParentAware {
             }
         });
     }
-
-
     
     @FXML
     //

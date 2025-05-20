@@ -39,7 +39,6 @@ public class QCFrameController implements IParentAware{
 
     public QCFrameController() {
         this.pdfGenerator = new PDFGenerator();
-
     }
 
 
@@ -100,10 +99,8 @@ public class QCFrameController implements IParentAware{
             label.setPadding(new Insets(10));
             hbox1.getChildren().add(label);
 
-
             String imagePath = photo.getPhotoPath();
             Image finalImage = new Image(Objects.requireNonNull(getClass().getResourceAsStream(imagePath)));
-
 
             Photos currentPhoto = photo;
 

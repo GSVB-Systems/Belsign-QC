@@ -183,11 +183,6 @@ public class ProductFrameController implements IParentAware {
 
               vbRight.getChildren().add(container);
           }
-
-
-
-
-
         } catch (Exception e) {
             showError("Error loading image: " + e.getMessage());
             e.printStackTrace();

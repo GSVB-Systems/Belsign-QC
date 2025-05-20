@@ -59,7 +59,6 @@ public class ProductsDAO implements IProductDAO<Products> {
         }, executorService);
     }
 
-
     @Override
     public CompletableFuture<Void> delete(int id) throws Exception {
         return CompletableFuture.runAsync(() -> {
@@ -91,9 +90,6 @@ public class ProductsDAO implements IProductDAO<Products> {
             }
         }, executorService);
     }
-
-
-
 
     @Override
     public CompletableFuture<Products> read(int productId) {
@@ -227,26 +223,6 @@ public class ProductsDAO implements IProductDAO<Products> {
             }
         }, executorService);
     }
-
-    /*
-    @Override
-    public CompletableFuture<Void> update(Products product) {
-        return CompletableFuture.runAsync(() -> {
-            String sql = "UPDATE Products SET productName = ?, productStatus = ? WHERE productId = ?";
-            try (Connection conn = dbConnector.getConnection();
-                 PreparedStatement stmt = conn.prepareStatement(sql)) {
-                stmt.setString(1, product.getProductName());
-                stmt.setString(2, product.getProductStatus());
-                stmt.setInt(3, product.getProductId());
-                stmt.executeUpdate();
-            } catch (SQLException e) {
-                throw new RuntimeException("Error updating product", e);
-            }
-
-        }, executorService);
-    }
-
-     */
 
     @Override
     public CompletableFuture<List<Products>> readAllByOrderId(int orderId) {

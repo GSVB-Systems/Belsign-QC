@@ -14,7 +14,6 @@ public class ProductSession {
         return instance;
     }
 
-
     public static void setEnteredProduct(Products product) {
         ProductSession productSession = getInstance();
         productSession.product = product;

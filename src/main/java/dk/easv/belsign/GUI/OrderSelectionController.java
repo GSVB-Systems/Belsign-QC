@@ -61,7 +61,4 @@ public class OrderSelectionController implements IParentAware {
         alert.setContentText(message);
         alert.showAndWait();
     }
-
-
-
 }

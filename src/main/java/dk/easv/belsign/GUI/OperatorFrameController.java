@@ -30,9 +30,6 @@ public class OperatorFrameController {
 
     private Products products;
 
-
-
-
     public void initialize() {
         // Set appropriate properties for better layout behavior
         fpFlowpane.setHgap(10);
@@ -42,8 +39,6 @@ public class OperatorFrameController {
         scrPane.widthProperty().addListener((obs, oldVal, newVal) -> {
             fpFlowpane.setPrefWidth(newVal.doubleValue() - 20);
         });
-
-
     }
 
     public void setProduct(Products selectedProduct) {
@@ -51,8 +46,6 @@ public class OperatorFrameController {
         ProductSession.setEnteredProduct(selectedProduct);
         showImages();
     }
-
-
 
     private void showImages() {
         fpFlowpane.getChildren().clear();
@@ -122,6 +115,5 @@ public class OperatorFrameController {
         });
         return customPane;
     }
-
 }
 

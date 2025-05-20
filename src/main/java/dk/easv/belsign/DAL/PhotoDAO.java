@@ -61,27 +61,6 @@ public class PhotoDAO implements IPhotoDAO<Photos> {
         });
     }
 
-    /*
-    @Override
-    public CompletableFuture<List<Photos>> readAll() {
-        return CompletableFuture.supplyAsync(() -> {
-            List<Photos> photos = new ArrayList<>();
-            String sql = "SELECT * FROM Photos";
-            try (Connection conn = dbConnector.getConnection();
-                 PreparedStatement stmt = conn.prepareStatement(sql)) {
-                ResultSet rs = stmt.executeQuery(sql);
-                while (rs.next()) {
-                    photos.add(mapResultSetToPhoto(rs));
-                }
-            } catch (SQLException e) {
-                throw new RuntimeException(e);
-            }
-            return photos;
-        });
-    }
-     */
-
-
     @Override
     public CompletableFuture<List<Photos>> readAll() {
 
@@ -109,9 +88,6 @@ public class PhotoDAO implements IPhotoDAO<Photos> {
                 throw new RuntimeException("Error fetching photos from database", e);
             }
         }, executorService);
-
-
-
     }
 
     @Override
@@ -178,7 +154,6 @@ public class PhotoDAO implements IPhotoDAO<Photos> {
                 rs.getString("photoStatus"),
                 rs.getInt("productId"),
                 rs.getString("photoComments")
-
         );
     }
 

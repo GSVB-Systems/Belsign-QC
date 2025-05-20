@@ -45,8 +45,6 @@ public class PDFGenerator {
         return (dateToString);
     }
 
-
-
         public void createPDF(String filepath, Products products) throws Exception {
 
 
@@ -80,8 +78,6 @@ public class PDFGenerator {
                 }
                 document.add(new Paragraph("- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -").setFontSize(14).setBold());
             }
-
-
 
             // Closing the document
             document.close();
