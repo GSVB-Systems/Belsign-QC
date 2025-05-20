@@ -49,7 +49,7 @@ public class ProductsModel {
         photoService.updatePhoto(photos);
     }
 
-    public void updatePhotoAndComments (Photos photo) {
-        photoService.updatePhotoAndComments(photo);
+    public void updatePhotoComment (Photos photo) {
+        photoService.updatePhotoComment(photo);
     }
 }

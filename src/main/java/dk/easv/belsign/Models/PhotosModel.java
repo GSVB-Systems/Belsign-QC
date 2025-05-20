@@ -5,6 +5,8 @@ import dk.easv.belsign.BLL.PhotoManager;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 
+import java.sql.SQLException;
+
 public class PhotosModel {
 
     private final ObservableList<Photos> observablePhotos;
@@ -26,5 +28,9 @@ public class PhotosModel {
 
     public Photos getPhotoById(int photoId) throws Exception {
         return photoManager.getPhotoById(photoId);
+    }
+
+    public void updatePhotoComment(Photos photo) throws SQLException {
+        photoManager.updatePhotoComment(photo);
     }
 }

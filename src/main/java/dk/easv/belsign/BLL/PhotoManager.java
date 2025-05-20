@@ -5,6 +5,7 @@ import dk.easv.belsign.DAL.IPhotoDAO;
 import dk.easv.belsign.DAL.PhotoDAO;
 
 import java.io.IOException;
+import java.sql.SQLException;
 import java.util.List;
 
 public class PhotoManager {
@@ -27,4 +28,7 @@ public class PhotoManager {
         return (Photos) photoDataAccess.read(photoId).join();
     }
 
+    public void updatePhotoComment(Photos photo) throws SQLException {
+        photoDataAccess.updatePhotoComment(photo);
+    }
 }

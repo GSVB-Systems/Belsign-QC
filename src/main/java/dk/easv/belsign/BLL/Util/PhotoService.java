@@ -33,14 +33,14 @@ public class PhotoService {
     public CompletableFuture<Void> deletePhoto(int photoId) throws Exception {
         return photoDAO.delete(photoId);
     }
-    public CompletableFuture<Void> updatePhotoAndComments(Photos photo) {
+    public CompletableFuture<Void> updatePhotoComment(Photos photo) {
         return CompletableFuture.runAsync(() -> {
             try (Connection conn = dbConnector.getConnection()) {
                 conn.setAutoCommit(false);
 
                 photoDAO.updatePhoto(photo);
                 if (photo.getPhotoComments() != null) {
-                    photoDAO.updatePhotoComment(photo.getPhotoId(), photo.getPhotoComments());
+                    photoDAO.updatePhotoComment(photo);
                 }
 
                 conn.commit();

@@ -197,16 +197,51 @@ public class PhotoDAO implements IPhotoDAO<Photos> {
         }, executorService);
     }
 
-    public void updatePhotoComment(int photoId, String comment) throws SQLException {
-        String sql =
-                "UPDATE Photos SET photoComments = ? WHERE photoId = ?;";
+    @Override
+    public void updatePhotoComment(Photos photo) throws SQLException {
+        Connection conn = null;
+        try {
+            conn = dbConnector.getConnection();
+            conn.setAutoCommit(false); // Start transaction
 
+            // Try to update first
+            String updateSql = "UPDATE PhotoComments SET photoComment = ? WHERE photoId = ?";
+            int rowsAffected;
+            try (PreparedStatement updateStmt = conn.prepareStatement(updateSql)) {
+                updateStmt.setString(1, photo.getPhotoComments());
+                updateStmt.setInt(2, photo.getPhotoId());
+                rowsAffected = updateStmt.executeUpdate();
+            }
 
-        try (Connection conn = dbConnector.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
-            stmt.setInt(1, photoId);
-            stmt.setString(2, comment);
-            stmt.executeUpdate();
+            // If no rows were affected, then insert a new record
+            if (rowsAffected == 0) {
+                String insertSql = "INSERT INTO PhotoComments (photoId, photoComment) VALUES (?, ?)";
+                try (PreparedStatement insertStmt = conn.prepareStatement(insertSql)) {
+                    insertStmt.setInt(1, photo.getPhotoId());
+                    insertStmt.setString(2, photo.getPhotoComments());
+                    insertStmt.executeUpdate();
+                }
+            }
+
+            conn.commit(); // Commit transaction
+        } catch (SQLException e) {
+            if (conn != null) {
+                try {
+                    conn.rollback(); // Rollback in case of error
+                } catch (SQLException ex) {
+                    throw new RuntimeException("Failed to rollback transaction", ex);
+                }
+            }
+            throw new SQLException("Failed to update photo comment", e);
+        } finally {
+            if (conn != null) {
+                try {
+                    conn.setAutoCommit(true);
+                    conn.close();
+                } catch (SQLException e) {
+                    throw new RuntimeException("Failed to close connection", e);
+                }
+            }
         }
     }
 

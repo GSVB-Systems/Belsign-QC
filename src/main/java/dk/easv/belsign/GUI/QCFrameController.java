@@ -15,17 +15,14 @@ import javafx.scene.Parent;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.layout.FlowPane;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.Pane;
-import javafx.scene.layout.VBox;
+import javafx.scene.layout.*;
 
 import java.util.Objects;
 import java.util.Optional;
 
 public class QCFrameController implements IParentAware{
     public ScrollPane scrPane;
-    private PDFGenerator pdfGenerator;
+
     private ProductsModel productsModel;
     private PhotosModel photosModel;
 
@@ -37,9 +34,7 @@ public class QCFrameController implements IParentAware{
 
     private MainframeController parent;
 
-    public QCFrameController() {
-        this.pdfGenerator = new PDFGenerator();
-    }
+
 
 
     public void initialize() {
@@ -73,20 +68,29 @@ public class QCFrameController implements IParentAware{
     }
 
     private void showImages() {
-        // Then use a regular for loop with the size
-        Pane customPane1 = null;
-        Image image = null;
+        Pane customPane1;
+        Image image;
+
         for (Photos photo : products.getPhotos()) {
-            // Create container for event card
             customPane1 = new Pane();
             customPane1.setPrefSize(550, 310);
             fpFlowpane.getChildren().add(customPane1);
             customPane1.setStyle("-fx-background-color: #FFF; -fx-background-radius: 8px; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.2), 10, 0, 0, 0);");
 
+            // Overlay for corner highlight
+            Region colorCorner = new Region();
+            colorCorner.setPrefSize(60, 60); // Adjust size as needed
+            colorCorner.setStyle("-fx-background-color: rgba(0,255,0,0.25); -fx-background-radius: 0 20px 0 0;"); // Green by default, 25% opacity
+            colorCorner.setVisible(false); // Hidden by default
 
-            // Create vertical layout for event content
+            // Position
+            colorCorner.layoutXProperty().bind(customPane1.widthProperty().subtract(colorCorner.prefWidthProperty()));
+            colorCorner.setLayoutY(0);
+
+            customPane1.getChildren().add(colorCorner);
+
             VBox vbox1 = new VBox();
-            vbox1.setPrefWidth(customPane1.getPrefWidth()); // Match the pane width
+            vbox1.setPrefWidth(customPane1.getPrefWidth());
             customPane1.getChildren().add(vbox1);
 
             HBox hbox1 = new HBox(15);
@@ -112,45 +116,47 @@ public class QCFrameController implements IParentAware{
             btnDecline.setPadding(new Insets(10));
             hbox1.getChildren().addAll(btnApprove, btnDecline);
 
+            // Approve
             btnApprove.setOnAction(event -> {
                 updatePhotoStatus(currentPhoto, "Approved");
+                colorCorner.setStyle("-fx-background-color: rgba(0,255,0,0.25); -fx-background-radius: 0 8px 0 10px;");
+                colorCorner.setVisible(true);
             });
 
+            // Decline
             btnDecline.setOnAction(event -> {
                 updatePhotoStatus(currentPhoto, "Declined");
+                colorCorner.setStyle("-fx-background-color: rgba(255,0,0,0.25); -fx-background-radius: 0 8px 0 10px;");
+                colorCorner.setVisible(true);
             });
 
-            Button btnComment = new Button("🗒🖋");
+            Button btnComment = new Button("🖋");
             btnComment.setStyle("-fx-background-color: #ffff00; -fx-text-fill: #000; -fx-font-size: 20px;");
             btnComment.setPadding(new Insets(10));
             hbox1.getChildren().add(btnComment);
 
             String finalImagePath = imagePath;
             btnComment.setOnAction(event -> {
-
                 String existingComment = photo.getPhotoComments();
                 if (existingComment == null) {
                     existingComment = "";
                 }
-
                 TextInputDialog tiDialog = new TextInputDialog(existingComment);
                 tiDialog.setTitle("Comment");
                 tiDialog.setHeaderText("Edit, enter new, or delete the comment:");
                 tiDialog.setContentText("Enter comment for image: " + photo.getPhotoName());
-
                 Optional<String> result = tiDialog.showAndWait();
                 String comment = result.orElse(null);
-
                 if (comment != null) {
                     photo.setPhotoComment(comment);
                     try {
-                        productsModel.updateProduct(products);
+                        photosModel.updatePhotoComment(photo);
                     } catch (Exception e) {
                         showError("Failed to update product: " + e.getMessage());
                     }
                 }
             });
-            // Event image
+
             ImageView imageViewEvent = new ImageView();
             imageViewEvent.setFitWidth(customPane1.getPrefWidth());
             imageViewEvent.setFitHeight(260);
@@ -191,7 +197,7 @@ public class QCFrameController implements IParentAware{
     public void onGeneratePDFPressed(ActionEvent actionEvent) {
         try{
 
-        pdfGenerator.createPDF("src/main/resources/dk/easv/belsign/PDF/QCReport.pdf", products);
+       // pdfGenerator.createPDF("src/main/resources/dk/easv/belsign/PDF/QCReport.pdf", products);
         }catch (Exception e){
             showError("PDF generation failed: " + e.getMessage());
         }

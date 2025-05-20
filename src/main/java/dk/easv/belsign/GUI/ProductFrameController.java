@@ -3,6 +3,7 @@ package dk.easv.belsign.GUI;
 import dk.easv.belsign.BE.Photos;
 import dk.easv.belsign.BE.Products;
 import dk.easv.belsign.BLL.Util.OrderSession;
+import dk.easv.belsign.BLL.Util.PDFGenerator;
 import dk.easv.belsign.Models.ProductsModel;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -32,6 +33,15 @@ public class ProductFrameController implements IParentAware {
     private Label lblApprovedBy;
     @FXML
     private Label lblApproval;
+
+
+    private PDFGenerator pdfGenerator;
+    private Products products;
+
+    public ProductFrameController() {
+        this.pdfGenerator = new PDFGenerator();
+        this.products = selectedProduct;
+    }
 
     @Override
     public void setParent(MainframeController parent) {
@@ -160,7 +170,7 @@ public class ProductFrameController implements IParentAware {
 
               String statusOrComment;
               if ("Approved".equals(photo.getPhotoStatus()) || "Declined".equals(photo.getPhotoStatus())) {
-                  statusOrComment = photo.getPhotoStatus();
+                  statusOrComment = photo.getPhotoStatus() + ", " + photo.getPhotoComments();
               } else {
                   statusOrComment = photo.getPhotoComments();
               }
@@ -226,14 +236,18 @@ public class ProductFrameController implements IParentAware {
         }
     }
 
-    public void onPDFButtonPressed(ActionEvent actionEvent) {
-    }
-
     private void showError(String message) {
         Alert alert = new Alert(Alert.AlertType.ERROR);
         alert.setTitle("PDF Generation Error");
         alert.setHeaderText(null);
         alert.setContentText(message);
         alert.showAndWait();
+    }
+    public void onPDFButtonPressed(ActionEvent actionEvent) {
+        try{
+            pdfGenerator.createPDF("src/main/resources/dk/easv/belsign/PDF/QCReport.pdf", selectedProduct);
+        }catch (Exception e){
+            showError("PDF generation failed: " + e.getMessage());
+        }
     }
 }

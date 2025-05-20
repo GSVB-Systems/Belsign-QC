@@ -12,6 +12,7 @@ import dk.easv.belsign.BE.Orders;
 import dk.easv.belsign.BE.Photos;
 import dk.easv.belsign.BE.Products;
 import dk.easv.belsign.BLL.Util.OrderSession;
+import dk.easv.belsign.Models.ProductsModel;
 
 
 import java.io.File;
@@ -25,16 +26,9 @@ import java.util.Date;
 
 
 public class PDFGenerator {
-    private OrderSession orderSession;
-    //private Products products;
-    //private Orders orders;
-    //private Photos photos;
+    ProductsModel productsModel;
 
 
-    public void initialize() {
-        this.orderSession = new OrderSession();
-
-    }
     public static String convertDateToString(String date) {
     DateFormat df = new SimpleDateFormat(date);
 
@@ -46,7 +40,7 @@ public class PDFGenerator {
     }
 
         public void createPDF(String filepath, Products products) throws Exception {
-
+            this.productsModel = new ProductsModel();
 
             File file = new File(filepath);
             file.getParentFile().mkdirs();
@@ -63,7 +57,8 @@ public class PDFGenerator {
 
              int orderSize = OrderSession.getEnteredOrder().getProductQuantity();
 
-            for (int i = 0; i < orderSize; i++) {
+            for (int i = 0; i < productsModel.getObservableProducts(OrderSession.getEnteredOrder().getOrderId()).size(); i++) {
+                products = productsModel.getProductsByOrder().get(i);
                 String productName = products.getProductName();
                 document.add(new Paragraph("Product: " + productName).setBold());
                 for(Photos photo : products.getPhotos()) {
