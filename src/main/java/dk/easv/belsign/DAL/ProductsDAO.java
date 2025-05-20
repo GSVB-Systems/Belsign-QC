@@ -3,6 +3,7 @@ package dk.easv.belsign.DAL;
 import dk.easv.belsign.BE.Products;
 import dk.easv.belsign.BLL.Util.ThreadShutdownUtil;
 import dk.easv.belsign.BE.Photos;
+import dk.easv.belsign.BLL.Util.PhotoService;
 
 import java.io.IOException;
 import java.sql.Connection;
@@ -14,6 +15,7 @@ import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+
 
 public class ProductsDAO implements IProductDAO<Products> {
 
@@ -153,6 +155,18 @@ public class ProductsDAO implements IProductDAO<Products> {
     @Override
     public CompletableFuture<Void> update(Products product) {
         return CompletableFuture.runAsync(() -> {
+            String sql = "UPDATE Products SET productName = ?, productStatus = ? WHERE productId = ?";
+            try (Connection conn = dbConnector.getConnection();
+                 PreparedStatement stmt = conn.prepareStatement(sql)) {
+                stmt.setString(1, product.getProductName());
+                stmt.setString(2, product.getProductStatus());
+                stmt.setInt(3, product.getProductId());
+                stmt.executeUpdate();
+            } catch (SQLException e) {
+                throw new RuntimeException("Error updating product", e);
+            }
+
+            /*
             String productSql = "UPDATE products SET quantity = ?, productName = ?, size = ? WHERE productId = ?";
             String photoSql = "UPDATE Photos SET photoName = ?, photoPath = ?, photoStatus = ? WHERE productId = ? AND photoId = ?";
             String commentSql =
@@ -206,10 +220,10 @@ public class ProductsDAO implements IProductDAO<Products> {
                             }
 
                             // Update photo comment
-                            if (photo.getPhotoComment() != null) {
+                            if (photo.getPhotoComments() != null) {
                                 try (PreparedStatement commentStatement = conn.prepareStatement(commentSql)) {
                                     commentStatement.setInt(1, photo.getPhotoId());
-                                    commentStatement.setString(2, photo.getPhotoComment());
+                                    commentStatement.setString(2, photo.getPhotoComments());
                                     commentStatement.executeUpdate();
                                 }
                             }
@@ -224,7 +238,7 @@ public class ProductsDAO implements IProductDAO<Products> {
                 }
             } catch (SQLException e) {
                 throw new RuntimeException("Database connection error during product update", e);
-            }
+            }*/
         }, executorService);
     }
 
@@ -293,7 +307,7 @@ public class ProductsDAO implements IProductDAO<Products> {
                         String photoComment = rs.getString("photoComment");
 
                         // Create photo with comment
-                        Photos photo = new Photos(photoId, productId, photoName, photoPath, photoStatus, photoComment);
+                        Photos photo = new Photos(photoId, photoName, photoPath, photoStatus, productId, photoComment);
                         product.getPhotos().add(photo);
 
                         // For backward compatibility
