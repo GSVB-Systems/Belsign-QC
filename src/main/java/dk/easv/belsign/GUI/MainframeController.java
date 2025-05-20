@@ -52,6 +52,7 @@ public class MainframeController {
                 showError("Failed to go to real app, sums up");
             }
         }
+
     //Til Exception handeling - prompter en Alarm popup til GUI
     private void showError(String message) {
         Alert alert = new Alert(Alert.AlertType.ERROR);

@@ -4,6 +4,7 @@ import dk.easv.belsign.BE.Photos;
 import dk.easv.belsign.BE.Products;
 import dk.easv.belsign.BE.Users;
 import dk.easv.belsign.BLL.ProductsManager;
+import dk.easv.belsign.Models.ProductsModel;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -11,13 +12,74 @@ import java.util.List;
 
 public class ProductApprovalUtil {
 
-    private final ProductsManager productsManager;
+    private final ProductsModel productsModel;
 
-    public ProductApprovalUtil(ProductsManager productsManager) {
-        this.productsManager = productsManager;
+    public ProductApprovalUtil(ProductsModel productsModel) throws Exception {
+        this.productsModel = new ProductsModel();
     }
 
-    public void approveProduct(Products product, int approvedBy) {
+
+    public void setProductStatus(Products product, int approvedBy) throws Exception {
+    if (product == null) {
+        throw new IllegalArgumentException("Product cannot be null");
+    }
+
+    List<Photos> photos = product.getPhotos();
+
+    if (photos == null || photos.isEmpty()) {
+        throw new IllegalStateException("Product must have photos to determine status");
+    }
+
+    boolean allApproved = true;
+    boolean anyRejected = false;
+
+    for (Photos photo : photos) {
+        String status = photo.getPhotoStatus();
+        if (!"Approved".equalsIgnoreCase(status)) {
+            allApproved = false;
+        }
+        if ("Rejected".equalsIgnoreCase(status) || "Declined".equalsIgnoreCase(status)) {
+            anyRejected = true;
+        }
+    }
+
+    if (allApproved) {
+        product.setProductStatus("Approved");
+    } else if (anyRejected) {
+        product.setProductStatus("Declined");
+    } else {
+        throw new IllegalStateException("Cannot set product status: Photos are pending or incomplete");
+    }
+
+    product.setApprovalDate(java.time.LocalDateTime.now());
+    product.setApprovedBy(approvedBy);
+
+    // Persist the change
+    productsModel.updateProduct(product);
+}
+
+
+
+    /*
+    public void setProductStatus(Products product, int approvedBy) {
+        if (product == null) {
+            throw new IllegalArgumentException("Product cannot be null");
+        }
+
+        //approveProduct(product, approvedBy);
+        rejectProduct(product, approvedBy);
+
+
+        if(approveProduct(product, approvedBy)) {
+
+
+
+        }
+
+    }
+
+
+    public boolean approveProduct(Products product, int approvedBy) {
         if (product == null) {
             throw new IllegalArgumentException("Product cannot be null");
         }
@@ -28,6 +90,7 @@ public class ProductApprovalUtil {
             for (Photos photo : photos) {
                 if (!"Approved".equals(photo.getPhotoStatus())) {
                     throw new IllegalStateException("Cannot approve product: Not all photos are approved");
+
                 }
             }
         }
@@ -36,9 +99,10 @@ public class ProductApprovalUtil {
         product.setProductStatus("Approved");
         product.setApprovalDate(LocalDateTime.now());
         product.setApprovedBy(approvedBy);
+        return true;
     }
 
-    public void rejectProduct(Products product) {
+    public boolean rejectProduct(Products product, int approvedBy) {
         if (product == null) {
             throw new IllegalArgumentException("Product cannot be null");
         }
@@ -64,8 +128,11 @@ public class ProductApprovalUtil {
 
         // At least one photo is rejected, proceed with rejection
         product.setProductStatus("Rejected");
-        product.setApprovalDate(LocalDateTime.now()); // Set current date/time as rejection date
+        product.setApprovalDate(LocalDateTime.now());
+        product.setApprovedBy(approvedBy);
+        return true;
     }
+    */
 
     public boolean isProductApproved(Products product) {
         if (product == null) {

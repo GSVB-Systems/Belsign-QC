@@ -75,7 +75,7 @@ public class PDFGenerator {
                     document.add(productImage);
                     String imageName = photo.getPhotoName();
                     document.add(new Paragraph(imageName));
-                    String imageComment = photo.getPhotoComment();
+                    String imageComment = photo.getPhotoComments();
                     document.add(new Paragraph("comment for " + imageName + ": " + imageComment));
                 }
                 document.add(new Paragraph("- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -").setFontSize(14).setBold());

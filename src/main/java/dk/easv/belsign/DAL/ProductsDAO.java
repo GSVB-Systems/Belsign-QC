@@ -155,6 +155,83 @@ public class ProductsDAO implements IProductDAO<Products> {
     @Override
     public CompletableFuture<Void> update(Products product) {
         return CompletableFuture.runAsync(() -> {
+            String productsSql = "UPDATE Products SET orderId = ?, productName = ?, quantity = ?, size = ? WHERE productId = ?";
+            String approvalSql = "UPDATE ProductApproval SET userId = ?, approvalDate = ?, productStatus = ? WHERE productId = ?";
+            String insertApprovalSql = "INSERT INTO ProductApproval (productId, userId, approvalDate, productStatus) VALUES (?, ?, ?, ?)";
+
+            Connection conn = null;
+            try {
+                conn = dbConnector.getConnection();
+                conn.setAutoCommit(false); // Start transaction
+
+                // Update Products table
+                try (PreparedStatement stmt = conn.prepareStatement(productsSql)) {
+                    stmt.setInt(1, product.getOrderId());
+                    stmt.setString(2, product.getProductName());
+                    stmt.setInt(3, product.getQuantity());
+                    stmt.setInt(4, product.getSize());
+                    stmt.setInt(5, product.getProductId());
+
+                    stmt.executeUpdate();
+                }
+
+                // Check if record exists in ProductApproval
+                boolean recordExists = false;
+                try (PreparedStatement checkStmt = conn.prepareStatement("SELECT 1 FROM ProductApproval WHERE productId = ?")) {
+                    checkStmt.setInt(1, product.getProductId());
+                    try (ResultSet rs = checkStmt.executeQuery()) {
+                        recordExists = rs.next();
+                    }
+                }
+
+                // Update or insert into ProductApproval
+                if (recordExists) {
+                    try (PreparedStatement stmt = conn.prepareStatement(approvalSql)) {
+                        stmt.setInt(1, product.getApprovedBy());
+                        stmt.setObject(2, product.getApprovalDate());
+                        stmt.setString(3, product.getProductStatus());
+                        stmt.setInt(4, product.getProductId());
+
+                        stmt.executeUpdate();
+                    }
+                } else {
+                    try (PreparedStatement stmt = conn.prepareStatement(insertApprovalSql)) {
+                        stmt.setInt(1, product.getProductId());
+                        stmt.setInt(2, product.getApprovedBy());
+                        stmt.setObject(3, product.getApprovalDate());
+                        stmt.setString(4, product.getProductStatus());
+
+                        stmt.executeUpdate();
+                    }
+                }
+
+                conn.commit(); // Commit transaction
+            } catch (SQLException e) {
+                if (conn != null) {
+                    try {
+                        conn.rollback(); // Rollback on error
+                    } catch (SQLException ex) {
+                        throw new RuntimeException("Failed to rollback transaction", ex);
+                    }
+                }
+                throw new RuntimeException("Failed to update product", e);
+            } finally {
+                if (conn != null) {
+                    try {
+                        conn.setAutoCommit(true);
+                        conn.close();
+                    } catch (SQLException e) {
+                        throw new RuntimeException("Failed to close connection", e);
+                    }
+                }
+            }
+        }, executorService);
+    }
+
+    /*
+    @Override
+    public CompletableFuture<Void> update(Products product) {
+        return CompletableFuture.runAsync(() -> {
             String sql = "UPDATE Products SET productName = ?, productStatus = ? WHERE productId = ?";
             try (Connection conn = dbConnector.getConnection();
                  PreparedStatement stmt = conn.prepareStatement(sql)) {
@@ -166,81 +243,10 @@ public class ProductsDAO implements IProductDAO<Products> {
                 throw new RuntimeException("Error updating product", e);
             }
 
-            /*
-            String productSql = "UPDATE products SET quantity = ?, productName = ?, size = ? WHERE productId = ?";
-            String photoSql = "UPDATE Photos SET photoName = ?, photoPath = ?, photoStatus = ? WHERE productId = ? AND photoId = ?";
-            String commentSql =
-                    "MERGE INTO PhotoComments AS target " +
-                            "USING (VALUES(?, ?)) AS source(photoId, photoComment) " +
-                            "ON target.photoId = source.photoId " +
-                            "WHEN MATCHED THEN " +
-                            "  UPDATE SET target.photoComment = source.photoComment " +
-                            "WHEN NOT MATCHED THEN " +
-                            "  INSERT (photoId, photoComment) VALUES (source.photoId, source.photoComment);";
-            String approvalDateSql = "UPDATE ProductApproval SET approvalDate = CURRENT_TIMESTAMP WHERE productId = ?";
-
-            try (Connection conn = dbConnector.getConnection()) {
-                // Update product information
-                conn.setAutoCommit(false); // Start transaction for product update
-                try {
-                    try (PreparedStatement productStatement = conn.prepareStatement(productSql)) {
-                        productStatement.setInt(1, product.getQuantity());
-                        productStatement.setString(2, product.getProductName());
-                        productStatement.setInt(3, product.getSize());
-                        productStatement.setInt(4, product.getProductId());
-                        productStatement.executeUpdate();
-                    }
-
-                    try (PreparedStatement approvalDateStatement = conn.prepareStatement(approvalDateSql)) {
-                        approvalDateStatement.setInt(1, product.getProductId());
-                        approvalDateStatement.executeUpdate();
-                    }
-
-                    conn.commit();
-                } catch (SQLException e) {
-                    conn.rollback();
-                    throw new RuntimeException("Failed to update product information", e);
-                } finally {
-                    conn.setAutoCommit(true); // Reset for next transaction
-                }
-
-                // Process each photo in a separate transaction
-                if (product.getPhotos() != null && !product.getPhotos().isEmpty()) {
-                    for (Photos photo : product.getPhotos()) {
-                        conn.setAutoCommit(false); // Start transaction for each photo
-                        try {
-                            // Update photo information
-                            try (PreparedStatement photoStatement = conn.prepareStatement(photoSql)) {
-                                photoStatement.setString(1, photo.getPhotoName());
-                                photoStatement.setString(2, photo.getPhotoPath());
-                                photoStatement.setString(3, photo.getPhotoStatus());
-                                photoStatement.setInt(4, photo.getProductId());
-                                photoStatement.setInt(5, photo.getPhotoId());
-                                photoStatement.executeUpdate();
-                            }
-
-                            // Update photo comment
-                            if (photo.getPhotoComments() != null) {
-                                try (PreparedStatement commentStatement = conn.prepareStatement(commentSql)) {
-                                    commentStatement.setInt(1, photo.getPhotoId());
-                                    commentStatement.setString(2, photo.getPhotoComments());
-                                    commentStatement.executeUpdate();
-                                }
-                            }
-                            conn.commit();
-                        } catch (SQLException e) {
-                            conn.rollback();
-                            throw new RuntimeException("Failed to update photo ID: " + photo.getPhotoId(), e);
-                        } finally {
-                            conn.setAutoCommit(true); // Reset for next photo
-                        }
-                    }
-                }
-            } catch (SQLException e) {
-                throw new RuntimeException("Database connection error during product update", e);
-            }*/
         }, executorService);
     }
+
+     */
 
     @Override
     public CompletableFuture<List<Products>> readAllByOrderId(int orderId) {

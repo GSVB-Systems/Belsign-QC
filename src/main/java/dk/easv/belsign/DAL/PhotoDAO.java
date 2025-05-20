@@ -12,8 +12,8 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-public class PhotoDAO implements ICrudRepo<Photos> {
-    private DBConnector dbConnector;
+public class PhotoDAO implements IPhotoDAO<Photos> {
+    private final DBConnector dbConnector;
     private ExecutorService executorService;
     private final ThreadShutdownUtil threadShutdownUtil;
 
@@ -61,6 +61,7 @@ public class PhotoDAO implements ICrudRepo<Photos> {
         });
     }
 
+    /*
     @Override
     public CompletableFuture<List<Photos>> readAll() {
         return CompletableFuture.supplyAsync(() -> {
@@ -78,24 +79,81 @@ public class PhotoDAO implements ICrudRepo<Photos> {
             return photos;
         });
     }
+     */
+
+
+    @Override
+    public CompletableFuture<List<Photos>> readAll() {
+
+        return CompletableFuture.supplyAsync(() -> {
+            ArrayList<Photos> photos = new ArrayList<>();
+            String sql = "SELECT * FROM Photos";
+
+            try (Connection conn = dbConnector.getConnection();
+                 PreparedStatement statement = conn.prepareStatement(sql)) {
+                ResultSet rs = statement.executeQuery(sql);
+
+                while (rs.next()) {
+                    int photoId = rs.getInt("photoId");
+                    String photoName = rs.getString("photoName");
+                    String photoPath = rs.getString("photoPath");
+                    String photoStatus = rs.getString("photoStatus");
+                    int productId = rs.getInt("productId");
+                    String photoComments = rs.getString("photoComments");
+
+                    Photos photo = new Photos(photoId, photoName, photoPath, photoStatus, productId, photoComments);
+                    photos.add(photo);
+                }
+                return photos;
+            } catch (SQLException e) {
+                throw new RuntimeException("Error fetching photos from database", e);
+            }
+        }, executorService);
+
+
+
+    }
 
     @Override
     public CompletableFuture<Void> update(Photos photo) {
         return CompletableFuture.runAsync(() -> {
-            String sql = "UPDATE Photos SET photoPath = ?, photoName = ?, photoStatus = ?, productId = ? WHERE photoId = ?";
-            try (Connection conn = dbConnector.getConnection();
-                 PreparedStatement stmt = conn.prepareStatement(sql)) {
-                stmt.setString(1, photo.getPhotoPath());
-                stmt.setString(2, photo.getPhotoName());
-                stmt.setString(3, photo.getPhotoStatus());
-                stmt.setInt(4, photo.getProductId());
-                stmt.setInt(6, photo.getPhotoId());
-                stmt.setString(5, photo.getPhotoComments());
-                stmt.executeUpdate();
+            String sql = "UPDATE Photos SET photoPath = ?, photoName = ?, photoStatus = ?, productId = ?, photoComments = ? WHERE photoId = ?";
+            Connection conn = null;
+            try {
+                conn = dbConnector.getConnection();
+                conn.setAutoCommit(false);
+
+                try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+                    stmt.setString(1, photo.getPhotoPath());
+                    stmt.setString(2, photo.getPhotoName());
+                    stmt.setString(3, photo.getPhotoStatus());
+                    stmt.setInt(4, photo.getProductId());
+                    stmt.setString(5, photo.getPhotoComments());
+                    stmt.setInt(6, photo.getPhotoId());
+
+                    stmt.executeUpdate();
+                    conn.commit();
+                }
             } catch (SQLException e) {
-                throw new RuntimeException(e);
+                if (conn != null) {
+                    try {
+                        conn.rollback();
+                    } catch (SQLException ex) {
+                        throw new RuntimeException("Failed to rollback transaction", ex);
+                    }
+                }
+                throw new RuntimeException("Failed to update photo", e);
+            } finally {
+                if (conn != null) {
+                    try {
+                        conn.setAutoCommit(true);
+                        conn.close();
+                    } catch (SQLException e) {
+                        throw new RuntimeException("Failed to close connection", e);
+                    }
+                }
             }
-        });
+        }, executorService);
     }
 
     @Override
@@ -124,18 +182,44 @@ public class PhotoDAO implements ICrudRepo<Photos> {
         );
     }
 
-    public void updatePhoto(Photos photo) throws SQLException {
-        String sql = "UPDATE Photos SET photoName = ?, photoPath = ?, photoStatus = ? WHERE productId = ? AND photoId = ?";
-        try (Connection conn = dbConnector.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
+    public CompletableFuture<Void> updatePhoto(Photos photo) {
+        return CompletableFuture.runAsync(() -> {
+            String sql = "UPDATE Photos SET photoName = ?, photoPath = ?, photoStatus = ? WHERE productId = ? AND photoId = ?";
+            Connection conn = null;
+            try {
+                conn = dbConnector.getConnection();
+                conn.setAutoCommit(false);
 
-            stmt.setString(1, photo.getPhotoName());
-            stmt.setString(2, photo.getPhotoPath());
-            stmt.setString(3, photo.getPhotoStatus());
-            stmt.setInt(4, photo.getProductId());
-            stmt.setInt(5, photo.getPhotoId());
-            stmt.executeUpdate();
-        }
+                try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+                    stmt.setString(1, photo.getPhotoName());
+                    stmt.setString(2, photo.getPhotoPath());
+                    stmt.setString(3, photo.getPhotoStatus());
+                    stmt.setInt(4, photo.getProductId());
+                    stmt.setInt(5, photo.getPhotoId());
+
+                    stmt.executeUpdate();
+                    conn.commit();
+                }
+            } catch (SQLException e) {
+                if (conn != null) {
+                    try {
+                        conn.rollback();
+                    } catch (SQLException ex) {
+                        throw new RuntimeException("Failed to rollback transaction", ex);
+                    }
+                }
+                throw new RuntimeException("Failed to update photo", e);
+            } finally {
+                if (conn != null) {
+                    try {
+                        conn.setAutoCommit(true);
+                        conn.close();
+                    } catch (SQLException e) {
+                        throw new RuntimeException("Failed to close connection", e);
+                    }
+                }
+            }
+        }, executorService);
     }
 
     public void updatePhotoComment(int photoId, String comment) throws SQLException {

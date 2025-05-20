@@ -3,14 +3,15 @@ package dk.easv.belsign.GUI;
 import com.itextpdf.io.image.ImageDataFactory;
 import dk.easv.belsign.BE.Photos;
 import dk.easv.belsign.BE.Products;
-import dk.easv.belsign.BLL.Util.CameraHandler;
-import dk.easv.belsign.BLL.Util.PDFGenerator;
-import dk.easv.belsign.BLL.Util.ProductSession;
+import dk.easv.belsign.BLL.Util.*;
+import dk.easv.belsign.Models.PhotosModel;
 import dk.easv.belsign.Models.ProductsModel;
 
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.geometry.Insets;
+import javafx.scene.Parent;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -22,17 +23,19 @@ import javafx.scene.layout.VBox;
 import java.util.Objects;
 import java.util.Optional;
 
-public class QCFrameController {
+public class QCFrameController implements IParentAware{
     public ScrollPane scrPane;
-    private MainframeController mainframeController;
     private PDFGenerator pdfGenerator;
     private ProductsModel productsModel;
+    private PhotosModel photosModel;
 
     @FXML
     private FlowPane fpFlowpane;
 
     private Products products;
     private Object image;
+
+    private MainframeController parent;
 
     public QCFrameController() {
         this.pdfGenerator = new PDFGenerator();
@@ -52,15 +55,22 @@ public class QCFrameController {
 
         try {
             this.productsModel = new ProductsModel();
+            this.photosModel = new PhotosModel();
 
         } catch (Exception e) {
             showError("Failed to initialize ProductsModel: " + e.getMessage());
+            e.printStackTrace();
         }
     }
 
     public void setProduct(Products selectedProduct) {
         this.products = selectedProduct;
         showImages();
+    }
+
+    @Override
+    public void setParent(MainframeController parent) {
+        this.parent = parent;
     }
 
     private void showImages() {
@@ -201,13 +211,28 @@ public class QCFrameController {
     private void updatePhotoStatus(Photos photo, String status) {
         try {
             photo.setPhotoStatus(status);
-            productsModel.updateProduct(products);
+            photosModel.updatePhoto(photo);
         } catch (Exception e) {
             showError("Failed to update photo status: " + e.getMessage());
         }
     }
 
     @FXML
-    private void onUploadPressed(ActionEvent actionEvent) {
+    private void onConfirmPressed(ActionEvent actionEvent) throws Exception {
+        ProductApprovalUtil productApprovalUtil = new ProductApprovalUtil(productsModel);
+        int approvedBy = UserSession.getLoggedInUser().getUserId();
+        try {
+            productApprovalUtil.setProductStatus(products, approvedBy);
+        } catch (Exception e) {
+            showError("Failed to set product status: " + e.getMessage());
+        }finally {
+
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/dk/easv/belsign/ProductFrame.fxml"));
+            parent.fillMainPane(loader);
+            Object controller = loader.getController();
+            if (controller instanceof IParentAware) {
+                ((IParentAware) controller).setParent(parent);
+            }
+        }
     }
 }
