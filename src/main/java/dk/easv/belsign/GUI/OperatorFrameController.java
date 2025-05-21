@@ -122,7 +122,7 @@ public class OperatorFrameController implements IParentAware {
             ImageView imageView = new ImageView();
             imageView.setFitWidth(customPane.getPrefWidth());
             imageView.setFitHeight(260);
-            imageView.setImage(new Image(Objects.requireNonNull(getClass().getResourceAsStream(photoIndex.getPhotoPath()))));
+            imageView.setImage(new Image(getClass().getResourceAsStream(photoIndex.getPhotoPath())));
             vbox.getChildren().add(imageView);
 
             customPane.setOnMouseClicked(event -> {
