@@ -93,31 +93,39 @@ public class PhotoDAO implements IPhotoDAO<Photos> {
     @Override
     public CompletableFuture<Void> update(Photos photo) {
         return CompletableFuture.runAsync(() -> {
-            String sql = "UPDATE Photos SET photoPath = ?, photoName = ?, photoStatus = ?, productId = ? WHERE photoId = ?";
-            String sql2 = "UPDATE PhotoComments SET photoComments = ? WHERE photoId = ?";
             Connection conn = null;
             try {
                 conn = dbConnector.getConnection();
                 conn.setAutoCommit(false);
 
-                try (PreparedStatement stmt = conn.prepareStatement(sql)) {
-                    stmt.setString(1, photo.getPhotoPath());
-                    stmt.setString(2, photo.getPhotoName());
-                    stmt.setString(3, photo.getPhotoStatus());
-                    stmt.setInt(4, photo.getProductId());
-                    stmt.setInt(6, photo.getPhotoId());
-
-                    stmt.executeUpdate();
-                    conn.commit();
+                // Try to update photo first
+                String updateSql = "UPDATE Photos SET photoPath = ?, photoName = ?, photoStatus = ?, productId = ? WHERE photoId = ?";
+                int rowsAffected;
+                try (PreparedStatement updateStmt = conn.prepareStatement(updateSql)) {
+                    updateStmt.setString(1, photo.getPhotoPath());
+                    updateStmt.setString(2, photo.getPhotoName());
+                    updateStmt.setString(3, photo.getPhotoStatus());
+                    updateStmt.setInt(4, photo.getProductId());
+                    updateStmt.setInt(5, photo.getPhotoId());
+                    rowsAffected = updateStmt.executeUpdate();
                 }
 
-                try (PreparedStatement stmt2 = conn.prepareStatement(sql2)) {
-                    stmt2.setString(1, photo.getPhotoComments());
-                    stmt2.setInt(2, photo.getPhotoId());
-                    stmt2.executeUpdate();
-                    conn.commit();
+                // If no rows were updated, insert a new photo
+                if (rowsAffected == 0) {
+                    String insertSql = "INSERT INTO Photos (photoId, photoPath, photoName, photoStatus, productId) VALUES (?, ?, ?, ?, ?)";
+                    try (PreparedStatement insertStmt = conn.prepareStatement(insertSql)) {
+                        insertStmt.setInt(1, photo.getPhotoId());
+                        insertStmt.setString(2, photo.getPhotoPath());
+                        insertStmt.setString(3, photo.getPhotoName());
+                        insertStmt.setString(4, photo.getPhotoStatus());
+                        insertStmt.setInt(5, photo.getProductId());
+                        insertStmt.executeUpdate();
+                    }
                 }
 
+
+
+                conn.commit();
             } catch (SQLException e) {
                 if (conn != null) {
                     try {
@@ -126,7 +134,7 @@ public class PhotoDAO implements IPhotoDAO<Photos> {
                         throw new RuntimeException("Failed to rollback transaction", ex);
                     }
                 }
-                throw new RuntimeException("Failed to update photo", e);
+                throw new RuntimeException("Failed to update/insert photo", e);
             } finally {
                 if (conn != null) {
                     try {
