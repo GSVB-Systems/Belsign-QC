@@ -71,16 +71,12 @@ public class CameraViewController implements Initializable {
         close();
 
         if (path != null) {
-            Photos photo = new Photos();
-            photo.setPhotoName(photoName);
-            photo.setPhotoPath(path);
-            photo.setProductId(productId);
 
-            // 1. Save to session list (IMPORTANT!)
-            ProductSession.getEnteredProduct().getPhotos().add(photo);
+            PhotoSession.getCurrentPhoto().setPhotoPath(path);
+
 
             // 2. Optional: store in controller too
-            this.capturedPhoto = photo;
+           
         }
     }
 

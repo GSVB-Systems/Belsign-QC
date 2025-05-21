@@ -36,5 +36,5 @@ public class ProductsModel {
         productsManager.updateProduct(product);
 
     }
-    
+
 }
