@@ -76,7 +76,7 @@ public class CameraViewController implements Initializable {
 
 
             // 2. Optional: store in controller too
-           
+
         }
     }
 
