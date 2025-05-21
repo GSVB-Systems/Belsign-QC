@@ -73,7 +73,7 @@ public class OperatorFrameController implements IParentAware {
 
             fpFlowpane.getChildren().add(imageBox);
         }
-        fpFlowpane.getChildren().add(createImageBox(true, true, null, new Photos()));
+        fpFlowpane.getChildren().add(createImageBox(true, true, null, newPhoto()));
     }
 
     @FXML
@@ -136,7 +136,7 @@ public class OperatorFrameController implements IParentAware {
                 }
 
                 if (allowAddNewBox) {
-                    Pane newBox = createImageBox(true, true, null, new Photos() );
+                    Pane newBox = createImageBox(true, true, null, newPhoto() );
                     fpFlowpane.getChildren().add(newBox);
                 }
 
@@ -154,6 +154,13 @@ public class OperatorFrameController implements IParentAware {
 
 
 
+    }
+
+    private Photos newPhoto() {
+        Photos newPhoto = new Photos();
+        newPhoto.setPhotoName(" ");
+        newPhoto.setPhotoPath("/dk/easv/belsign/images/belmanlogo.png");
+        return newPhoto;
     }
 
     private void showError(String message) {
