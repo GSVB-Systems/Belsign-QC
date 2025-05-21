@@ -112,9 +112,8 @@ public class PhotoDAO implements IPhotoDAO<Photos> {
 
                 // If no rows were updated, insert a new photo
                 if (rowsAffected == 0) {
-                    String insertSql = "INSERT INTO Photos (photoId, photoPath, photoName, photoStatus, productId) VALUES (?, ?, ?, ?, ?)";
+                    String insertSql = "INSERT INTO Photos ( photoPath, photoName, photoStatus, productId) VALUES (?, ?, ?, ?)";
                     try (PreparedStatement insertStmt = conn.prepareStatement(insertSql)) {
-                        insertStmt.setInt(1, photo.getPhotoId());
                         insertStmt.setString(2, photo.getPhotoPath());
                         insertStmt.setString(3, photo.getPhotoName());
                         insertStmt.setString(4, photo.getPhotoStatus());
