@@ -93,7 +93,8 @@ public class PhotoDAO implements IPhotoDAO<Photos> {
     @Override
     public CompletableFuture<Void> update(Photos photo) {
         return CompletableFuture.runAsync(() -> {
-            String sql = "UPDATE Photos SET photoPath = ?, photoName = ?, photoStatus = ?, productId = ?, photoComments = ? WHERE photoId = ?";
+            String sql = "UPDATE Photos SET photoPath = ?, photoName = ?, photoStatus = ?, productId = ? WHERE photoId = ?";
+            String sql2 = "UPDATE PhotoComments SET photoComments = ? WHERE photoId = ?";
             Connection conn = null;
             try {
                 conn = dbConnector.getConnection();
@@ -104,12 +105,19 @@ public class PhotoDAO implements IPhotoDAO<Photos> {
                     stmt.setString(2, photo.getPhotoName());
                     stmt.setString(3, photo.getPhotoStatus());
                     stmt.setInt(4, photo.getProductId());
-                    stmt.setString(5, photo.getPhotoComments());
                     stmt.setInt(6, photo.getPhotoId());
 
                     stmt.executeUpdate();
                     conn.commit();
                 }
+
+                try (PreparedStatement stmt2 = conn.prepareStatement(sql2)) {
+                    stmt2.setString(1, photo.getPhotoComments());
+                    stmt2.setInt(2, photo.getPhotoId());
+                    stmt2.executeUpdate();
+                    conn.commit();
+                }
+
             } catch (SQLException e) {
                 if (conn != null) {
                     try {

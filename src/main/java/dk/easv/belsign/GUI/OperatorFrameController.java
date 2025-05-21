@@ -64,7 +64,7 @@ public class OperatorFrameController implements IParentAware {
         fpFlowpane.getChildren().clear();
         for (int i = 0; i < products.getSize(); i++) {
             Photos photo = products.getPhotos().get(i);
-            Pane imageBox = createImageBox(false, false, photo, products.getPhotos().get(i));
+            Pane imageBox = createImageBox(false, false, photo);
             Label label = new Label(photo.getPhotoName());
             label.setPadding(new Insets(10));
 
@@ -73,7 +73,7 @@ public class OperatorFrameController implements IParentAware {
 
             fpFlowpane.getChildren().add(imageBox);
         }
-        fpFlowpane.getChildren().add(createImageBox(true, true, null, newPhoto()));
+        fpFlowpane.getChildren().add(createImageBox(true, true, newPhoto()));
     }
 
     @FXML
@@ -103,7 +103,7 @@ public class OperatorFrameController implements IParentAware {
     }
 
 
-    private Pane createImageBox(boolean includeComboBox, boolean allowAddNewBox, Photos photo, Photos photoIndex) {
+    private Pane createImageBox(boolean includeComboBox, boolean allowAddNewBox, Photos photoIndex) {
         Pane customPane = null;
         customPane = new Pane();
             customPane.setPrefSize(550, 310);
@@ -117,6 +117,13 @@ public class OperatorFrameController implements IParentAware {
                 ComboBox<String> comboBox = new ComboBox<>();
                 comboBox.getItems().addAll("tag1", "tag2", "tag3");
                 vbox.getChildren().add(comboBox);
+                comboBox.setOnAction(event -> {
+                    String selectedTag = comboBox.getValue();
+                    if (selectedTag != null) {
+                        photoIndex.setPhotoName(selectedTag);
+                    }
+                    System.out.println(photoIndex.getPhotoName());
+                });
             }
 
             ImageView imageView = new ImageView();
@@ -131,13 +138,17 @@ public class OperatorFrameController implements IParentAware {
                 Photos newPhoto = openCameraAndCapturePhoto(); // Updated method returning Photos object
 
                 if (newPhoto != null) {
-                    imageView.setImage(new Image("file:" + newPhoto.getPhotoPath()));
-                    ProductSession.getEnteredProduct().getPhotos().add(newPhoto);
+                    photoIndex.setPhotoPath(newPhoto.getPhotoPath());
+                    System.out.println(photoIndex.getPhotoPath() + "  " + newPhoto.getPhotoPath());
+                    imageView.setImage(new Image(getClass().getResourceAsStream(photoIndex.getPhotoPath())));
+                    ProductSession.getEnteredProduct().getPhotos().add(photoIndex);
+
                 }
 
                 if (allowAddNewBox) {
-                    Pane newBox = createImageBox(true, true, null, newPhoto() );
+                    Pane newBox = createImageBox(true, true, newPhoto() );
                     fpFlowpane.getChildren().add(newBox);
+
                 }
 
 
@@ -157,10 +168,11 @@ public class OperatorFrameController implements IParentAware {
     }
 
     private Photos newPhoto() {
-        Photos newPhoto = new Photos();
-        newPhoto.setPhotoName(" ");
-        newPhoto.setPhotoPath("/dk/easv/belsign/images/belmanlogo.png");
-        return newPhoto;
+        Photos photo = new Photos();
+        photo.setPhotoName(" ");
+        photo.setPhotoPath("/dk/easv/belsign/images/belmanlogo.png");
+        photo.setProductId(products.getProductId());
+        return photo;
     }
 
     private void showError(String message) {
