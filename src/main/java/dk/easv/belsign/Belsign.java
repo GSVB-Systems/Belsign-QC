@@ -20,7 +20,7 @@ public class Belsign extends Application {
     @Override
     public void start(Stage stage) throws IOException {
         try {
-            CameraHandler.getInstance().openCamera();
+            //CameraHandler.getInstance().openCamera();
             FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/dk/easv/belsign/Mainframe.fxml"));
             Parent root = fxmlLoader.load();
 
