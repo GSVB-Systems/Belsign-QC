@@ -62,8 +62,7 @@ public class OperatorFrameController implements IParentAware {
 
     private void showImages() {
         fpFlowpane.getChildren().clear();
-        for (int i = 0; i < products.getSize(); i++) {
-            Photos photo = products.getPhotos().get(i);
+        for (Photos photo : products.getPhotos()) {
             Pane imageBox = createImageBox(false, false, photo);
             Label label = new Label(photo.getPhotoName());
             label.setPadding(new Insets(10));
@@ -141,7 +140,7 @@ public class OperatorFrameController implements IParentAware {
                     photoIndex.setPhotoPath(newPhoto.getPhotoPath());
                     System.out.println(photoIndex.getPhotoPath() + "  " + newPhoto.getPhotoPath());
                     imageView.setImage(new Image(getClass().getResourceAsStream(photoIndex.getPhotoPath())));
-                    //products.getPhotos().add(photoIndex);
+
 
                 }
 
@@ -160,9 +159,14 @@ public class OperatorFrameController implements IParentAware {
     }
     private void savePhotosToDatabase() {
 
-            List<Photos> photos = ProductSession.getEnteredProduct().getPhotos();
+            List<Photos> photos = products.getPhotos();
             photosModel.updatePhotoList(photos);
 
+            for (Photos photo : photos) {
+                if (photo.getPhotoPath() != null) {
+                    System.out.println("Photo path: " + photo.getPhotoPath() + " Photo name: " + photo.getPhotoName() + " Photo status: " + photo.getPhotoStatus());
+                }
+            }
 
 
     }

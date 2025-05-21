@@ -6,7 +6,9 @@ import dk.easv.belsign.DAL.PhotoDAO;
 
 import java.io.IOException;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public class PhotoManager {
 
@@ -33,7 +35,11 @@ public class PhotoManager {
     }
 
     public void updatePhotoList(List<Photos> photos) {
-        for (Photos photo : photos) {
+        List<Photos> validPhotos = new ArrayList<>(photos);
+
+        validPhotos.removeIf(photo -> Objects.equals(photo.getPhotoName(), " ") || photo.getPhotoName().trim().isEmpty());
+
+        for (Photos photo : validPhotos) {
             try {
                 photoDataAccess.update(photo);
             } catch (Exception e) {

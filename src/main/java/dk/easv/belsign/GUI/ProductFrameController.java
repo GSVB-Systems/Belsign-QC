@@ -39,6 +39,8 @@ public class ProductFrameController implements IParentAware {
 
     private PDFGenerator pdfGenerator;
     private Products products;
+    @FXML
+    private Button btnGeneratePDF;
 
     public ProductFrameController() {
         this.pdfGenerator = new PDFGenerator();
@@ -57,6 +59,12 @@ public class ProductFrameController implements IParentAware {
 
             vbLeft.setAlignment(javafx.geometry.Pos.CENTER);
             vbLeft.setSpacing(20);
+
+            if(UserSession.getLoggedInUser().getRoleId() == 1) {
+                btnGeneratePDF.setVisible(false);
+            } else if(UserSession.getLoggedInUser().getRoleId() == 2) {
+                btnGeneratePDF.setVisible(true);
+            }
 
             showProducts();
             // Don't show images on init - wait for selection
@@ -173,7 +181,11 @@ public class ProductFrameController implements IParentAware {
 
               String statusOrComment;
               if ("Approved".equals(photo.getPhotoStatus()) || "Declined".equals(photo.getPhotoStatus())) {
-                  statusOrComment = photo.getPhotoStatus() + ", " + photo.getPhotoComments();
+                  if (photo.getPhotoComments() != null && !photo.getPhotoComments().isEmpty()) {
+                      statusOrComment = photo.getPhotoStatus() + ", " + photo.getPhotoComments();
+                  } else {
+                      statusOrComment = photo.getPhotoStatus();
+                  }
               } else {
                   statusOrComment = photo.getPhotoComments();
               }

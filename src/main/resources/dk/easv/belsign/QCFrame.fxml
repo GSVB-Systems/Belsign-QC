@@ -11,7 +11,7 @@
 <?import javafx.scene.layout.Region?>
 <?import javafx.scene.layout.Priority?>
 
-<BorderPane xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1" fx:controller="dk.easv.belsign.GUI.QCFrameController">
+<BorderPane xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1" fx:controller="dk.easv.belsign.GUI.QCFrameController" stylesheets="@style.css">
     <bottom>
         <HBox alignment="CENTER_LEFT" prefHeight="100.0" prefWidth="200.0" BorderPane.alignment="CENTER">
             <children>
@@ -37,9 +37,9 @@
                         <Insets right="10.0" />
                     </HBox.margin>
                 </Button>
-                <Button alignment="CENTER" mnemonicParsing="false" onAction="#onConfirmPressed" prefHeight="50.0" prefWidth="150.0" style="-fx-background-color: D9D9D9;" text="Confirm">
+                <Button alignment="CENTER" mnemonicParsing="false" onAction="#onConfirmPressed" prefHeight="50.0" prefWidth="150.0" text="Confirm">
                     <HBox.margin>
-                        <Insets right="15.0" />
+                        <Insets bottom="10.0" left="50.0" right="10.0" top="10.0" />
                     </HBox.margin>
                 </Button>
             </children>
