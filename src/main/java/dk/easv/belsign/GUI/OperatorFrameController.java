@@ -141,7 +141,7 @@ public class OperatorFrameController implements IParentAware {
                     photoIndex.setPhotoPath(newPhoto.getPhotoPath());
                     System.out.println(photoIndex.getPhotoPath() + "  " + newPhoto.getPhotoPath());
                     imageView.setImage(new Image(getClass().getResourceAsStream(photoIndex.getPhotoPath())));
-                    products.getPhotos().add(photoIndex);
+                    //products.getPhotos().add(photoIndex);
 
                 }
 
@@ -172,6 +172,7 @@ public class OperatorFrameController implements IParentAware {
         photo.setPhotoName(" ");
         photo.setPhotoPath("/dk/easv/belsign/images/belmanlogo.png");
         photo.setProductId(products.getProductId());
+        products.getPhotos().add(photo);
         return photo;
     }
 
