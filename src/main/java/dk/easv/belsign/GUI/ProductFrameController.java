@@ -111,6 +111,7 @@ public class ProductFrameController implements IParentAware {
     }
 
     private void selectProduct(Products product) {
+
         this.selectedProduct = product;
         showImages();
 

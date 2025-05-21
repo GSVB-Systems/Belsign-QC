@@ -7,6 +7,7 @@ import dk.easv.belsign.Models.PhotosModel;
 import dk.easv.belsign.Models.ProductsModel;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.geometry.Insets;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ComboBox;
@@ -17,13 +18,15 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
+import org.opencv.photo.Photo;
 
 import java.io.IOException;
 import java.util.List;
 import java.util.Objects;
 
-public class OperatorFrameController {
+public class OperatorFrameController implements IParentAware {
     private MainframeController mainframeController;
+
 
     @FXML
     public ScrollPane scrPane;
@@ -61,7 +64,7 @@ public class OperatorFrameController {
         fpFlowpane.getChildren().clear();
         for (int i = 0; i < products.getSize(); i++) {
             Photos photo = products.getPhotos().get(i);
-            Pane imageBox = createImageBox(false, false, photo);
+            Pane imageBox = createImageBox(false, false, photo, products.getPhotos().get(i));
             Label label = new Label(photo.getPhotoName());
             label.setPadding(new Insets(10));
 
@@ -70,13 +73,19 @@ public class OperatorFrameController {
 
             fpFlowpane.getChildren().add(imageBox);
         }
-        fpFlowpane.getChildren().add(createImageBox(true, true, null));
+       // fpFlowpane.getChildren().add(createImageBox(true, true, null));
     }
 
     @FXML
     private void handleUpload(ActionEvent event) {
         savePhotosToDatabase();
         CameraHandler.getInstance().releaseCam();
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/dk/easv/belsign/ProductFrame.fxml"));
+        mainframeController.fillMainPane(loader);
+        Object controller = loader.getController();
+        if (controller instanceof IParentAware) {
+            ((IParentAware) controller).setParent(mainframeController);
+        }
     }
 
     public void setParent(MainframeController mainframeController) {
@@ -93,42 +102,48 @@ public class OperatorFrameController {
         return controller.getCapturedPhoto(); // return Photos, not Image
     }
 
-    private Pane createImageBox(boolean includeComboBox, boolean allowAddNewBox, Photos photo) {
-        Pane customPane = new Pane();
-        customPane.setPrefSize(550, 310);
-        customPane.getStyleClass().add("custom-pane");
 
-        VBox vbox = new VBox();
-        vbox.setPrefWidth(customPane.getPrefWidth());
-        customPane.getChildren().add(vbox);
+    private Pane createImageBox(boolean includeComboBox, boolean allowAddNewBox, Photos photo, Photos photoIndex) {
+        Pane customPane = null;
+        customPane = new Pane();
+            customPane.setPrefSize(550, 310);
+            customPane.getStyleClass().add("custom-pane");
 
-        if (includeComboBox) {
-            ComboBox<String> comboBox = new ComboBox<>();
-            comboBox.getItems().addAll("tag1", "tag2", "tag3");
-            vbox.getChildren().add(comboBox);
-        }
+            VBox vbox = new VBox();
+            vbox.setPrefWidth(customPane.getPrefWidth());
+            customPane.getChildren().add(vbox);
 
-        ImageView imageView = new ImageView();
-        imageView.setFitWidth(customPane.getPrefWidth());
-        imageView.setFitHeight(260);
-        imageView.setImage(new Image(Objects.requireNonNull(getClass().getResourceAsStream("/dk/easv/belsign/images/belmanlogo.png"))));
-        vbox.getChildren().add(imageView);
-
-        customPane.setOnMouseClicked(event -> {
-            PhotoSession.setCurrentPhoto(photo);
-
-            Photos newPhoto = openCameraAndCapturePhoto(); // Updated method returning Photos object
-
-            if (newPhoto != null) {
-                imageView.setImage(new Image("file:" + newPhoto.getPhotoPath()));
-                ProductSession.getEnteredProduct().getPhotos().add(newPhoto);
+            if (includeComboBox) {
+                ComboBox<String> comboBox = new ComboBox<>();
+                comboBox.getItems().addAll("tag1", "tag2", "tag3");
+                vbox.getChildren().add(comboBox);
             }
 
-            if (allowAddNewBox) {
-                Pane newBox = createImageBox(true, true, null);
-                fpFlowpane.getChildren().add(newBox);
-            }
-        });
+            ImageView imageView = new ImageView();
+            imageView.setFitWidth(customPane.getPrefWidth());
+            imageView.setFitHeight(260);
+            imageView.setImage(new Image(Objects.requireNonNull(getClass().getResourceAsStream(photoIndex.getPhotoPath()))));
+            vbox.getChildren().add(imageView);
+
+            customPane.setOnMouseClicked(event -> {
+                PhotoSession.setCurrentPhoto(photoIndex);
+
+                Photos newPhoto = openCameraAndCapturePhoto(); // Updated method returning Photos object
+
+                if (newPhoto != null) {
+                    imageView.setImage(new Image("file:" + newPhoto.getPhotoPath()));
+                    ProductSession.getEnteredProduct().getPhotos().add(newPhoto);
+                }
+                /*
+                if (allowAddNewBox) {
+                    Pane newBox = createImageBox(true, true, null);
+                    fpFlowpane.getChildren().add(newBox);
+                }
+
+                 */
+            });
+
+
 
         return customPane;
     }
