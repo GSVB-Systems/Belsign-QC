@@ -73,7 +73,7 @@ public class OperatorFrameController implements IParentAware {
 
             fpFlowpane.getChildren().add(imageBox);
         }
-       // fpFlowpane.getChildren().add(createImageBox(true, true, null));
+        fpFlowpane.getChildren().add(createImageBox(true, true, null, new Photos()));
     }
 
     @FXML
@@ -134,13 +134,13 @@ public class OperatorFrameController implements IParentAware {
                     imageView.setImage(new Image("file:" + newPhoto.getPhotoPath()));
                     ProductSession.getEnteredProduct().getPhotos().add(newPhoto);
                 }
-                /*
+
                 if (allowAddNewBox) {
-                    Pane newBox = createImageBox(true, true, null);
+                    Pane newBox = createImageBox(true, true, null, new Photos() );
                     fpFlowpane.getChildren().add(newBox);
                 }
 
-                 */
+
             });
 
 
