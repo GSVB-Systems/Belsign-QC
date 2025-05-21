@@ -2,6 +2,7 @@ package dk.easv.belsign.DAL;
 
 import dk.easv.belsign.BE.Products;
 import dk.easv.belsign.BLL.Util.ThreadShutdownUtil;
+import dk.easv.belsign.BE.Photos;
 
 import java.io.IOException;
 import java.sql.Connection;
@@ -14,7 +15,8 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-public class ProductsDAO implements ICrudRepo<Products> {
+
+public class ProductsDAO implements IProductDAO<Products> {
 
     private DBConnector dbConnector;
     private ExecutorService executorService;
@@ -30,16 +32,16 @@ public class ProductsDAO implements ICrudRepo<Products> {
     @Override
     public CompletableFuture<Void> create(Products product) {
         return CompletableFuture.runAsync(() -> {
-            String sql = "INSERT INTO products (photoId, orderId, productName, quantity) VALUES (?, ?, ?, ?)";
+            String sql = "INSERT INTO products ( orderId, productName, quantity, size) VALUES (?, ?, ?, ?, ?)";
             try (Connection conn = dbConnector.getConnection();
                  PreparedStatement statement = conn.prepareStatement(sql)) {
 
                 conn.setAutoCommit(false); // Start transaktion
 
-                statement.setInt(1, product.getPhotoId());
                 statement.setInt(2, product.getOrderId());
                 statement.setString(3, product.getProductName());
                 statement.setInt(4, product.getQuantity());
+                statement.setInt(5, product.getSize());
 
                 statement.executeUpdate();
                 conn.commit(); // Commit transaktion hvis alt lykkes
@@ -55,7 +57,6 @@ public class ProductsDAO implements ICrudRepo<Products> {
             }
         }, executorService);
     }
-
 
     @Override
     public CompletableFuture<Void> delete(int id) throws Exception {
@@ -89,9 +90,6 @@ public class ProductsDAO implements ICrudRepo<Products> {
         }, executorService);
     }
 
-
-
-
     @Override
     public CompletableFuture<Products> read(int productId) {
         return CompletableFuture.supplyAsync(() -> {
@@ -108,8 +106,9 @@ public class ProductsDAO implements ICrudRepo<Products> {
                     int orderId = rs.getInt("orderId");
                     String productName = rs.getString("productName");
                     int quantity = rs.getInt("quantity");
+                    int size = rs.getInt("size");
 
-                    return new Products(productId, photoId, orderId, productName, quantity);
+                    return new Products(productId, orderId, productName, quantity, size);
                 } else {
                     return null;
                 }
@@ -133,12 +132,12 @@ public class ProductsDAO implements ICrudRepo<Products> {
 
                 while (rs.next()) {
                     int productId = rs.getInt("productId");
-                    int photoId = rs.getInt("photoId");
                     int orderId = rs.getInt("orderId");
                     String productName = rs.getString("productName");
                     int quantity = rs.getInt("quantity");
+                    int size = rs.getInt("size");
 
-                    Products product = new Products(productId, photoId, orderId, productName, quantity);
+                    Products product = new Products(productId, orderId, productName, quantity, size);
                     products.add(product);
                 }
                 return products;
@@ -151,29 +150,159 @@ public class ProductsDAO implements ICrudRepo<Products> {
     @Override
     public CompletableFuture<Void> update(Products product) {
         return CompletableFuture.runAsync(() -> {
-            String sql = "UPDATE products SET quantity = ?, photoId = ?, productName = ? WHERE productId = ?";
+            String productsSql = "UPDATE Products SET orderId = ?, productName = ?, quantity = ?, size = ? WHERE productId = ?";
+            String approvalSql = "UPDATE ProductApproval SET userId = ?, approvalDate = ?, productStatus = ? WHERE productId = ?";
+            String insertApprovalSql = "INSERT INTO ProductApproval (productId, userId, approvalDate, productStatus) VALUES (?, ?, ?, ?)";
 
-            try(Connection conn = dbConnector.getConnection()){
-                conn.setAutoCommit(false);
+            Connection conn = null;
+            try {
+                conn = dbConnector.getConnection();
+                conn.setAutoCommit(false); // Start transaction
 
-                try(PreparedStatement statement = conn.prepareStatement(sql)){
-                    statement.setInt(1, product.getQuantity());
-                    statement.setInt(2, product.getPhotoId());
-                    statement.setString(3, product.getProductName());
-                    statement.setInt(4, product.getProductId());
+                // Update Products table
+                try (PreparedStatement stmt = conn.prepareStatement(productsSql)) {
+                    stmt.setInt(1, product.getOrderId());
+                    stmt.setString(2, product.getProductName());
+                    stmt.setInt(3, product.getQuantity());
+                    stmt.setInt(4, product.getSize());
+                    stmt.setInt(5, product.getProductId());
 
-                    statement.executeUpdate();
-                    conn.commit();
-                } catch (SQLException e) {
-                    try {
-                        conn.rollback();
-                    } catch (SQLException ex) {
-                        throw new RuntimeException("Error rolling back transaction", ex);
-                    }
-                    throw new RuntimeException("Error updating product in database", e);
+                    stmt.executeUpdate();
                 }
+
+                // Check if record exists in ProductApproval
+                boolean recordExists = false;
+                try (PreparedStatement checkStmt = conn.prepareStatement("SELECT 1 FROM ProductApproval WHERE productId = ?")) {
+                    checkStmt.setInt(1, product.getProductId());
+                    try (ResultSet rs = checkStmt.executeQuery()) {
+                        recordExists = rs.next();
+                    }
+                }
+
+                // Update or insert into ProductApproval
+                if (recordExists) {
+                    try (PreparedStatement stmt = conn.prepareStatement(approvalSql)) {
+                        stmt.setInt(1, product.getApprovedBy());
+                        stmt.setObject(2, product.getApprovalDate());
+                        stmt.setString(3, product.getProductStatus());
+                        stmt.setInt(4, product.getProductId());
+
+                        stmt.executeUpdate();
+                    }
+                } else {
+                    try (PreparedStatement stmt = conn.prepareStatement(insertApprovalSql)) {
+                        stmt.setInt(1, product.getProductId());
+                        stmt.setInt(2, product.getApprovedBy());
+                        stmt.setObject(3, product.getApprovalDate());
+                        stmt.setString(4, product.getProductStatus());
+
+                        stmt.executeUpdate();
+                    }
+                }
+
+                conn.commit(); // Commit transaction
             } catch (SQLException e) {
-                throw new RuntimeException("Database connection error", e);
+                if (conn != null) {
+                    try {
+                        conn.rollback(); // Rollback on error
+                    } catch (SQLException ex) {
+                        throw new RuntimeException("Failed to rollback transaction", ex);
+                    }
+                }
+                throw new RuntimeException("Failed to update product", e);
+            } finally {
+                if (conn != null) {
+                    try {
+                        conn.setAutoCommit(true);
+                        conn.close();
+                    } catch (SQLException e) {
+                        throw new RuntimeException("Failed to close connection", e);
+                    }
+                }
+            }
+        }, executorService);
+    }
+
+    @Override
+    public CompletableFuture<List<Products>> readAllByOrderId(int orderId) {
+        return CompletableFuture.supplyAsync(() -> {
+            List<Products> products = new ArrayList<>();
+            List<Integer> processedProductIds = new ArrayList<>();
+
+            String sql = "SELECT p.*, ph.photoPath, ph.photoName, ph.photoStatus, ph.photoId AS photo_id, " +
+                    "pc.photoComment AS photoComment, " +
+                    "pa.approvalDate, pa.productStatus, pa.userId " +
+                    "FROM Products p " +
+                    "LEFT JOIN Photos ph ON p.productId = ph.productId " +
+                    "LEFT JOIN PhotoComments pc ON ph.photoId = pc.photoId " +
+                    "LEFT JOIN ProductApproval pa ON p.productId = pa.productId " +
+                    "WHERE p.orderId = ?";
+
+            try (Connection conn = dbConnector.getConnection();
+                 PreparedStatement statement = conn.prepareStatement(sql)) {
+
+                statement.setInt(1, orderId);
+                ResultSet rs = statement.executeQuery();
+
+                while (rs.next()) {
+                    int productId = rs.getInt("productId");
+                    String productName = rs.getString("productName");
+                    int quantity = rs.getInt("quantity");
+                    int size = rs.getInt("size");
+
+                    // Get approval date and product status
+                    java.sql.Timestamp approvalDate = rs.getTimestamp("approvalDate");
+                    String productStatus = rs.getString("productStatus");
+                    int userId = rs.getInt("userId");
+
+                    // Find or create the product
+                    Products product = null;
+                    if (!processedProductIds.contains(productId)) {
+                        product = new Products(productId, orderId, productName, quantity, size);
+                        product.setPhotos(new ArrayList<>());
+
+                        // Set approval date and product status
+                        if (approvalDate != null) {
+                            product.setApprovalDate(approvalDate.toLocalDateTime());
+                        }
+                        product.setProductStatus(productStatus);
+                        product.setApprovedBy(userId);
+
+                        products.add(product);
+                        processedProductIds.add(productId);
+                    } else {
+                        for (Products p : products) {
+                            if (p.getProductId() == productId) {
+                                product = p;
+                                break;
+                            }
+                        }
+                    }
+
+                    // Add photo if it exists
+                    if (product != null && rs.getObject("photo_id") != null) {
+                        int photoId = rs.getInt("photo_id");
+                        String photoPath = rs.getString("photoPath");
+                        String photoName = rs.getString("photoName");
+                        String photoStatus = rs.getString("photoStatus");
+                        String photoComment = rs.getString("photoComment");
+
+                        // Create photo with comment
+                        Photos photo = new Photos(photoId, photoName, photoPath, photoStatus, productId, photoComment);
+                        product.getPhotos().add(photo);
+
+                        // For backward compatibility
+                        if (product.getPhotoPath() == null) {
+                            product.setPhotoPath(photoPath);
+                            product.setPhotoName(photoName);
+                            product.setPhotoStatus(photoStatus);
+                        }
+                    }
+                }
+
+                return products;
+            } catch (SQLException e) {
+                throw new RuntimeException("Error fetching products by order ID", e);
             }
         }, executorService);
     }

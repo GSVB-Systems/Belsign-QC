@@ -22,4 +22,8 @@ public class OrdersManager {
     public void updateOrder(Orders order) throws Exception {
         ordersDataAccess.update(order);
     }
+
+    public Orders getOrderById(int orderId) throws Exception {
+        return (Orders) ordersDataAccess.read(orderId).join();
+    }
 }

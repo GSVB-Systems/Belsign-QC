@@ -8,6 +8,12 @@ public class Users {
     private String email;
     private String hashedPassword;
 
+    public Users() {
+
+    }
+
+
+
 
     public int getUserId() {
         return userId;

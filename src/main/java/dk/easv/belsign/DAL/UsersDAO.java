@@ -47,8 +47,6 @@ public class UsersDAO implements ICrudRepo<Users> {
         });
     }
 
-
-
     @Override
     public CompletableFuture<List<Users>> readAll() {
         return CompletableFuture.supplyAsync(() -> {
@@ -139,5 +137,4 @@ public class UsersDAO implements ICrudRepo<Users> {
     public void shutdown() {
         executorService.shutdown();
     }
-
 }

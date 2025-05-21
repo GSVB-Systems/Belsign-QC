@@ -26,6 +26,10 @@ public class OrdersModel {
     public void updateOrder(Orders order) throws Exception {
         ordersManager.updateOrder(order);
     }
+
+    public Orders getOrderById(int orderId) throws Exception {
+        return ordersManager.getOrderById(orderId);
+    }
 }
 
 

@@ -1,5 +1,6 @@
 package dk.easv.belsign.BLL.Util;
 
+import javafx.embed.swing.SwingFXUtils;
 import javafx.scene.image.Image;
 import javafx.scene.image.PixelFormat;
 import javafx.scene.image.PixelWriter;
@@ -8,6 +9,13 @@ import org.opencv.core.Core;
 import org.opencv.core.Mat;
 import org.opencv.imgproc.Imgproc;
 import org.opencv.videoio.VideoCapture;
+
+import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 
 public class  CameraHandler {
@@ -55,8 +63,35 @@ public class  CameraHandler {
             System.err.println("Failed to capture pic.");
             return null;
         }
+
+        Core.flip(frame, frame, 1);
         return matToImage(frame);
     }
+
+    public String saveImagesToOrders(Image image, int orderId, int productId, String photo) {
+        BufferedImage bufferedImage = SwingFXUtils.fromFXImage(image, null);
+        String basePath = "src/main/resources/dk/easv/belsign/images/Orders";
+        String relativePath = "/dk/easv/belsign/images/Orders";
+
+        String orderPath = basePath + "/" + orderId;
+        File folder = new File(orderPath);
+        if (!folder.exists()) folder.mkdirs();
+
+        String imgName = productId + "_" + PhotoSession.getCurrentPhoto().getPhotoName() + ".png";
+        File truefile = new File(folder, imgName);
+
+        String returnPath = relativePath + "/" + orderId + "/" + imgName;
+
+        try {
+            ImageIO.write(bufferedImage, "png", truefile);
+            System.out.println("Success! Saved to: " + truefile.getAbsolutePath());
+            return returnPath;
+        } catch (IOException e) {
+            System.err.println("Error saving image " + e.getMessage());
+            return null;
+        }
+    }
+
 
     public boolean openCamera() {
         if (capture == null) {
@@ -74,6 +109,19 @@ public class  CameraHandler {
             capture.release();
         }
         isRunning = false;
+    }
+
+    //scanner device for cams
+    public List<Integer> getAvailableCameras() {
+        List<Integer> availableCameras = new ArrayList<>();
+        for (int i = 0; i < 10; i++) {
+            VideoCapture tempCapture = new VideoCapture(i);
+            if (tempCapture.isOpened()) {
+                availableCameras.add(i);
+                tempCapture.release();
+            }
+        }
+        return availableCameras;
     }
 
     public boolean isCamRunning() {

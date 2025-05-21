@@ -37,7 +37,7 @@ public class OrdersDAO implements ICrudRepo<Orders> {
 
                 try (PreparedStatement stmt = conn.prepareStatement(sql)) {
                     stmt.setInt(1, order.getProductQuantity());
-                    stmt.setString(2, order.getOrderId());
+                    stmt.setInt(2, order.getOrderId());
 
                     stmt.executeUpdate();
                     conn.commit();
@@ -108,7 +108,7 @@ public class OrdersDAO implements ICrudRepo<Orders> {
                 conn.setAutoCommit(false); // Start transaktion
 
                 try (PreparedStatement statement = conn.prepareStatement(sql)) {
-                    statement.setString(1, order.getOrderId());
+                    statement.setInt(1, order.getOrderId());
                     statement.setInt(2, order.getProductQuantity());
 
                     statement.executeUpdate(); // Udfør INSERT
@@ -134,7 +134,7 @@ public class OrdersDAO implements ICrudRepo<Orders> {
     @Override
     public CompletableFuture<Orders> read(int id) throws Exception {
         return CompletableFuture.supplyAsync(() -> {
-            String sql = "SELECT * FROM orders WHERE orderNumber = ?";
+            String sql = "SELECT * FROM orders WHERE orderId = ?";
             try (Connection conn = dbConnector.getConnection();
                  PreparedStatement statement = conn.prepareStatement(sql)) {
 
@@ -142,7 +142,7 @@ public class OrdersDAO implements ICrudRepo<Orders> {
                 ResultSet rs = statement.executeQuery();
 
                 if (rs.next()) {
-                    String orderId = rs.getString("orderId");
+                    int orderId = rs.getInt("orderId");
                     int productQuantity = rs.getInt("productQuantity");
                     return new Orders(orderId, productQuantity);
                 } else {
@@ -166,7 +166,7 @@ public class OrdersDAO implements ICrudRepo<Orders> {
                 ResultSet rs = statement.executeQuery(sql);
 
                 while (rs.next()) {
-                    String orderId = rs.getString("orderId");
+                    int orderId = rs.getInt("orderId");
                     int productQuantity = rs.getInt("productQuantity");
 
                     Orders order = new Orders(orderId, productQuantity);
@@ -178,5 +178,4 @@ public class OrdersDAO implements ICrudRepo<Orders> {
             }
         }, executorService);
     }
-
 }

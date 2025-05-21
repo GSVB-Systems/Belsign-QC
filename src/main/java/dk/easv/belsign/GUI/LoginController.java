@@ -2,6 +2,7 @@ package dk.easv.belsign.GUI;
 
 
 import dk.easv.belsign.BLL.Util.LoginValidator;
+import dk.easv.belsign.BLL.Util.OrderValidator;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -51,9 +52,18 @@ public class LoginController implements IParentAware {
 
             btnShowPw.setText(isPwShown ? "👀" : "🫣");
         });
-}
 
-
+        txtPassword.setOnKeyPressed(event -> {
+            if (event.getCode().toString().equals("ENTER")) {
+                try {
+                    onLogin(new ActionEvent());
+                } catch (IOException e) {
+                    showError("Invalid ID or password.");
+                }
+            }
+        });
+    }
+    
     @FXML
     //
     private void onLogin(ActionEvent event) throws IOException {
@@ -71,27 +81,9 @@ public class LoginController implements IParentAware {
     //temp metode til at sende videre til main app
     private void goToApp() {
         try {
-            FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/dk/easv/belsign/Mainframe.fxml"));
-            Parent root = fxmlLoader.load();
-
-            Scene scene = new Scene(root);
-            String cssPath = getClass().getResource("/dk/easv/belsign/style.css").toExternalForm();
-            if (cssPath != null) {
-                scene.getStylesheets().add(cssPath);
-            } else {
-                System.err.println("CSS file not found: /dk/easv/belsign/style.css");
-            }
-
-            Stage stage = (Stage) txtId.getScene().getWindow();
-            stage.setTitle("Belsign");
-            stage.setScene(scene);
-            stage.setMaximized(true);
-            stage.show();
-            MainframeController mainframeController = fxmlLoader.getController();
-            mainframeController.fillMainPane(new FXMLLoader(getClass().getResource("/dk/easv/belsign/OrderSelection.fxml")));
-
-        } catch (IOException e) {
-            showError("Failed to go to real app, sums up");
+            parent.fillMainPane(new FXMLLoader(getClass().getResource("/dk/easv/belsign/OrderSelection.fxml")));
+        } catch (Exception e) {
+            showError("Failed to navigate to the application: " + e.getMessage());
         }
     }
 

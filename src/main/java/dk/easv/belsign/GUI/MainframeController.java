@@ -1,7 +1,11 @@
 package dk.easv.belsign.GUI;
 
+import dk.easv.belsign.Belsign;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.scene.control.Button;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.Pane;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -19,7 +23,8 @@ public class MainframeController {
         private Pane mainPane;
         @FXML
         private Text txtOrder;
-
+        @FXML
+        private Button btnLogout;
         public void initialize() {
             String orderText = "Belman";
             setOrder(orderText);
@@ -32,9 +37,6 @@ public class MainframeController {
         public void fillMainPane(FXMLLoader loader) {
             try {
 
-                //FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/dk/easv/belsign/OperatorFrameTEMP.fxml"));
-                //FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/dk/easv/belsign/OrderSelection.fxml"));
-
                 Parent root = loader.load();
 
                 Object controller = loader.getController();
@@ -45,13 +47,12 @@ public class MainframeController {
                 mainPane.getChildren().clear();
                 mainPane.getChildren().add(root);
 
-
-
             } catch (
                     IOException e) {
                 showError("Failed to go to real app, sums up");
             }
         }
+
     //Til Exception handeling - prompter en Alarm popup til GUI
     private void showError(String message) {
         Alert alert = new Alert(Alert.AlertType.ERROR);
@@ -62,8 +63,14 @@ public class MainframeController {
     }
 
     @FXML
-    private void handleLogOut(ActionEvent event) {
+    private void handleLogOut(ActionEvent event) throws IOException {
+        try {
+            fillMainPane(new FXMLLoader(getClass().getResource("/dk/easv/belsign/Login.fxml")));
 
+            setOrder("Belman");
+        } catch (Exception e) {
+            showError("Failed to log out: " + e.getMessage());
+        }
     }
 }
 
