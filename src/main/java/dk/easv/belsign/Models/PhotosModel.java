@@ -6,6 +6,7 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 
 import java.sql.SQLException;
+import java.util.List;
 
 public class PhotosModel {
 
@@ -32,5 +33,9 @@ public class PhotosModel {
 
     public void updatePhotoComment(Photos photo) throws SQLException {
         photoManager.updatePhotoComment(photo);
+    }
+
+    public void updatePhotoList(List<Photos> photos) {
+        photoManager.updatePhotoList(photos);
     }
 }

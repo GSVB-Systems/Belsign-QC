@@ -3,7 +3,6 @@ package dk.easv.belsign.DAL;
 import dk.easv.belsign.BE.Products;
 import dk.easv.belsign.BLL.Util.ThreadShutdownUtil;
 import dk.easv.belsign.BE.Photos;
-import dk.easv.belsign.BLL.Util.PhotoService;
 
 import java.io.IOException;
 import java.sql.Connection;

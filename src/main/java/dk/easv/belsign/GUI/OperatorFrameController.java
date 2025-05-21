@@ -3,9 +3,12 @@ package dk.easv.belsign.GUI;
 import dk.easv.belsign.BE.Photos;
 import dk.easv.belsign.BE.Products;
 import dk.easv.belsign.BLL.Util.*;
+import dk.easv.belsign.Models.PhotosModel;
+import dk.easv.belsign.Models.ProductsModel;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.geometry.Insets;
+import javafx.scene.control.Alert;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
@@ -28,6 +31,7 @@ public class OperatorFrameController {
     private FlowPane fpFlowpane;
 
     private Products products;
+    private PhotosModel photosModel;
 
     public void initialize() {
         // Set appropriate properties for better layout behavior
@@ -38,6 +42,13 @@ public class OperatorFrameController {
         scrPane.widthProperty().addListener((obs, oldVal, newVal) -> {
             fpFlowpane.setPrefWidth(newVal.doubleValue() - 20);
         });
+
+        try {
+            this.photosModel = new PhotosModel();
+        } catch (Exception e) {
+            showError("Failed to initialize ProductsModel: " + e.getMessage());
+            e.printStackTrace();
+        }
     }
 
     public void setProduct(Products selectedProduct) {
@@ -122,19 +133,20 @@ public class OperatorFrameController {
         return customPane;
     }
     private void savePhotosToDatabase() {
-        try {
-            PhotoService photoService = new PhotoService();
-            List<Photos> photos = ProductSession.getEnteredProduct().getPhotos();
 
-            photoService.savePhotos(photos)
-                    .thenRun(() -> System.out.println("Photos saved successfully!"))
-                    .exceptionally(ex -> {
-                        ex.printStackTrace();
-                        return null;
-                    });
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+            List<Photos> photos = ProductSession.getEnteredProduct().getPhotos();
+            photosModel.updatePhotoList(photos);
+
+
+
+    }
+
+    private void showError(String message) {
+        Alert alert = new Alert(Alert.AlertType.ERROR);
+        alert.setTitle("Error");
+        alert.setHeaderText(null);
+        alert.setContentText(message);
+        alert.showAndWait();
     }
 
 

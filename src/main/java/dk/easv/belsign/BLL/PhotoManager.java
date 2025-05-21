@@ -31,4 +31,14 @@ public class PhotoManager {
     public void updatePhotoComment(Photos photo) throws SQLException {
         photoDataAccess.updatePhotoComment(photo);
     }
+
+    public void updatePhotoList(List<Photos> photos) {
+        for (Photos photo : photos) {
+            try {
+                photoDataAccess.update(photo);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+    }
 }
