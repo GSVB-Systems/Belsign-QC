@@ -141,7 +141,7 @@ public class OperatorFrameController implements IParentAware {
                     photoIndex.setPhotoPath(newPhoto.getPhotoPath());
                     System.out.println(photoIndex.getPhotoPath() + "  " + newPhoto.getPhotoPath());
                     imageView.setImage(new Image(getClass().getResourceAsStream(photoIndex.getPhotoPath())));
-                    ProductSession.getEnteredProduct().getPhotos().add(photoIndex);
+                    products.getPhotos().add(photoIndex);
 
                 }
 
