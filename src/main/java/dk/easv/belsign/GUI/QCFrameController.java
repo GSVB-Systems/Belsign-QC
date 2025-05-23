@@ -116,6 +116,16 @@ public class QCFrameController implements IParentAware{
             btnDecline.setPadding(new Insets(10));
             hbox1.getChildren().addAll(btnApprove, btnDecline);
 
+            if(photo.getPhotoStatus() != null) {
+                if (photo.getPhotoStatus().equals("Approved")) {
+                    colorCorner.setStyle("-fx-background-color: rgba(0,255,0,0.25); -fx-background-radius: 0 8px 0 10px;");
+                    colorCorner.setVisible(true);
+                } else if (photo.getPhotoStatus().equals("Declined")) {
+                    colorCorner.setStyle("-fx-background-color: rgba(255,0,0,0.25); -fx-background-radius: 0 8px 0 10px;");
+                    colorCorner.setVisible(true);
+                }
+            }
+
             // Approve
             btnApprove.setOnAction(event -> {
                 updatePhotoStatus(currentPhoto, "Approved");

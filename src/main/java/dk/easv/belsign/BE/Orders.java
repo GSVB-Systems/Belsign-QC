@@ -1,8 +1,28 @@
 package dk.easv.belsign.BE;
 
+
+import java.time.LocalDateTime;
+
 public class Orders {
     private int orderId;
-    private int productQuantity;
+    private LocalDateTime ApprovalDate;
+    private String approvalStatus;
+
+
+
+    public LocalDateTime getApprovalDate() {
+        return ApprovalDate;
+    }
+    public void setApprovalDate(LocalDateTime approvalDate) {
+        ApprovalDate = approvalDate;
+    }
+    public String getApprovalStatus() {
+        return approvalStatus;
+    }
+    public void setApprovalStatus(String orderStatus) {
+        this.approvalStatus = orderStatus;
+    }
+
 
     public int getOrderId() {
         return orderId;
@@ -12,16 +32,13 @@ public class Orders {
         this.orderId = orderId;
     }
 
-    public int getProductQuantity() {
-        return productQuantity;
-    }
-
-    public void setProductQuantity(int productQuantity) {
-        this.productQuantity = productQuantity;
-    }
-
-    public Orders(int orderId, int productQuantity) {
+    public Orders(int orderId) {
         this.orderId = orderId;
-        this.productQuantity = productQuantity;
+    }
+
+    public Orders(int orderId, LocalDateTime approvalDate, String approvalStatus) {
+        this.orderId = orderId;
+        this.ApprovalDate = approvalDate;
+        this.approvalStatus = approvalStatus;
     }
 }

@@ -23,6 +23,7 @@ public class OrderSelectionController implements IParentAware {
     @Override
     public void setParent(MainframeController parent) {
         this.parent = parent;
+        parent.setBtnLogout(true);
     }
 
     public void initialize() {

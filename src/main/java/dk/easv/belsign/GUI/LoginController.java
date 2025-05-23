@@ -29,6 +29,7 @@ public class LoginController implements IParentAware {
     @Override
     public void setParent(MainframeController parent) {
         this.parent = parent;
+        parent.setBtnLogout(false);
     }
 
 

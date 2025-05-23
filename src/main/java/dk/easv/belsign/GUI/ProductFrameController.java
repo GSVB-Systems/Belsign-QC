@@ -1,9 +1,11 @@
 package dk.easv.belsign.GUI;
 
+import dk.easv.belsign.BE.Orders;
 import dk.easv.belsign.BE.Photos;
 import dk.easv.belsign.BE.Products;
 import dk.easv.belsign.BLL.Util.OrderSession;
 import dk.easv.belsign.BLL.Util.PDFGenerator;
+import dk.easv.belsign.Models.OrdersModel;
 import dk.easv.belsign.Models.ProductsModel;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -21,12 +23,15 @@ import dk.easv.belsign.BLL.Util.UserSession;
 import javafx.scene.shape.StrokeType;
 
 import java.io.File;
+import java.util.List;
+import java.util.Objects;
 
 
 public class ProductFrameController implements IParentAware {
     public VBox vbLeft;
     public VBox vbRight;
     public ProductsModel productsModel;
+    public OrdersModel ordersModel;
     public Button btnOpen;
     private MainframeController parent;
     private Products selectedProduct;
@@ -52,10 +57,13 @@ public class ProductFrameController implements IParentAware {
         this.parent = parent;
     }
 
+
+
     public void initialize() {
         try {
             productsModel = new ProductsModel();
             productsModel.getObservableProducts(OrderSession.getEnteredOrder().getOrderId());
+            ordersModel = new OrdersModel();
 
             vbLeft.setAlignment(javafx.geometry.Pos.CENTER);
             vbLeft.setSpacing(20);
@@ -76,6 +84,7 @@ public class ProductFrameController implements IParentAware {
 
     public void showProducts() {
         try {
+            List<Products> productsList = null;
             for (int i = 0; i < productsModel.getObservableProducts(OrderSession.getEnteredOrder().getOrderId()).size(); i++) {
                 Products products = productsModel.getProductsByOrder().get(i);
 
@@ -111,10 +120,42 @@ public class ProductFrameController implements IParentAware {
                 stack.setOnMouseEntered(e -> stack.setCursor(javafx.scene.Cursor.HAND));
 
                 vbLeft.getChildren().add(stack);
+
+                productsList = productsModel.getObservableProducts(OrderSession.getEnteredOrder().getOrderId());
+                productsList.add(products);
             }
+            OrderApproval(productsList);
         } catch (Exception e) {
             showError("Error loading products: " + e.getMessage());
             e.printStackTrace();
+        }
+    }
+
+    private void OrderApproval(List<Products> productsList) {
+        int productSize = 0;
+        int approvedProducts = 0;
+        for (int i = 0; i < productsList.size(); i++) {
+            products = productsList.get(i);
+            productSize++;
+            if (Objects.equals(products.getProductStatus(), "Approved")) {
+                approvedProducts++;
+
+            }
+
+        }
+        System.out.println(productSize + " " + approvedProducts);
+        if (productSize == approvedProducts) {
+            Orders order = OrderSession.getEnteredOrder();
+            order.setApprovalStatus("Approved");
+            order.setApprovalDate(java.time.LocalDateTime.now());
+            try {
+                System.out.println(order.getApprovalStatus() + " " + order.getApprovalDate() + " " + order.getOrderId() );
+                ordersModel.createOrderApproval(order);
+            } catch (Exception e) {
+                showError("Error creating order approval: ");
+                e.printStackTrace();
+
+            }
         }
     }
 

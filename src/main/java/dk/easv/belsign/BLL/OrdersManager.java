@@ -26,4 +26,8 @@ public class OrdersManager {
     public Orders getOrderById(int orderId) throws Exception {
         return (Orders) ordersDataAccess.read(orderId).join();
     }
+
+    public void createOrderApproval(Orders order) throws Exception {
+        ordersDataAccess.create(order);
+    }
 }

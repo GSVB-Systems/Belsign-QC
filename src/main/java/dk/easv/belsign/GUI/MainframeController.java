@@ -19,12 +19,15 @@ import java.io.IOException;
 
 
 public class MainframeController {
-        @FXML
+
+    @FXML
         private Pane mainPane;
         @FXML
         private Text txtOrder;
         @FXML
-        private Button btnLogout;
+        private Button btnLogOut;
+        @FXML
+        private ImageView imgLogout;
         public void initialize() {
             String orderText = "Belman";
             setOrder(orderText);
@@ -32,6 +35,11 @@ public class MainframeController {
 
         public void setOrder(String order) {
             txtOrder.setText(order);
+        }
+
+        public void setBtnLogout(Boolean visible) {
+            btnLogOut.setVisible(visible);
+            imgLogout.setVisible(visible);
         }
 
         public void fillMainPane(FXMLLoader loader) {

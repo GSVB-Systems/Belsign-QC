@@ -27,6 +27,10 @@ public class OrdersModel {
         ordersManager.updateOrder(order);
     }
 
+    public void createOrderApproval(Orders order) throws Exception {
+        ordersManager.createOrderApproval(order);
+    }
+
     public Orders getOrderById(int orderId) throws Exception {
         return ordersManager.getOrderById(orderId);
     }
