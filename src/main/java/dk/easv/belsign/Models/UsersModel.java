@@ -28,7 +28,7 @@ public class UsersModel {
         usersManager.updateUser(user);
     }
 
-    public Users getUserByd(int userId) throws Exception {
+    public Users getUserById(int userId) throws Exception {
         return usersManager.getUserById(userId);
     }
 

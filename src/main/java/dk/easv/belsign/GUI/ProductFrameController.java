@@ -7,6 +7,7 @@ import dk.easv.belsign.BLL.Util.OrderSession;
 import dk.easv.belsign.BLL.Util.PDFGenerator;
 import dk.easv.belsign.Models.OrdersModel;
 import dk.easv.belsign.Models.ProductsModel;
+import dk.easv.belsign.Models.UsersModel;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -32,6 +33,7 @@ public class ProductFrameController implements IParentAware {
     public VBox vbRight;
     public ProductsModel productsModel;
     public OrdersModel ordersModel;
+    public UsersModel usersModel;
     public Button btnOpen;
     private MainframeController parent;
     private Products selectedProduct;
@@ -64,6 +66,7 @@ public class ProductFrameController implements IParentAware {
             productsModel = new ProductsModel();
             productsModel.getObservableProducts(OrderSession.getEnteredOrder().getOrderId());
             ordersModel = new OrdersModel();
+            usersModel = new UsersModel();
 
             vbLeft.setAlignment(javafx.geometry.Pos.CENTER);
             vbLeft.setSpacing(20);
@@ -170,6 +173,7 @@ public class ProductFrameController implements IParentAware {
             String productName = product.getProductName();
             parent.setOrder(orderNumber + "-" + productName);
             lblApproval.setText(product.getProductStatus());
+            lblApprovedBy.setText(usersModel.getUserById(product.getApprovedBy()).getFirstName() + " " + usersModel.getUserById(product.getApprovedBy()).getLastName());
         } catch (Exception e) {
             showError("Error updating order title: " + e.getMessage());
         }
@@ -303,10 +307,18 @@ public class ProductFrameController implements IParentAware {
         alert.showAndWait();
     }
     public void onPDFButtonPressed(ActionEvent actionEvent) {
-        try{
-            pdfGenerator.createPDF("src/main/resources/dk/easv/belsign/PDF/QCReport.pdf", selectedProduct);
-        }catch (Exception e){
-            showError("PDF generation failed: " + e.getMessage());
+        if(OrderSession.getEnteredOrder().getApprovalStatus() == "Approved") {
+            try{
+                pdfGenerator.createPDF("src/main/resources/dk/easv/belsign/PDF/QCReport.pdf", selectedProduct);
+            }catch (Exception e){
+                showError("PDF generation failed: " + e.getMessage());
+            }
+
+
+        }else
+        {
+            showError("Order not approved - Order needs to be approved before generating PDF");
         }
+
     }
 }

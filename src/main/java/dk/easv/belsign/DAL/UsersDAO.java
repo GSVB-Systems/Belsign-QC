@@ -26,7 +26,7 @@ public class UsersDAO implements ICrudRepo<Users> {
     @Override
     public CompletableFuture<Void> create(Users user) throws Exception {
         return CompletableFuture.runAsync(() -> {
-            String sql = "INSERT INTO users (userId, roleId, firstName, lastName, email, hashedPassword) VALUES (?, ?, ?)";
+            String sql = "INSERT INTO Users (userId, roleId, firstName, lastName, email, hashedPassword) VALUES (?, ?, ?, ?, ?, ?)";
 
             try (Connection conn = dbConnector.getConnection();
                  PreparedStatement stmt = conn.prepareStatement(sql)) {
@@ -51,11 +51,11 @@ public class UsersDAO implements ICrudRepo<Users> {
     public CompletableFuture<List<Users>> readAll() {
         return CompletableFuture.supplyAsync(() -> {
             ArrayList<Users> users = new ArrayList<>();
-            String sql = "SELECT * FROM users";
+            String sql = "SELECT * FROM Users";
 
             try (Connection conn = dbConnector.getConnection();
-                 PreparedStatement statement = conn.prepareStatement(sql)) {
-                ResultSet rs = statement.executeQuery(sql);
+                 PreparedStatement statement = conn.prepareStatement(sql);
+                 ResultSet rs = statement.executeQuery()) {
 
                 while (rs.next()) {
                     int userId = rs.getInt("userId");
@@ -111,7 +111,7 @@ public class UsersDAO implements ICrudRepo<Users> {
     @Override
     public CompletableFuture<Users> read(int UserId) {
         return CompletableFuture.supplyAsync(() -> {
-            String sql = "SELECT * FROM users WHERE UserId = ?";
+            String sql = "SELECT * FROM Users WHERE UserId = ?";
             try (Connection conn = dbConnector.getConnection();
                  PreparedStatement statement = conn.prepareStatement(sql)) {
                 statement.setInt(1, UserId);
