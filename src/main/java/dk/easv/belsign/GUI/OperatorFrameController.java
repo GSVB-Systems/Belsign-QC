@@ -135,9 +135,10 @@ public class OperatorFrameController implements IParentAware {
                 CameraViewController controller = SceneService.fullscreen("CameraView.fxml", "Camera");
                 if (controller != null) {
                     Image capturedImage = controller.getCapturedImage();
+                    Photos capturedPhotoData = controller.getCapturedPhoto();
                     if (capturedImage != null) {
-                        photoIndex.setPhotoPath(null);
-                        photoIndex.setPhotoName("Captured");
+                        photoIndex.setPhotoPath(capturedPhotoData.getPhotoPath());
+                        photoIndex.setPhotoName(capturedPhotoData.getPhotoName());
                         imageView.setImage(capturedImage);
                     }
                 }
