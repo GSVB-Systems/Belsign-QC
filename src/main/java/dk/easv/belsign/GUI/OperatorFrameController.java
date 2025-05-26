@@ -174,7 +174,7 @@ public class OperatorFrameController implements IParentAware {
     private Photos newPhoto() {
         Photos photo = new Photos();
         photo.setPhotoName(" ");
-        photo.setPhotoPath("/dk/easv/belsign/images/belmanlogo.png");
+        photo.setPhotoPath("/dk/easv/belsign/images/addPhoto.png");
         photo.setProductId(products.getProductId());
         products.getPhotos().add(photo);
         return photo;

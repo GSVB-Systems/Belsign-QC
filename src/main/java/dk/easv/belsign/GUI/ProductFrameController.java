@@ -81,7 +81,7 @@ public class ProductFrameController implements IParentAware {
             // Don't show images on init - wait for selection
         } catch (Exception e) {
             showError("Error initializing: " + e.getMessage());
-            e.printStackTrace();
+
         }
     }
 
@@ -130,7 +130,7 @@ public class ProductFrameController implements IParentAware {
             OrderApproval(productsList);
         } catch (Exception e) {
             showError("Error loading products: " + e.getMessage());
-            e.printStackTrace();
+
         }
     }
 
@@ -146,17 +146,16 @@ public class ProductFrameController implements IParentAware {
             }
 
         }
-        System.out.println(productSize + " " + approvedProducts);
+        
         if (productSize == approvedProducts) {
             Orders order = OrderSession.getEnteredOrder();
             order.setApprovalStatus("Approved");
             order.setApprovalDate(java.time.LocalDateTime.now());
             try {
-                System.out.println(order.getApprovalStatus() + " " + order.getApprovalDate() + " " + order.getOrderId() );
                 ordersModel.createOrderApproval(order);
             } catch (Exception e) {
                 showError("Error creating order approval: ");
-                e.printStackTrace();
+
 
             }
         }

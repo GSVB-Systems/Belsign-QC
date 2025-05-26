@@ -202,16 +202,7 @@ public class QCFrameController implements IParentAware{
         // Show the stage
         imageStage.show();
     }
-
-
-    public void onGeneratePDFPressed(ActionEvent actionEvent) {
-        try{
-
-       // pdfGenerator.createPDF("src/main/resources/dk/easv/belsign/PDF/QCReport.pdf", products);
-        }catch (Exception e){
-            showError("PDF generation failed: " + e.getMessage());
-        }
-    }
+    
 
     private void showError(String message) {
         Alert alert = new Alert(Alert.AlertType.ERROR);
