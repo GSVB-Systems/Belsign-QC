@@ -19,7 +19,7 @@
                <font>
                   <Font size="16.0" />
                </font></PasswordField>
-            <Button fx:id="btnLogin" layoutX="267.0" layoutY="237.0" mnemonicParsing="false" onAction="#onLogin" prefHeight="37.0" prefWidth="67.0" text="Login" />
+            <Button fx:id="btnLogin" layoutX="193.0" layoutY="239.0" mnemonicParsing="false" onAction="#onLogin" prefHeight="47.0" prefWidth="214.0" text="Login" />
             <TextField fx:id="txtShowPassword" layoutX="193.0" layoutY="195.0" prefHeight="36.0" prefWidth="214.0" promptText="Password">
                <font>
                   <Font size="16.0" />
