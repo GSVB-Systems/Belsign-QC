@@ -32,16 +32,16 @@ public class ProductsDAO implements IProductDAO<Products> {
     @Override
     public CompletableFuture<Void> create(Products product) {
         return CompletableFuture.runAsync(() -> {
-            String sql = "INSERT INTO products ( orderId, productName, quantity, size) VALUES (?, ?, ?, ?, ?)";
+            String sql = "INSERT INTO products ( orderId, productName, quantity, size) VALUES (?, ?, ?, ?)";
             try (Connection conn = dbConnector.getConnection();
                  PreparedStatement statement = conn.prepareStatement(sql)) {
 
                 conn.setAutoCommit(false); // Start transaktion
 
-                statement.setInt(2, product.getOrderId());
-                statement.setString(3, product.getProductName());
-                statement.setInt(4, product.getQuantity());
-                statement.setInt(5, product.getSize());
+                statement.setInt(1, product.getOrderId());
+                statement.setString(2, product.getProductName());
+                statement.setInt(3, product.getQuantity());
+                statement.setInt(4, product.getSize());
 
                 statement.executeUpdate();
                 conn.commit(); // Commit transaktion hvis alt lykkes

@@ -4,11 +4,11 @@ import at.favre.lib.crypto.bcrypt.BCrypt;
 import dk.easv.belsign.BE.Users;
 import dk.easv.belsign.DAL.ICrudRepo;
 import dk.easv.belsign.DAL.UsersDAO;
+import dk.easv.belsign.DAL.DALExceptions;
 
 import java.io.IOException;
 
 public class LoginValidator {
-
 
     private ICrudRepo usersDAO;
 
@@ -18,14 +18,11 @@ public class LoginValidator {
 
     public LoginValidator() throws IOException {
         usersDAO = new UsersDAO();
-
     }
-
-
 
     public boolean validateLogin(int userId, String password) {
         // Basic validation checks
-        if (userId == 0|| password == null || password.isBlank()) {
+        if (userId == 0 || password == null || password.isBlank()) {
             return false;
         }
 
@@ -49,8 +46,13 @@ public class LoginValidator {
             }
 
             return verified;
+
+        } catch (DALExceptions e) {
+            ExceptionHandler.handleDALException(e);
+            return false;
+
         } catch (Exception e) {
-            // Handle exceptions
+            ExceptionHandler.handleUnexpectedExeption(e);
             return false;
         }
     }

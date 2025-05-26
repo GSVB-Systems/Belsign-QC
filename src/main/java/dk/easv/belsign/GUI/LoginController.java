@@ -1,6 +1,7 @@
 package dk.easv.belsign.GUI;
 
 
+import dk.easv.belsign.BLL.Util.ExceptionHandler;
 import dk.easv.belsign.BLL.Util.LoginValidator;
 import dk.easv.belsign.BLL.Util.OrderValidator;
 import javafx.event.ActionEvent;
@@ -78,14 +79,22 @@ public class LoginController implements IParentAware {
     @FXML
     //
     private void onLogin(ActionEvent event) throws IOException {
-        LoginValidator loginValidator = new LoginValidator();
+        try {
+            LoginValidator loginValidator = new LoginValidator();
 
-        Boolean success = loginValidator.validateLogin(Integer.parseInt(txtId.getText()), txtPassword.getText());
+            Boolean success = loginValidator.validateLogin(Integer.parseInt(txtId.getText()),
+                    txtPassword.getText()
+            );
 
-        if (success) {
-            goToApp();
-        } else {
-            showError("Invalid ID or password.");
+            if (success) {
+                goToApp();
+            } else {
+                showError("Invalid ID or password.");
+            }
+
+        } catch (Exception e) {
+            ExceptionHandler.handleUnexpectedExeption(e);
+            showError("Input error :<");
         }
     }
 
@@ -94,7 +103,8 @@ public class LoginController implements IParentAware {
         try {
             parent.fillMainPane(new FXMLLoader(getClass().getResource("/dk/easv/belsign/OrderSelection.fxml")));
         } catch (Exception e) {
-            showError("Failed to navigate to the application: " + e.getMessage());
+            ExceptionHandler.handleUnexpectedExeption(e);
+            showError("Couldnt load Main app, which means we are COOKED LOOK INSIDE LOGIN CONTROLLER" + e.getMessage());
         }
     }
 
