@@ -38,7 +38,7 @@ public class Belsign extends Application {
             stage.setMaximized(true);
             stage.show();
             MainframeController mainframeController = fxmlLoader.getController();
-            mainframeController.fillMainPane(new FXMLLoader(getClass().getResource("/dk/easv/belsign/Login.fxml")));
+            mainframeController.fillMainPane(new FXMLLoader(getClass().getResource("/dk/easv/belsign/AdminOrderFrame.fxml")));
 
         } catch (IOException e) {
             e.printStackTrace();
