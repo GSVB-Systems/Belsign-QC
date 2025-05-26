@@ -9,6 +9,8 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.stage.Stage;
 import java.io.IOException;
 
@@ -35,12 +37,16 @@ public class LoginController implements IParentAware {
 
     public void initialize() {
 
+        ImageView imageView = new ImageView();
         txtShowPassword.textProperty().bindBidirectional(txtPassword.textProperty());
 
         txtShowPassword.setVisible(false);
         txtShowPassword.setManaged(false);
 
-        btnShowPw.setText("👀");
+        imageView.setFitHeight(24);
+        imageView.setFitWidth(24);
+        imageView.setImage(new Image("/dk/easv/belsign/images/passVisible.png"));
+        btnShowPw.setGraphic(imageView);
 
         //IM A FUCKING LIAR I AM USED!
         btnShowPw.setOnAction(e -> {
@@ -51,7 +57,11 @@ public class LoginController implements IParentAware {
             txtPassword.setVisible(!isPwShown);
             txtPassword.setManaged(!isPwShown);
 
-            btnShowPw.setText(isPwShown ? "🔒" : "👀");
+            if (isPwShown) {
+                imageView.setImage(new Image("/dk/easv/belsign/images/passNotVisible.png"));
+            } else {
+                imageView.setImage(new Image("/dk/easv/belsign/images/passVisible.png"));
+            }
         });
 
         txtPassword.setOnKeyPressed(event -> {
