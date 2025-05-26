@@ -172,8 +172,12 @@ public class ProductFrameController implements IParentAware {
             String productName = product.getProductName();
             parent.setOrder(orderNumber + "-" + productName);
             lblApproval.setText(product.getProductStatus());
-            lblApprovedBy.setText(usersModel.getUserById(product.getApprovedBy()).getFirstName() + " " + usersModel.getUserById(product.getApprovedBy()).getLastName());
-        } catch (Exception e) {
+            if (product.getApprovedBy() > 0) {
+                lblApprovedBy.setText(usersModel.getUserById(product.getApprovedBy()).getFirstName() + " " +
+                        usersModel.getUserById(product.getApprovedBy()).getLastName());
+            } else {
+                lblApprovedBy.setText("...");
+            }        } catch (Exception e) {
             showError("Error updating order title: " + e.getMessage());
         }
 
