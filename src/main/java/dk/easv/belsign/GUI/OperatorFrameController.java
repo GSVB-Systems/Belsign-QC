@@ -79,12 +79,20 @@ public class OperatorFrameController implements IParentAware {
     private void handleUpload(ActionEvent event) {
         savePhotosToDatabase();
         CameraHandler.getInstance().releaseCam();
+
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/dk/easv/belsign/ProductFrame.fxml"));
         mainframeController.fillMainPane(loader);
-        Object controller = loader.getController();
-        if (controller instanceof IParentAware) {
-            ((IParentAware) controller).setParent(mainframeController);
+
+        // Get the controller reference
+        ProductFrameController productController = loader.getController();
+
+        // Set parent
+        if (productController instanceof IParentAware) {
+            ((IParentAware) productController).setParent(mainframeController);
         }
+
+        // Call reload method to refresh data
+        productController.loadProducts();
     }
 
     public void setParent(MainframeController mainframeController) {

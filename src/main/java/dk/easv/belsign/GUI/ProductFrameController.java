@@ -64,6 +64,7 @@ public class ProductFrameController implements IParentAware {
 
     public void initialize() {
         try {
+
             productsModel = new ProductsModel();
             productsModel.getObservableProducts(OrderSession.getEnteredOrder().getOrderId());
             ordersModel = new OrdersModel();
@@ -83,6 +84,25 @@ public class ProductFrameController implements IParentAware {
         } catch (Exception e) {
             showError("Error initializing: " + e.getMessage());
 
+        }
+    }
+
+    public void loadProducts() {
+        try {
+            // Clear existing product list
+            vbLeft.getChildren().clear();
+
+            // Reload products from the model
+            productsModel.getObservableProducts(OrderSession.getEnteredOrder().getOrderId());
+
+            // Rebuild the product list UI
+            showProducts();
+
+            // Reset selection state
+            previouslySelectedStack = null;
+            selectedProduct = null;
+        } catch (Exception e) {
+            showError("Error reloading products: " + e.getMessage());
         }
     }
 
