@@ -146,7 +146,7 @@ public class ProductFrameController implements IParentAware {
             }
 
         }
-        
+
         if (productSize == approvedProducts) {
             Orders order = OrderSession.getEnteredOrder();
             order.setApprovalStatus("Approved");
