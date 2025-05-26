@@ -253,7 +253,7 @@ public class ProductFrameController implements IParentAware {
                 ImageView imageView = new ImageView();
                 String photoPath = photo.getPhotoPath();
                 if(photoPath != null) {
-                    imageView.setImage(new Image(new File(photoPath).toString()));
+                    imageView.setImage(new Image(new File(photoPath).toURI().toString()));
                 }
                 imageView.setFitWidth(90);
                 imageView.setFitHeight(90);

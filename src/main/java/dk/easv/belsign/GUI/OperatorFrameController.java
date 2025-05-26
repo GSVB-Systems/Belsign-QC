@@ -20,6 +20,7 @@ import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import org.opencv.photo.Photo;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.List;
 import java.util.Objects;
@@ -128,7 +129,7 @@ public class OperatorFrameController implements IParentAware {
             ImageView imageView = new ImageView();
             imageView.setFitWidth(customPane.getPrefWidth());
             imageView.setFitHeight(260);
-            imageView.setImage(new Image(getClass().getResourceAsStream(photoIndex.getPhotoPath())));
+            imageView.setImage(new Image(new File(photoIndex.getPhotoPath()).toURI().toString()));
             vbox.getChildren().add(imageView);
 
             customPane.setOnMouseClicked(event -> {

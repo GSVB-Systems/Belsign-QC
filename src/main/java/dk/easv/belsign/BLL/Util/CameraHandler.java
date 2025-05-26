@@ -70,17 +70,19 @@ public class  CameraHandler {
 
     public String saveImagesToOrders(Image image, int orderId, int productId, String photo) {
         BufferedImage bufferedImage = SwingFXUtils.fromFXImage(image, null);
-        String basePath = "src/main/resources/dk/easv/belsign/images/Orders";
-        String relativePath = "/dk/easv/belsign/images/Orders";
+        //String basePath = "src/main/resources/dk/easv/belsign/images/Orders";
+        //String relativePath = "/dk/easv/belsign/images/Orders";
 
-        String orderPath = basePath + "/" + orderId;
+        String path = "images/Orders";
+
+        String orderPath = path + "/" + orderId;
         File folder = new File(orderPath);
         if (!folder.exists()) folder.mkdirs();
 
         String imgName = productId + "_" + PhotoSession.getCurrentPhoto().getPhotoName() + ".png";
         File truefile = new File(folder, imgName);
 
-        String returnPath = relativePath + "/" + orderId + "/" + imgName;
+        String returnPath = path + "/" + orderId + "/" + imgName;
 
         try {
             ImageIO.write(bufferedImage, "png", truefile);
