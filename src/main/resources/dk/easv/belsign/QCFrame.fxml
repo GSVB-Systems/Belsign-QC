@@ -31,7 +31,7 @@
                     </children>
                 </VBox>
                 <Region HBox.hgrow="ALWAYS" />
-                <Button alignment="CENTER" mnemonicParsing="false" onAction="#onConfirmPressed" prefHeight="50.0" prefWidth="150.0" text="Confirm">
+                <Button alignment="CENTER" mnemonicParsing="false" onAction="#onConfirmPressed" prefHeight="75.0" prefWidth="200.0" text="Confirm">
                     <HBox.margin>
                         <Insets bottom="10.0" left="50.0" right="10.0" top="10.0" />
                     </HBox.margin>

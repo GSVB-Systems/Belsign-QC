@@ -13,7 +13,7 @@
 <?import javafx.scene.shape.Line?>
 <?import javafx.scene.text.Font?>
 
-<BorderPane style="-fx-background-color: f4f4f4;" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="dk.easv.belsign.GUI.ProductFrameController">
+<BorderPane style="-fx-background-color: f4f4f4;" xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1" fx:controller="dk.easv.belsign.GUI.ProductFrameController">
    <top>
       <HBox alignment="CENTER" prefHeight="55.0" BorderPane.alignment="CENTER">
          <children>
@@ -78,8 +78,8 @@
                         </VBox>
                         <HBox alignment="BOTTOM_RIGHT" spacing="20.0">
                            <children>
-                              <Button fx:id="btnGeneratePDF" alignment="CENTER" mnemonicParsing="false" onAction="#onPDFButtonPressed" prefHeight="50.0" prefWidth="150.0" style="-fx-background-color: D9D9D9;" text="Generate PDF" />
-                              <Button fx:id="btnOpen" alignment="CENTER" mnemonicParsing="false" onAction="#onOpenButtonPressed" prefHeight="50.0" prefWidth="150.0" style="-fx-background-color: D9D9D9;" text="Open Documentation" />
+                              <Button fx:id="btnGeneratePDF" alignment="CENTER" mnemonicParsing="false" onAction="#onPDFButtonPressed" prefHeight="75.0" prefWidth="200.0" style="-fx-background-color: D9D9D9;" text="Generate PDF" />
+                              <Button fx:id="btnOpen" alignment="CENTER" mnemonicParsing="false" onAction="#onOpenButtonPressed" prefHeight="75.0" prefWidth="200.0" style="-fx-background-color: D9D9D9;" text="Open Documentation" />
                            </children>
                         </HBox>
                      </children>

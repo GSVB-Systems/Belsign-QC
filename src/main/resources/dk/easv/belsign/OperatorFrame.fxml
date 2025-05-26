@@ -30,7 +30,7 @@
                      </VBox.margin></Label>
                </children></VBox>
             <Region HBox.hgrow="ALWAYS" />
-            <Button alignment="CENTER" mnemonicParsing="false" onAction="#handleUpload" prefHeight="50.0" prefWidth="150.0" text="Upload">
+            <Button alignment="CENTER" mnemonicParsing="false" onAction="#handleUpload" prefHeight="75.0" prefWidth="200.0" text="Upload">
                <HBox.margin>
                   <Insets bottom="10.0" left="50.0" right="10.0" top="10.0" />
                </HBox.margin></Button>
