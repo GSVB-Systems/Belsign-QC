@@ -65,7 +65,7 @@ public class CameraViewController implements Initializable {
 
         int orderId = OrderSession.getEnteredOrder().getOrderId();
         int productId = ProductSession.getEnteredProduct().getProductId();
-        String photoName = "photo_" + PhotoSession.getCurrentPhoto().getPhotoName();
+        String photoName = PhotoSession.getCurrentPhoto().getPhotoName();
 
         String path = CameraHandler.getInstance().saveImagesToOrders(capturedImage, orderId, productId, photoName);
         close();
