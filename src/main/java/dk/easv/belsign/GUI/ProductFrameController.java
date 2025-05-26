@@ -15,6 +15,7 @@ import javafx.geometry.Insets;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.Separator;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
@@ -219,46 +220,56 @@ public class ProductFrameController implements IParentAware {
             // If no product is selected, return
             if (selectedProduct == null) return;
 
-          for(Photos photo : selectedProduct.getPhotos()) {
-              HBox container = new HBox();
-              container.setSpacing(10);
-              container.setPadding(new Insets(0, 50, 0, 50));
+            List<Photos> photos = selectedProduct.getPhotos();
+            int photoCount = photos.size();
 
+            for(int i = 0; i < photoCount; i++) {
+                Photos photo = photos.get(i);
+                HBox container = new HBox();
+                container.setSpacing(10);
+                container.setPadding(new Insets(0, 50, 0, 50));
 
-              Label label1 = new Label(photo.getPhotoName());
+                Label label1 = new Label(photo.getPhotoName());
 
-              String statusOrComment;
-              if ("Approved".equals(photo.getPhotoStatus()) || "Declined".equals(photo.getPhotoStatus())) {
-                  if (photo.getPhotoComments() != null && !photo.getPhotoComments().isEmpty()) {
-                      statusOrComment = photo.getPhotoStatus() + ", " + photo.getPhotoComments();
-                  } else {
-                      statusOrComment = photo.getPhotoStatus();
-                  }
-              } else {
-                  statusOrComment = photo.getPhotoComments();
-              }
-              Label label2 = new Label(statusOrComment);
+                String statusOrComment;
+                if ("Approved".equals(photo.getPhotoStatus()) || "Declined".equals(photo.getPhotoStatus())) {
+                    if (photo.getPhotoComments() != null && !photo.getPhotoComments().isEmpty()) {
+                        statusOrComment = photo.getPhotoStatus() + ", " + photo.getPhotoComments();
+                    } else {
+                        statusOrComment = photo.getPhotoStatus();
+                    }
+                } else {
+                    statusOrComment = photo.getPhotoComments();
+                }
+                Label label2 = new Label(statusOrComment);
 
+                VBox labelContainer = new VBox();
+                label1.setStyle("-fx-font-size: 24px;");
+                label2.setStyle("-fx-font-size: 24px;");
+                labelContainer.getChildren().addAll(label1, label2);
+                labelContainer.setSpacing(5);
 
-              VBox labelContainer = new VBox();
-              labelContainer.getChildren().addAll(label1, label2);
-              labelContainer.setSpacing(5);
+                ImageView imageView = new ImageView();
+                String photoPath = photo.getPhotoPath();
+                if(photoPath != null) {
+                    imageView.setImage(new Image(new File(photoPath).toString()));
+                }
+                imageView.setFitWidth(90);
+                imageView.setFitHeight(90);
+                imageView.setPreserveRatio(true);
 
+                container.getChildren().addAll(labelContainer, imageView);
+                HBox.setHgrow(labelContainer, Priority.ALWAYS);
 
-              ImageView imageView = new ImageView();
-              String photoPath = photo.getPhotoPath();
-              if( photoPath != null) {
-                  imageView.setImage(new Image(new File(photoPath).toString()));
-              }
-              imageView.setFitWidth(50);
-              imageView.setFitHeight(50);
-              imageView.setPreserveRatio(true);
+                vbRight.getChildren().add(container);
 
-              container.getChildren().addAll(labelContainer, imageView);
-              HBox.setHgrow(labelContainer, Priority.ALWAYS);
-
-              vbRight.getChildren().add(container);
-          }
+                // Add separator after each container except the last one
+                if (i < photoCount - 1) {
+                    Separator separator = new Separator();
+                    separator.setPadding(new Insets(10, 0, 10, 0));
+                    vbRight.getChildren().add(separator);
+                }
+            }
         } catch (Exception e) {
             showError("Error loading image: " + e.getMessage());
             e.printStackTrace();
