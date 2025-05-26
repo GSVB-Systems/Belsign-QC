@@ -202,7 +202,7 @@ public class QCFrameController implements IParentAware{
         // Show the stage
         imageStage.show();
     }
-    
+
 
     private void showError(String message) {
         Alert alert = new Alert(Alert.AlertType.ERROR);
