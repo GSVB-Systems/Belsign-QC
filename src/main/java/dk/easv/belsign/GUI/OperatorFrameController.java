@@ -103,14 +103,13 @@ public class OperatorFrameController implements IParentAware {
 
 
     private Pane createImageBox(boolean includeComboBox, boolean allowAddNewBox, Photos photoIndex) {
-        Pane customPane = null;
-        customPane = new Pane();
-            customPane.setPrefSize(550, 310);
-            customPane.getStyleClass().add("custom-pane");
+        Pane customPane = new Pane();
+        customPane.setPrefSize(550, 310);
+        customPane.getStyleClass().add("custom-pane");
 
-            VBox vbox = new VBox();
-            vbox.setPrefWidth(customPane.getPrefWidth());
-            customPane.getChildren().add(vbox);
+        VBox vbox = new VBox();
+        vbox.setPrefWidth(customPane.getPrefWidth());
+        customPane.getChildren().add(vbox);
 
             if (includeComboBox) {
                 ComboBox<String> comboBox = new ComboBox<>();
@@ -133,26 +132,20 @@ public class OperatorFrameController implements IParentAware {
 
             customPane.setOnMouseClicked(event -> {
                 PhotoSession.setCurrentPhoto(photoIndex);
-
-                Photos newPhoto = openCameraAndCapturePhoto(); // Updated method returning Photos object
-
-                if (newPhoto != null) {
-                    photoIndex.setPhotoPath(newPhoto.getPhotoPath());
-                    System.out.println(photoIndex.getPhotoPath() + "  " + newPhoto.getPhotoPath());
-                    imageView.setImage(new Image(getClass().getResourceAsStream(photoIndex.getPhotoPath())));
-
-
+                CameraViewController controller = SceneService.fullscreen("CameraView.fxml", "Camera");
+                if (controller != null) {
+                    Image capturedImage = controller.getCapturedImage();
+                    if (capturedImage != null) {
+                        photoIndex.setPhotoPath(null);
+                        photoIndex.setPhotoName("Captured");
+                        imageView.setImage(capturedImage);
+                    }
                 }
-
                 if (allowAddNewBox) {
-                    Pane newBox = createImageBox(true, true, newPhoto() );
+                    Pane newBox = createImageBox(true, true, newPhoto());
                     fpFlowpane.getChildren().add(newBox);
-
                 }
-
-
             });
-
 
 
         return customPane;

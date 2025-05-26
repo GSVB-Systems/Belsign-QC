@@ -76,6 +76,10 @@ public class CameraViewController implements Initializable {
 
 
             // 2. Optional: store in controller too
+            capturedPhoto = new Photos();
+            capturedPhoto.setPhotoPath(path);
+            capturedPhoto.setPhotoName(photoName);
+            capturedPhoto.setProductId(productId);
 
         }
     }
