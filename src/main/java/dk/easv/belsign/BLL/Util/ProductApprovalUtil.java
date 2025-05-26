@@ -92,4 +92,70 @@ public class ProductApprovalUtil {
                 return product.getProductStatus();
         }
     }
+
+    public void approveProduct(Products product, int approvedBy) {
+        if (product == null) {
+            throw new IllegalArgumentException("Product cannot be null");
+        }
+
+        List<Photos> photos = product.getPhotos();
+
+        // Check that all photos are approved
+        if (photos != null && !photos.isEmpty()) {
+            for (Photos photo : photos) {
+                if (!"Approved".equalsIgnoreCase(photo.getPhotoStatus())) {
+                    throw new IllegalStateException("Cannot approve product: Not all photos are approved");
+                }
+            }
+        }
+
+        // Set product as approved
+        product.setProductStatus("Approved");
+        product.setApprovalDate(LocalDateTime.now());
+        product.setApprovedBy(approvedBy);
+
+        try {
+            // Persist the change
+            productsModel.updateProduct(product);
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to update product", e);
+        }
+    }
+
+    public void rejectProduct(Products product) {
+        if (product == null) {
+            throw new IllegalArgumentException("Product cannot be null");
+        }
+
+        List<Photos> photos = product.getPhotos();
+
+        if (photos == null || photos.isEmpty()) {
+            throw new IllegalStateException("Cannot reject product: No photos associated with this product");
+        }
+
+        boolean hasDeclinedPhoto = false;
+
+        for (Photos photo : photos) {
+            String status = photo.getPhotoStatus();
+            if ("Rejected".equalsIgnoreCase(status) || "Declined".equalsIgnoreCase(status)) {
+                hasDeclinedPhoto = true;
+                break;
+            }
+        }
+
+        if (!hasDeclinedPhoto) {
+            throw new IllegalStateException("Cannot reject product: No photos are declined");
+        }
+
+        // Set product as rejected
+        product.setProductStatus("Rejected");
+        product.setApprovalDate(LocalDateTime.now());
+
+        try {
+            // Persist the change
+            productsModel.updateProduct(product);
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to update product", e);
+        }
+    }
 }

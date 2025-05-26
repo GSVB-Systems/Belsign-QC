@@ -19,7 +19,7 @@ class ProductApprovalUtilTest {
     private ProductApprovalUtil productApprovalUtil;
 
     @BeforeEach
-    void setUp() {
+    void setUp() throws Exception {
         productApprovalUtil = new ProductApprovalUtil(null);
         testProduct = new Products(1, 1, "Test Product", 5, 10, "Pending");
 
