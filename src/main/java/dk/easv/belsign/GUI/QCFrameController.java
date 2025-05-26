@@ -17,6 +17,7 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
 
+import java.io.File;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -104,7 +105,7 @@ public class QCFrameController implements IParentAware{
             hbox1.getChildren().add(label);
 
             String imagePath = photo.getPhotoPath();
-            Image finalImage = new Image(Objects.requireNonNull(getClass().getResourceAsStream(imagePath)));
+            Image finalImage = new Image(new File(imagePath).toURI().toString());
 
             Photos currentPhoto = photo;
 
@@ -170,7 +171,7 @@ public class QCFrameController implements IParentAware{
             ImageView imageViewEvent = new ImageView();
             imageViewEvent.setFitWidth(customPane1.getPrefWidth());
             imageViewEvent.setFitHeight(260);
-            image = new Image(Objects.requireNonNull(getClass().getResourceAsStream(photo.getPhotoPath())));
+            image = new Image(new File(photo.getPhotoPath()).toURI().toString());
             imageViewEvent.setImage(image);
             vbox1.getChildren().add(imageViewEvent);
 
