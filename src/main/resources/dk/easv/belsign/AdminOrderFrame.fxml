@@ -66,7 +66,7 @@
                 </HBox>
                 <TableView fx:id="tblOrders" VBox.vgrow="ALWAYS">
                     <columns>
-                        <TableColumn minWidth="100.0" prefWidth="-1.0" text="Order Id" />
+                        <TableColumn minWidth="100.0" prefWidth="-1.0" text="Order Id" fx:id="colOrderId" />
                     </columns>
                 </TableView>
             </children>
