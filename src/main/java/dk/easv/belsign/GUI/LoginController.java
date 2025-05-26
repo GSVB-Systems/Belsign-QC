@@ -51,7 +51,7 @@ public class LoginController implements IParentAware {
             txtPassword.setVisible(!isPwShown);
             txtPassword.setManaged(!isPwShown);
 
-            btnShowPw.setText(isPwShown ? "👀" : "🫣");
+            btnShowPw.setText(isPwShown ? "🔒" : "👀");
         });
 
         txtPassword.setOnKeyPressed(event -> {

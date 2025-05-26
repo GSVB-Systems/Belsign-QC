@@ -78,8 +78,14 @@
                         </VBox>
                         <HBox alignment="BOTTOM_RIGHT" spacing="20.0">
                            <children>
-                              <Button fx:id="btnGeneratePDF" alignment="CENTER" mnemonicParsing="false" onAction="#onPDFButtonPressed" prefHeight="75.0" prefWidth="200.0" style="-fx-background-color: D9D9D9;" text="Generate PDF" />
-                              <Button fx:id="btnOpen" alignment="CENTER" mnemonicParsing="false" onAction="#onOpenButtonPressed" prefHeight="75.0" prefWidth="200.0" style="-fx-background-color: D9D9D9;" text="Open Documentation" />
+                              <Button fx:id="btnGeneratePDF" alignment="CENTER" mnemonicParsing="false" onAction="#onPDFButtonPressed" prefHeight="125.0" prefWidth="300.0" style="-fx-background-color: D9D9D9;" text="Generate PDF">
+                                 <font>
+                                    <Font size="24.0" />
+                                 </font></Button>
+                              <Button fx:id="btnOpen" alignment="CENTER" mnemonicParsing="false" onAction="#onOpenButtonPressed" prefHeight="125.0" prefWidth="300.0" style="-fx-background-color: D9D9D9;" text="Open Documentation">
+                                 <font>
+                                    <Font size="24.0" />
+                                 </font></Button>
                            </children>
                         </HBox>
                      </children>
