@@ -8,7 +8,9 @@ import dk.easv.belsign.Models.PhotosModel;
 import dk.easv.belsign.Models.ProductsModel;
 import dk.easv.belsign.Models.UsersModel;
 import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.scene.control.Alert;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
@@ -152,5 +154,14 @@ public class AdminFrameController implements IParentAware {
         alert.setHeaderText(null);
         alert.setContentText(message);
         alert.showAndWait();
+    }
+
+    @FXML
+    private void openAdminUserFrame(ActionEvent actionEvent) {
+        try {
+            parent.fillMainPane(new FXMLLoader(getClass().getResource("/dk/easv/belsign/AdminUserFrame.fxml")));
+        } catch (Exception e) {
+            showError("Failed to load Admin User Frame, contact system administrator: " + e.getMessage());
+        }
     }
 }
