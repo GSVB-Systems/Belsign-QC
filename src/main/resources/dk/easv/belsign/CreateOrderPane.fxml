@@ -1,15 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.control.Button?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.FlowPane?>
 
-
-<AnchorPane prefHeight="561.0" prefWidth="967.0" xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1" fx:controller="dk.easv.belsign.CreateOrderPane">
+<?import javafx.scene.control.Button?>
+<AnchorPane prefHeight="561.0" prefWidth="967.0" xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1" fx:controller="dk.easv.belsign.GUI.CreateOrderController">
    <children>
-      <TextField layoutX="226.0" layoutY="81.0" />
-      <Button layoutX="174.0" layoutY="325.0" mnemonicParsing="false" text="Button" />
-      <Button layoutX="340.0" layoutY="325.0" mnemonicParsing="false" text="Button" />
-      <Button layoutX="568.0" layoutY="325.0" mnemonicParsing="false" text="Button" />
+      <TextField fx:id="txfOrderId" layoutX="152.0" layoutY="29.0" />
+      <FlowPane fx:id="fpProducts" layoutX="158.0" layoutY="116.0" prefHeight="200.0" prefWidth="200.0" />
+      <Button onAction="#addProduct" layoutX="158.0" layoutY="88.0" mnemonicParsing="false" text="Add Product" />
    </children>
 </AnchorPane>

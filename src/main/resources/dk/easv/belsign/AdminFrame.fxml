@@ -21,7 +21,7 @@
                           <children>
                               <Text text="Orders" />
                               <Region prefHeight="26.0" prefWidth="40.0" />
-                              <Button prefHeight="25.0" prefWidth="42.0" text="+" />
+                              <Button onAction="#openCreateOrder" prefHeight="25.0" prefWidth="42.0" text="+" />
                           </children>
                       </HBox>
                       <TableView fx:id="tblOrders" VBox.vgrow="ALWAYS">
