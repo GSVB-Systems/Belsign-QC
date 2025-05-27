@@ -1,9 +1,13 @@
 package dk.easv.belsign.GUI;
 
 import dk.easv.belsign.BE.Orders;
+import dk.easv.belsign.BE.Photos;
 import dk.easv.belsign.BE.Products;
 import dk.easv.belsign.Models.OrdersModel;
+import dk.easv.belsign.Models.PhotosModel;
 import dk.easv.belsign.Models.ProductsModel;
+import dk.easv.belsign.Models.UsersModel;
+import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
 import javafx.scene.control.TableColumn;
@@ -13,6 +17,8 @@ import javafx.scene.control.cell.PropertyValueFactory;
 public class AdminFrameController implements IParentAware {
     private OrdersModel ordersModel;
     private ProductsModel productsModel;
+    private PhotosModel photosModel;
+    private UsersModel usersModel;
     private MainframeController parent;
 
     @FXML
@@ -20,7 +26,7 @@ public class AdminFrameController implements IParentAware {
     @FXML
     private TableView<Products> tblProducts;
     @FXML
-    private TableView<Products> tblInformation;
+    private TableView<Photos> tblPhotos;
     @FXML
     private TableColumn colOrderId;
     @FXML
@@ -30,7 +36,7 @@ public class AdminFrameController implements IParentAware {
     @FXML
     private TableColumn colSize;
     @FXML
-    private TableColumn colPhotos;
+    private TableColumn colPhotoName;
     @FXML
     private TableColumn colPhotoStatus;
     @FXML
@@ -45,6 +51,7 @@ public class AdminFrameController implements IParentAware {
     private int selectedOrderId;
     private int selectedProductId;
 
+
     @Override
     public void setParent(MainframeController parent) {
         this.parent = parent;
@@ -57,6 +64,8 @@ public class AdminFrameController implements IParentAware {
         try {
             this.ordersModel = new OrdersModel();
             this.productsModel = new ProductsModel();
+            this.photosModel = new PhotosModel();
+            this.usersModel = new UsersModel();
 
         } catch (Exception e) {
             showError("Failed to initialize OrdersModel: ");
@@ -64,8 +73,7 @@ public class AdminFrameController implements IParentAware {
         }
 
         DisplayOrders();
-        //DisplayProducts();
-        //DisplayInformation();
+
     }
 
 
@@ -83,7 +91,6 @@ public class AdminFrameController implements IParentAware {
                 selectedOrderId = selectedOrder.getOrderId();
                 try {
                     DisplayProducts();
-                    DisplayInformation();
                 } catch (Exception e) {
                     throw new RuntimeException(e);
                 }
@@ -100,16 +107,42 @@ public class AdminFrameController implements IParentAware {
          colProductId.setCellValueFactory(new PropertyValueFactory<>("productId"));
          colProductName.setCellValueFactory(new PropertyValueFactory<>("productName"));
          colSize.setCellValueFactory(new PropertyValueFactory<>("size"));
+         colApprovedBy.setCellValueFactory(new PropertyValueFactory<>("approvedBy"));
+         colApprovalDate.setCellValueFactory(new PropertyValueFactory<>("approvalDate"));
+         colProductStatus.setCellValueFactory(new PropertyValueFactory<>("productStatus"));
+
+        tblProducts.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
+            if (newValue != null) {
+                selectedProduct = newValue;
+                selectedProductId = selectedProduct.getProductId();
+                try {
+
+                    DisplayPhotos();
+                } catch (Exception e) {
+                    throw new RuntimeException(e);
+                }
+            }
+        });
+
+
+
     }
 
-    private void DisplayInformation() throws Exception {
+    private void DisplayPhotos() throws Exception {
 
-        tblInformation.setItems(productsModel.getObservableProducts(selectedOrderId));
+        tblPhotos.setItems(productsModel.getObservablePhotos(selectedProduct));
+        colPhotoName.setCellValueFactory(new PropertyValueFactory<>("photoName"));
         colPhotoStatus.setCellValueFactory(new PropertyValueFactory<>("photoStatus"));
-        colApprovedBy.setCellValueFactory(new PropertyValueFactory<>("approvedBy"));
-        colApprovalDate.setCellValueFactory(new PropertyValueFactory<>("approvalDate"));
-        colProductStatus.setCellValueFactory(new PropertyValueFactory<>("productStatus"));
-    }
+        colApprovedBy.setCellValueFactory(cellData -> {
+            int approvedById = selectedProduct.getApprovedBy();
+            try {
+                String approvedByName = usersModel.getUserById(approvedById).getLastName() + ", "
+                        + usersModel.getUserById(approvedById).getFirstName();
+                return new javafx.beans.property.SimpleStringProperty(approvedByName);
+            } catch (Exception e) {
+                return new javafx.beans.property.SimpleStringProperty("Unknown");
+            }
+        });    }
 
 
     //Til Exception handeling - prompter en Alarm popup til GUI

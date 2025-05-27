@@ -41,6 +41,8 @@
                               <TableColumn fx:id="colProductName" minWidth="120.0" prefWidth="-1.0" text="Product Name" />
                               <TableColumn visible="false" fx:id="colQuantity" minWidth="120.0" prefWidth="-1.0" text="Quantity" />
                               <TableColumn fx:id="colSize" minWidth="120.0" prefWidth="-1.0" text="Size" />
+                              <TableColumn fx:id="colApprovalDate" minWidth="120.0" prefWidth="-1.0" text="Approval date" />
+                              <TableColumn fx:id="colProductStatus" minWidth="120.0" prefWidth="-1.0" text="Product status" />
                           </columns>
                       </TableView>
                   </children>
@@ -48,13 +50,12 @@
               <VBox HBox.hgrow="ALWAYS">
                   <children>
                       <Region prefHeight="9.0" />
-                      <Text text="Product information" />
-                      <TableView fx:id="tblInformation" VBox.vgrow="ALWAYS">
+                      <Text text="Photos" />
+                      <TableView fx:id="tblPhotos" VBox.vgrow="ALWAYS">
                           <columns>
                               <TableColumn fx:id="colPhotoStatus" minWidth="120.0" prefWidth="-1.0" text="Photo status" />
+                                <TableColumn fx:id="colPhotoName" minWidth="120.0" prefWidth="-1.0" text="Photo Name" />
                               <TableColumn fx:id="colApprovedBy" minWidth="120.0" prefWidth="-1.0" text="Approved by" />
-                              <TableColumn fx:id="colApprovalDate" minWidth="120.0" prefWidth="-1.0" text="Approval date" />
-                              <TableColumn fx:id="colProductStatus" minWidth="120.0" prefWidth="-1.0" text="Product status" />
                           </columns>
                       </TableView>
                   </children>

@@ -11,6 +11,7 @@ import java.util.List;
 public class ProductsModel {
 
     private final ObservableList<Products> observableProducts;
+    private ObservableList<Photos> observablePhotos;
     private final ProductsManager productsManager;
 
 
@@ -18,6 +19,12 @@ public class ProductsModel {
         this.productsManager = new ProductsManager();
         observableProducts = FXCollections.observableArrayList();
 
+
+    }
+
+    public ObservableList<Photos> getObservablePhotos(Products product) {
+        observablePhotos = FXCollections.observableArrayList(product.getPhotos());
+        return observablePhotos;
     }
 
 
