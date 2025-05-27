@@ -30,8 +30,11 @@ public class ExceptionHandler {
         logger.log(Level.WARNING,"Logic Error: " + e.getMessage(), e);
     }
 
-    public static void handleUnexpectedExeption(Exception e) {
+    public static void handleUnexpectedException(Exception e) {
         logger.log(Level.SEVERE, "Unexpected Error: " + e.getMessage(), e);
     }
 
+    public static Logger getLogger() {
+        return logger;
+    }
 }

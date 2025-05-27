@@ -53,35 +53,35 @@ public class  CameraHandler {
     }
 
     public Image capturePic() {
-        if(!openCamera()) {
-            System.err.println("Failed To capture picture.");
-            return null;
-        }
-        Mat frame = new Mat();
-        boolean success = capture.read(frame);
-        if(!success || frame.empty()) {
-            System.err.println("Failed to capture pic.");
-            return null;
-        }
+        try {
+            if (!openCamera()) {
+                throw new Exception("Failed to open camera.");
+            }
 
-        Core.flip(frame, frame, 1);
-        return matToImage(frame);
+            Mat frame = new Mat();
+            boolean success = capture.read(frame);
+
+            if (!success || frame.empty()) {
+                throw new Exception("Camera returned an empty or unreadable frame.");
+            }
+
+            Core.flip(frame, frame, 1);
+            return matToImage(frame);
+        } catch (Exception e) {
+            ExceptionHandler.handleUnexpectedException(e);
+            return null;
+        }
     }
 
     public String saveImagesToOrders(Image image, int orderId, int productId, String photo) {
         BufferedImage bufferedImage = SwingFXUtils.fromFXImage(image, null);
-        //String basePath = "src/main/resources/dk/easv/belsign/images/Orders";
-        //String relativePath = "/dk/easv/belsign/images/Orders";
-
         String path = "images/Orders";
-
         String orderPath = path + "/" + orderId;
         File folder = new File(orderPath);
         if (!folder.exists()) folder.mkdirs();
 
         String imgName = productId + "_" + PhotoSession.getCurrentPhoto().getPhotoName() + ".png";
         File truefile = new File(folder, imgName);
-
         String returnPath = path + "/" + orderId + "/" + imgName;
 
         try {
@@ -89,11 +89,10 @@ public class  CameraHandler {
             System.out.println("Success! Saved to: " + truefile.getAbsolutePath());
             return returnPath;
         } catch (IOException e) {
-            System.err.println("Error saving image " + e.getMessage());
+            ExceptionHandler.handleUnexpectedException(e);
             return null;
         }
     }
-
 
     public boolean openCamera() {
         if (capture == null) {

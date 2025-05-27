@@ -52,7 +52,7 @@ public class LoginValidator {
             return false;
 
         } catch (Exception e) {
-            ExceptionHandler.handleUnexpectedExeption(e);
+            ExceptionHandler.handleUnexpectedException(e);
             return false;
         }
     }

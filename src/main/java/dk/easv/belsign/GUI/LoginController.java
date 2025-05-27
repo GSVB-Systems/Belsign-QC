@@ -1,9 +1,11 @@
 package dk.easv.belsign.GUI;
 
 
+import dk.easv.belsign.BE.Users;
 import dk.easv.belsign.BLL.Util.ExceptionHandler;
 import dk.easv.belsign.BLL.Util.LoginValidator;
 import dk.easv.belsign.BLL.Util.OrderValidator;
+import dk.easv.belsign.BLL.Util.UserSession;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -93,7 +95,7 @@ public class LoginController implements IParentAware {
             }
 
         } catch (Exception e) {
-            ExceptionHandler.handleUnexpectedExeption(e);
+            ExceptionHandler.handleUnexpectedException(e);
             showError("Input error :<");
         }
     }
@@ -101,9 +103,13 @@ public class LoginController implements IParentAware {
     //temp metode til at sende videre til main app
     private void goToApp() {
         try {
-            parent.fillMainPane(new FXMLLoader(getClass().getResource("/dk/easv/belsign/OrderSelection.fxml")));
+            if (UserSession.getLoggedInUser().getRoleId() == 3) {
+                parent.fillMainPane(new FXMLLoader(getClass().getResource("/dk/easv/belsign/AdminFrame.fxml")));
+            } else {
+                parent.fillMainPane(new FXMLLoader(getClass().getResource("/dk/easv/belsign/OrderSelection.fxml")));
+            }
         } catch (Exception e) {
-            ExceptionHandler.handleUnexpectedExeption(e);
+            ExceptionHandler.handleUnexpectedException(e);
             showError("Couldnt load Main app, which means we are COOKED LOOK INSIDE LOGIN CONTROLLER" + e.getMessage());
         }
     }

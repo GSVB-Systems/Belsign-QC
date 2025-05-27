@@ -8,6 +8,7 @@ import javafx.stage.Stage;
 
 import java.io.IOException;
 import java.net.URL;
+import java.util.logging.Level;
 
 public class SceneService {
 
@@ -22,17 +23,18 @@ public class SceneService {
         }
     }
 
-    //selve loaderen
     public static <T> ViewTuple<T> load(String fxmlPath) {
-        try{
+        try {
             FXMLLoader loader = new FXMLLoader(SceneService.class.getResource(fxmlPath));
             Parent root = loader.load();
             T controller = loader.getController();
             return new ViewTuple<>(root, controller);
         } catch (IOException e) {
-            throw new RuntimeException("Couldnt load FXML" + fxmlPath, e);
+            ExceptionHandler.getLogger().log(Level.SEVERE, "Failed to load FXML: " + fxmlPath, e);
+            throw new RuntimeException("Couldn't load FXML: " + fxmlPath, e);
         }
     }
+
 
     //til et lille popup vindue
     public static <T> T openSmallPopup(String fxmlPath, String title) {
@@ -45,13 +47,15 @@ public class SceneService {
         return tuple.controller;
     }
 
-    //til fullscreen, kommer til at blive brugt sammen med cam.
     public static <T> T fullscreen(String fxmlPath, String title) {
         try {
             URL resource = SceneService.class.getResource("/dk/easv/belsign/" + fxmlPath);
             if (resource == null) {
-                throw new RuntimeException("FXML file not found: " + fxmlPath);
+                String msg = "FXML file not found: " + fxmlPath;
+                ExceptionHandler.getLogger().severe(msg);
+                throw new RuntimeException(msg);
             }
+
             FXMLLoader loader = new FXMLLoader(resource);
             Parent root = loader.load();
             T controller = loader.getController();
@@ -65,8 +69,8 @@ public class SceneService {
 
             return controller;
         } catch (IOException e) {
+            ExceptionHandler.getLogger().log(Level.SEVERE, "Error loading fullscreen FXML: " + fxmlPath, e);
             throw new RuntimeException("Error loading FXML: " + fxmlPath, e);
         }
     }
-
 }

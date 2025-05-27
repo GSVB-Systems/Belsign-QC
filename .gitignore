@@ -39,3 +39,5 @@ build/
 
 /config/config.settings
 /lib/
+application.log
+application.log.lck

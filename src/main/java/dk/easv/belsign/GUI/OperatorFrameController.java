@@ -115,7 +115,7 @@ public class OperatorFrameController implements IParentAware {
 
             if (includeComboBox) {
                 ComboBox<String> comboBox = new ComboBox<>();
-                comboBox.getItems().addAll("Front", "Back", "Left", "Right", "Top", "Cosmetic Damage", "Other");
+                comboBox.getItems().addAll("Front 2", "Back 2", "Left 2", "Right 2", "Top 2", "Cosmetic Damage", "Other");
                 vbox.getChildren().add(comboBox);
                 comboBox.setOnAction(event -> {
                     String selectedTag = comboBox.getValue();
