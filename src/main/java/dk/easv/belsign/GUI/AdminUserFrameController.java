@@ -11,7 +11,8 @@ import javafx.stage.Stage;
 
 import java.io.IOException;
 
-public class AdminUserFrameController {
+public class AdminUserFrameController implements IParentAware {
+    private MainframeController parent;
     @FXML
     private Button btnCreateUser;
     @FXML
@@ -19,6 +20,11 @@ public class AdminUserFrameController {
     @FXML
     private Button btnDeleteUser;
 
+    @Override
+    public void setParent(MainframeController parent) {
+        this.parent = parent;
+        parent.setBtnLogout(true);
+    }
 
     public void onCreateUserButtonClicked(ActionEvent actionEvent) throws IOException {
         FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/dk/easv/belsign/CreateUserFrame.fxml"));
@@ -33,5 +39,14 @@ public class AdminUserFrameController {
 
         stage.initModality(Modality.APPLICATION_MODAL);
         stage.show();
+    }
+
+    @FXML
+    private void openAdminFrame(ActionEvent actionEvent) {
+        try {
+            parent.fillMainPane(new FXMLLoader(getClass().getResource("/dk/easv/belsign/AdminFrame.fxml")));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }
