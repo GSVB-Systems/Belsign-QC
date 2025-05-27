@@ -59,7 +59,7 @@ public class AdminFrameController implements IParentAware {
             this.productsModel = new ProductsModel();
 
         } catch (Exception e) {
-            showError("Failed to initialize OrdersModel: ");
+            showError("Failed to initialize OrdersModel - Contact System Administrator: ");
             e.printStackTrace();
         }
 
@@ -115,7 +115,7 @@ public class AdminFrameController implements IParentAware {
     //Til Exception handeling - prompter en Alarm popup til GUI
     private void showError(String message) {
         Alert alert = new Alert(Alert.AlertType.ERROR);
-        alert.setTitle("Login Error");
+        alert.setTitle("Admin Error!");
         alert.setHeaderText(null);
         alert.setContentText(message);
         alert.showAndWait();

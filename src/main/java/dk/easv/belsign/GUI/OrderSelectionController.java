@@ -51,7 +51,7 @@ public class OrderSelectionController implements IParentAware {
 
 
         } catch (Exception e) {
-            showError("order not found");
+            showError("Order not found, make sure you type the right orderID - remove dashes.");
         }
     }
     //Til Exception handeling - prompter en Alarm popup til GUI

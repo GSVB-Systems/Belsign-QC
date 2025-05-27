@@ -57,18 +57,10 @@ public class MainframeController {
 
             } catch (
                     IOException e) {
-                showError("Failed to go to real app, sums up");
+                showError("Failed to go to real application - Contact System Administrator!");
             }
         }
 
-    //Til Exception handeling - prompter en Alarm popup til GUI
-    private void showError(String message) {
-        Alert alert = new Alert(Alert.AlertType.ERROR);
-        alert.setTitle("Login Error");
-        alert.setHeaderText(null);
-        alert.setContentText(message);
-        alert.showAndWait();
-    }
 
     @FXML
     private void handleLogOut(ActionEvent event) throws IOException {
@@ -80,5 +72,15 @@ public class MainframeController {
             showError("Failed to log out: " + e.getMessage());
         }
     }
+
+    //Til Exception handeling - prompter en Alarm popup til GUI
+    private void showError(String message) {
+        Alert alert = new Alert(Alert.AlertType.ERROR);
+        alert.setTitle("Login Error");
+        alert.setHeaderText(null);
+        alert.setContentText(message);
+        alert.showAndWait();
+    }
+
 }
 

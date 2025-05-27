@@ -50,7 +50,7 @@ public class OperatorFrameController implements IParentAware {
         try {
             this.photosModel = new PhotosModel();
         } catch (Exception e) {
-            showError("Failed to initialize ProductsModel: " + e.getMessage());
+            showError("Failed to initialize ProductsModel - Contact System Administrator: " + e.getMessage());
             e.printStackTrace();
         }
     }
@@ -96,7 +96,7 @@ public class OperatorFrameController implements IParentAware {
     private Photos openCameraAndCapturePhoto() {
         CameraViewController controller = SceneService.fullscreen("CameraView.fxml", "Camera");
         if (controller == null) {
-            System.err.println("Failed to load Camera view.");
+            showError("Failed to load Camera - Contact System Administrator");
             return null;
         }
 
@@ -178,7 +178,7 @@ public class OperatorFrameController implements IParentAware {
 
     private void showError(String message) {
         Alert alert = new Alert(Alert.AlertType.ERROR);
-        alert.setTitle("Error");
+        alert.setTitle("Operator Error!");
         alert.setHeaderText(null);
         alert.setContentText(message);
         alert.showAndWait();

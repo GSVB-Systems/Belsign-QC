@@ -82,7 +82,7 @@ public class ProductFrameController implements IParentAware {
             showProducts();
             // Don't show images on init - wait for selection
         } catch (Exception e) {
-            showError("Error initializing: " + e.getMessage());
+            showError("Failed to initialize Productframe, contact system Administrator: " + e.getMessage());
 
         }
     }
@@ -131,7 +131,7 @@ public class ProductFrameController implements IParentAware {
             }
             OrderApproval(productsList);
         } catch (Exception e) {
-            showError("Error loading products: " + e.getMessage());
+            showError("Failed to load products, contact system administrator: " + e.getMessage());
 
         }
     }
@@ -156,7 +156,7 @@ public class ProductFrameController implements IParentAware {
             try {
                 ordersModel.createOrderApproval(order);
             } catch (Exception e) {
-                showError("Error creating order approval: ");
+                showError("Error creating order approval, Contact system Administrator");
 
 
             }
@@ -180,7 +180,7 @@ public class ProductFrameController implements IParentAware {
             } else {
                 lblApprovedBy.setText("...");
             }        } catch (Exception e) {
-            showError("Error updating order title: " + e.getMessage());
+            showError("Error updating order title, Contact system Administrator: " + e.getMessage());
         }
 
         // Clear previous selection highlight
@@ -272,7 +272,7 @@ public class ProductFrameController implements IParentAware {
                 }
             }
         } catch (Exception e) {
-            showError("Error loading image: " + e.getMessage());
+            showError("Error loading image, contact system Administrator: " + e.getMessage());
             e.printStackTrace();
         }
     }
@@ -314,13 +314,6 @@ public class ProductFrameController implements IParentAware {
         }
     }
 
-    private void showError(String message) {
-        Alert alert = new Alert(Alert.AlertType.ERROR);
-        alert.setTitle("PDF Generation Error");
-        alert.setHeaderText(null);
-        alert.setContentText(message);
-        alert.showAndWait();
-    }
     public void onPDFButtonPressed(ActionEvent actionEvent) {
         if(OrderSession.getEnteredOrder().getApprovalStatus() == "Approved") {
             try{
@@ -335,5 +328,13 @@ public class ProductFrameController implements IParentAware {
             showError("Order not approved - Order needs to be approved before generating PDF");
         }
 
+    }
+
+    private void showError(String message) {
+        Alert alert = new Alert(Alert.AlertType.ERROR);
+        alert.setTitle("Product Selection Error");
+        alert.setHeaderText(null);
+        alert.setContentText(message);
+        alert.showAndWait();
     }
 }

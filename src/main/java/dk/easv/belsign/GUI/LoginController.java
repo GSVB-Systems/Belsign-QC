@@ -96,7 +96,7 @@ public class LoginController implements IParentAware {
 
         } catch (Exception e) {
             ExceptionHandler.handleUnexpectedException(e);
-            showError("Input error :<");
+            showError("Input Error: Use your UserID to login");
         }
     }
 
@@ -110,7 +110,7 @@ public class LoginController implements IParentAware {
             }
         } catch (Exception e) {
             ExceptionHandler.handleUnexpectedException(e);
-            showError("Couldnt load Main app, which means we are COOKED LOOK INSIDE LOGIN CONTROLLER" + e.getMessage());
+            showError("Failed to load main Application, contact system administrator: " + e.getMessage());
         }
     }
 
