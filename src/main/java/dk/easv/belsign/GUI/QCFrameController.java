@@ -204,15 +204,6 @@ public class QCFrameController implements IParentAware{
         imageStage.show();
     }
 
-
-    private void showError(String message) {
-        Alert alert = new Alert(Alert.AlertType.ERROR);
-        alert.setTitle("PDF Generation Error");
-        alert.setHeaderText(null);
-        alert.setContentText(message);
-        alert.showAndWait();
-    }
-
     private void updatePhotoStatus(Photos photo, String status) {
         try {
             photo.setPhotoStatus(status);
@@ -239,5 +230,13 @@ public class QCFrameController implements IParentAware{
                 ((IParentAware) controller).setParent(parent);
             }
         }
+    }
+
+    private void showError(String message) {
+        Alert alert = new Alert(Alert.AlertType.ERROR);
+        alert.setTitle("Quality Controller Error");
+        alert.setHeaderText(null);
+        alert.setContentText(message);
+        alert.showAndWait();
     }
 }

@@ -8,6 +8,7 @@ import dk.easv.belsign.BLL.Util.ProductSession;
 import javafx.animation.AnimationTimer;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.control.Alert;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.StackPane;
@@ -40,7 +41,7 @@ public class CameraViewController implements Initializable {
 
         boolean opened = CameraHandler.getInstance().openCamera();
         if (!opened) {
-            System.err.println("Cant Open!");
+            showError("Cant Open Camera - Contact system Administrator!");
             return;
         }
 
@@ -57,6 +58,7 @@ public class CameraViewController implements Initializable {
         //viser feedet i imageviewet
         timer.start();
     }
+
 
     @FXML
     private void onCap() {
@@ -96,6 +98,15 @@ public class CameraViewController implements Initializable {
 
     public Photos getCapturedPhoto() {
         return capturedPhoto;
+    }
+
+    //Til Exception handeling - prompter en Alarm popup til GUI
+    private void showError(String message) {
+        Alert alert = new Alert(Alert.AlertType.ERROR);
+        alert.setTitle("Camera Error");
+        alert.setHeaderText(null);
+        alert.setContentText(message);
+        alert.showAndWait();
     }
 
 }

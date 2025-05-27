@@ -7,6 +7,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Camera;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
 import javafx.scene.image.Image;
 import javafx.stage.Stage;
 
@@ -29,7 +30,7 @@ public class Belsign extends Application {
             if (cssPath != null) {
                 scene.getStylesheets().add(cssPath);
             } else {
-                System.err.println("CSS file not found: /dk/easv/belsign/style.css");
+                showError("CSS file not found: /dk/easv/belsign/style.css");
             }
 
             stage.setTitle("Belsign");
@@ -42,7 +43,7 @@ public class Belsign extends Application {
 
         } catch (IOException e) {
             e.printStackTrace();
-            System.err.println("Failed to load the main application window.");
+            showError("Failed to load the main application window - contact the system administrator immediately");
         }
     }
 
@@ -55,5 +56,13 @@ public class Belsign extends Application {
         // Explicitly shutdown all registered executor services
         ThreadShutdownUtil.getInstance().shutdownAll();
         System.out.println("Application stopped");
+    }
+    //Til Exception handeling - prompter en Alarm popup til GUI
+    private void showError(String message) {
+        Alert alert = new Alert(Alert.AlertType.ERROR);
+        alert.setTitle("General Error");
+        alert.setHeaderText(null);
+        alert.setContentText(message);
+        alert.showAndWait();
     }
 }
