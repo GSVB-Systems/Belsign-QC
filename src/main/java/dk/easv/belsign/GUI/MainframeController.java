@@ -12,6 +12,7 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.layout.Pane;
+import javafx.scene.layout.StackPane;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 
@@ -20,8 +21,9 @@ import java.io.IOException;
 
 public class MainframeController {
 
-    @FXML
-        private Pane mainPane;
+
+        @FXML
+        private StackPane mainPane;
         @FXML
         private Text txtOrder;
         @FXML
@@ -80,6 +82,10 @@ public class MainframeController {
         alert.setHeaderText(null);
         alert.setContentText(message);
         alert.showAndWait();
+    }
+
+    public Pane getMainPane() {
+        return mainPane;
     }
 
 }

@@ -3,6 +3,8 @@ package dk.easv.belsign.GUI;
 import dk.easv.belsign.BE.Orders;
 import dk.easv.belsign.BE.Photos;
 import dk.easv.belsign.BE.Products;
+import dk.easv.belsign.BLL.Util.ExceptionHandler;
+import dk.easv.belsign.BLL.Util.SceneService;
 import dk.easv.belsign.Models.OrdersModel;
 import dk.easv.belsign.Models.PhotosModel;
 import dk.easv.belsign.Models.ProductsModel;
@@ -172,13 +174,13 @@ public class AdminFrameController implements IParentAware {
     }
 
     @FXML
-    private void openCreateOrder(ActionEvent actionEvent) throws IOException {
-        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/dk/easv/belsign/CreateOrderPane.fxml"));
-        Parent root = fxmlLoader.load();
-        Scene scene = new Scene(root);
-        Stage stage = new Stage();
-        stage.setScene(scene);
-        stage.initModality(Modality.APPLICATION_MODAL);
-        stage.show();
+    private void openCreateOrder(ActionEvent actionEvent) {
+        try {
+            String fxmlPath = "/dk/easv/belsign/CreateOrderPane.fxml";
+            SceneService.openModalWindow(fxmlPath, "Create Order", 600, 400);
+        } catch (Exception e) {
+            ExceptionHandler.handleUnexpectedException(e);
+            showError("Failed to open the Create Order window: " + e.getMessage());
+        }
     }
 }

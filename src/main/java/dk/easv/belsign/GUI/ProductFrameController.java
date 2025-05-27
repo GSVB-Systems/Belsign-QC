@@ -5,6 +5,7 @@ import dk.easv.belsign.BE.Photos;
 import dk.easv.belsign.BE.Products;
 import dk.easv.belsign.BLL.Util.OrderSession;
 import dk.easv.belsign.BLL.Util.PDFGenerator;
+import dk.easv.belsign.BLL.Util.SceneService;
 import dk.easv.belsign.Models.OrdersModel;
 import dk.easv.belsign.Models.ProductsModel;
 import dk.easv.belsign.Models.UsersModel;
@@ -284,28 +285,25 @@ public class ProductFrameController implements IParentAware {
         }
 
         try {
-            FXMLLoader loader = null;
             int roleId = UserSession.getLoggedInUser().getRoleId();
+            String fxmlPath;
 
             if (roleId == 1) {
-                loader = new FXMLLoader(getClass().getResource("/dk/easv/belsign/OperatorFrame.fxml"));
-            } else if(roleId == 2) {
-                loader = new FXMLLoader(getClass().getResource("/dk/easv/belsign/QCFrame.fxml"));
-            }
-
-            if (loader == null) {
+                fxmlPath = "/dk/easv/belsign/OperatorFrame.fxml";
+            } else if (roleId == 2) {
+                fxmlPath = "/dk/easv/belsign/QCFrame.fxml";
+            } else {
                 showError("Invalid role ID");
                 return;
             }
 
-            parent.fillMainPane(loader);
+            SceneService.loadCenterContent((StackPane) parent.getMainPane(), fxmlPath, parent);
 
-            if (roleId == 1) {
-                OperatorFrameController controller = loader.getController();
-                controller.setProduct(selectedProduct);
-            } else if(roleId == 2) {
-                QCFrameController controller = loader.getController();
-                controller.setProduct(selectedProduct);
+            Object controller = SceneService.getLastLoadedController();
+            if (roleId == 1 && controller instanceof OperatorFrameController) {
+                ((OperatorFrameController) controller).setProduct(selectedProduct);
+            } else if (roleId == 2 && controller instanceof QCFrameController) {
+                ((QCFrameController) controller).setProduct(selectedProduct);
             }
 
         } catch (Exception e) {

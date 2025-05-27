@@ -221,14 +221,9 @@ public class QCFrameController implements IParentAware{
             productApprovalUtil.setProductStatus(products, approvedBy);
         } catch (Exception e) {
             showError("Failed to set product status: " + e.getMessage());
-        }finally {
-
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/dk/easv/belsign/ProductFrame.fxml"));
-            parent.fillMainPane(loader);
-            Object controller = loader.getController();
-            if (controller instanceof IParentAware) {
-                ((IParentAware) controller).setParent(parent);
-            }
+        } finally {
+            String fxmlPath = "/dk/easv/belsign/ProductFrame.fxml";
+            SceneService.loadCenterContent((StackPane) parent.getMainPane(), fxmlPath, parent);
         }
     }
 

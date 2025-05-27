@@ -1,11 +1,15 @@
 package dk.easv.belsign.GUI;
 
+import dk.easv.belsign.BLL.Util.ExceptionHandler;
+import dk.easv.belsign.BLL.Util.SceneService;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
+import javafx.scene.layout.StackPane;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 
@@ -26,27 +30,32 @@ public class AdminUserFrameController implements IParentAware {
         parent.setBtnLogout(true);
     }
 
-    public void onCreateUserButtonClicked(ActionEvent actionEvent) throws IOException {
-        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/dk/easv/belsign/CreateUserFrame.fxml"));
-        Parent root = fxmlLoader.load();
-        Scene scene = new Scene(root);
-        Stage stage = new Stage();
-        stage.setScene(scene);
-        stage.setTitle("Create User");
-        stage.setResizable(false);
-        stage.setWidth(300);
-        stage.setHeight(400);
-
-        stage.initModality(Modality.APPLICATION_MODAL);
-        stage.show();
+    public void onCreateUserButtonClicked(ActionEvent actionEvent) {
+        try {
+            String fxmlPath = "/dk/easv/belsign/CreateUserFrame.fxml";
+            SceneService.openModalWindow(fxmlPath, "Create User", 300, 400);
+        } catch (Exception e) {
+            ExceptionHandler.handleUnexpectedException(e);
+            showError("Failed to open the Create User window: " + e.getMessage());
+        }
     }
 
     @FXML
     private void openAdminFrame(ActionEvent actionEvent) {
         try {
-            parent.fillMainPane(new FXMLLoader(getClass().getResource("/dk/easv/belsign/AdminFrame.fxml")));
+            String fxmlPath = "/dk/easv/belsign/AdminFrame.fxml";
+            SceneService.loadCenterContent((StackPane) parent.getMainPane(), fxmlPath, parent);
         } catch (Exception e) {
-            e.printStackTrace();
+            ExceptionHandler.handleUnexpectedException(e);
+            showError("Failed to load the Admin Frame, you should probably contact IT : " + e.getMessage());
         }
+    }
+
+    private void showError(String message) {
+        Alert alert = new Alert(Alert.AlertType.ERROR);
+        alert.setTitle("Admin Alert");
+        alert.setHeaderText(null);
+        alert.setContentText(message);
+        alert.showAndWait();
     }
 }

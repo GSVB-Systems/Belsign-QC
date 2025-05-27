@@ -1,8 +1,13 @@
 package dk.easv.belsign.BLL.Util;
 
+import dk.easv.belsign.GUI.IParentAware;
+import dk.easv.belsign.GUI.MainframeController;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
+import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.StackPane;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 
@@ -12,6 +17,7 @@ import java.util.logging.Level;
 
 public class SceneService {
 
+    private static Object lastLoadedController;
     //Tuple class til at returne parent og controller.
     public static class ViewTuple<T> {
         public final Parent view;
@@ -36,15 +42,16 @@ public class SceneService {
     }
 
 
-    //til et lille popup vindue
-    public static <T> T openSmallPopup(String fxmlPath, String title) {
-        ViewTuple<T> tuple = load(fxmlPath);
+    public static void openModalWindow(String fxmlPath, String title, int width, int height) throws IOException {
+        FXMLLoader fxmlLoader = new FXMLLoader(SceneService.class.getResource(fxmlPath));
+        Parent root = fxmlLoader.load();
+        Scene scene = new Scene(root, width, height);
         Stage stage = new Stage();
+        stage.setScene(scene);
         stage.setTitle(title);
-        stage.setScene(new Scene(tuple.view));
+        stage.setResizable(false);
         stage.initModality(Modality.APPLICATION_MODAL);
-        stage.showAndWait();
-        return tuple.controller;
+        stage.show();
     }
 
     public static <T> T fullscreen(String fxmlPath, String title) {
@@ -72,5 +79,33 @@ public class SceneService {
             ExceptionHandler.getLogger().log(Level.SEVERE, "Error loading fullscreen FXML: " + fxmlPath, e);
             throw new RuntimeException("Error loading FXML: " + fxmlPath, e);
         }
+    }
+
+    public static void loadCenterContent(StackPane mainPane, String fxmlPath, MainframeController parent) {
+        try {
+            FXMLLoader loader = new FXMLLoader(SceneService.class.getResource(fxmlPath));
+            Parent view = loader.load();
+
+            lastLoadedController = loader.getController();
+            Object controller = loader.getController();
+            if (controller instanceof IParentAware) {
+                ((IParentAware) controller).setParent(parent);
+            }
+
+            mainPane.getChildren().clear();
+            mainPane.getChildren().add(view);
+
+        } catch (IOException e) {
+            ExceptionHandler.handleUnexpectedException(e);
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setTitle("Error");
+            alert.setHeaderText(null);
+            alert.setContentText("Failed to load view: " + e.getMessage());
+            alert.showAndWait();
+        }
+    }
+
+    public static Object getLastLoadedController() {
+        return lastLoadedController;
     }
 }

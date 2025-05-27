@@ -2,10 +2,7 @@ package dk.easv.belsign.GUI;
 
 
 import dk.easv.belsign.BE.Users;
-import dk.easv.belsign.BLL.Util.ExceptionHandler;
-import dk.easv.belsign.BLL.Util.LoginValidator;
-import dk.easv.belsign.BLL.Util.OrderValidator;
-import dk.easv.belsign.BLL.Util.UserSession;
+import dk.easv.belsign.BLL.Util.*;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -14,6 +11,8 @@ import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 import java.io.IOException;
 
@@ -99,15 +98,13 @@ public class LoginController implements IParentAware {
             showError("Input Error: Use your UserID to login");
         }
     }
-
-    //temp metode til at sende videre til main app
     private void goToApp() {
         try {
-            if (UserSession.getLoggedInUser().getRoleId() == 3) {
-                parent.fillMainPane(new FXMLLoader(getClass().getResource("/dk/easv/belsign/AdminFrame.fxml")));
-            } else {
-                parent.fillMainPane(new FXMLLoader(getClass().getResource("/dk/easv/belsign/OrderSelection.fxml")));
-            }
+            String fxmlPath = (UserSession.getLoggedInUser().getRoleId() == 3)
+                    ? "/dk/easv/belsign/AdminFrame.fxml"
+                    : "/dk/easv/belsign/OrderSelection.fxml";
+
+            SceneService.loadCenterContent((StackPane) parent.getMainPane(), fxmlPath, parent);
         } catch (Exception e) {
             ExceptionHandler.handleUnexpectedException(e);
             showError("Failed to load main Application, contact system administrator: " + e.getMessage());
@@ -122,5 +119,7 @@ public class LoginController implements IParentAware {
         alert.setContentText(message);
         alert.showAndWait();
     }
+
+
 }
 

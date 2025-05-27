@@ -17,6 +17,7 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.Pane;
+import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import org.opencv.photo.Photo;
 
@@ -80,13 +81,9 @@ public class OperatorFrameController implements IParentAware {
     private void handleUpload(ActionEvent event) {
         savePhotosToDatabase();
         CameraHandler.getInstance().releaseCam();
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("/dk/easv/belsign/ProductFrame.fxml"));
 
-        mainframeController.fillMainPane(loader);
-        Object controller = loader.getController();
-        if (controller instanceof IParentAware) {
-            ((IParentAware) controller).setParent(mainframeController);
-        }
+        String fxmlPath = "/dk/easv/belsign/ProductFrame.fxml";
+        SceneService.loadCenterContent((StackPane) mainframeController.getMainPane(), fxmlPath, mainframeController);
     }
 
     public void setParent(MainframeController mainframeController) {
