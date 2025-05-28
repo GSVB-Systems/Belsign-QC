@@ -78,8 +78,9 @@ public class AdminFrameController implements IParentAware {
             this.usersModel = new UsersModel();
 
         } catch (Exception e) {
-            showError("Failed to initialize OrdersModel - Contact System Administrator: ");
-            e.printStackTrace();
+            ExceptionHandler.handleUnexpectedException(e);
+            showError("Failed to initialize OrdersModel - Contact System Administrator");
+
         }
 
         DisplayOrders();
@@ -104,7 +105,8 @@ public class AdminFrameController implements IParentAware {
                 try {
                     DisplayProducts();
                 } catch (Exception e) {
-                    throw new RuntimeException(e);
+                    ExceptionHandler.handleUnexpectedException(e);
+                    showError("Failed to show products, contact System Admin");
                 }
             }
         });
@@ -129,7 +131,9 @@ public class AdminFrameController implements IParentAware {
 
                     DisplayPhotos();
                 } catch (Exception e) {
-                    throw new RuntimeException(e);
+                    ExceptionHandler.handleUnexpectedException(e);
+                    showError("Failed to display associated products - Contact System Admin");
+
                 }
             }
         });
@@ -150,6 +154,7 @@ public class AdminFrameController implements IParentAware {
                         + usersModel.getUserById(approvedById).getFirstName();
                 return new javafx.beans.property.SimpleStringProperty(approvedByName);
             } catch (Exception e) {
+                ExceptionHandler.handleUnexpectedException(e);
                 return new javafx.beans.property.SimpleStringProperty("Unknown");
             }
         });    }
@@ -169,7 +174,7 @@ public class AdminFrameController implements IParentAware {
         try {
             parent.fillMainPane(new FXMLLoader(getClass().getResource("/dk/easv/belsign/AdminUserFrame.fxml")));
         } catch (Exception e) {
-            showError("Failed to load Admin User Frame, contact system administrator: " + e.getMessage());
+            showError("Failed to load Admin User Frame, contact system administrator");
         }
     }
 
@@ -183,7 +188,7 @@ public class AdminFrameController implements IParentAware {
             });
         } catch (Exception e) {
             ExceptionHandler.handleUnexpectedException(e);
-            showError("Failed to open the Create Order window: " + e.getMessage());
+            showError("Failed to open the Create Order window");
         }
 
     }

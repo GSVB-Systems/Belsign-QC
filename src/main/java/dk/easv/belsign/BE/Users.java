@@ -63,8 +63,18 @@ public class Users {
         this.hashedPassword = hashedPassword;
     }
 
+    // Used when retrieving users from DB
     public Users(int userId, int roleId, String firstName, String lastName, String email, String hashedPassword) {
         this.userId = userId;
+        this.roleId = roleId;
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.email = email;
+        this.hashedPassword = hashedPassword;
+    }
+
+    // Used when creating a new user
+    public Users(int roleId, String firstName, String lastName, String email, String hashedPassword) {
         this.roleId = roleId;
         this.firstName = firstName;
         this.lastName = lastName;

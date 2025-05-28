@@ -27,7 +27,7 @@
             <!-- Buttons below the table -->
             <HBox maxWidth="Infinity" spacing="10.0">
                 <Button fx:id="btnCreateUser" onAction="#onCreateUserButtonClicked" prefHeight="50.0" prefWidth="50.0" style="-fx-font-size: 21;" text="+" />
-                <Button fx:id="btnEditUser" prefHeight="50.0" prefWidth="50.0" style="-fx-font-size: 21;" text="🖋" />
+                <Button fx:id="btnEditUser" onAction="#onEditUserButtonClicked" prefHeight="50.0" prefWidth="50.0" style="-fx-font-size: 21;" text="🖋" />
                 <Button fx:id="btnDeleteUser" onAction="#onDeleteUserButtonClicked" prefHeight="50.0" prefWidth="50.0" style="-fx-font-size: 21;" text="🗑" />
             </HBox>
          <opaqueInsets>

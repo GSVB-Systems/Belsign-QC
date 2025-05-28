@@ -1,5 +1,6 @@
 package dk.easv.belsign.GUI;
 
+import dk.easv.belsign.BLL.Util.ExceptionHandler;
 import dk.easv.belsign.BLL.Util.OrderValidator;
 import dk.easv.belsign.BLL.Util.SceneService;
 import javafx.event.ActionEvent;
@@ -52,10 +53,13 @@ public class OrderSelectionController implements IParentAware {
                 throw new IllegalArgumentException("Invalid order ID");
             }
         } catch (NumberFormatException e) {
+            ExceptionHandler.handleUnexpectedException(e);
             showError("Invalid input: Please enter a numeric order ID.");
         } catch (IllegalArgumentException e) {
+            ExceptionHandler.handleUnexpectedException(e);
             showError(e.getMessage());
         } catch (Exception e) {
+            ExceptionHandler.handleUnexpectedException(e);
             showError("Order not found. Make sure you type the correct order ID without dashes.");
         }
     }

@@ -107,7 +107,7 @@ public class LoginController implements IParentAware {
             SceneService.loadCenterContent((StackPane) parent.getMainPane(), fxmlPath, parent);
         } catch (Exception e) {
             ExceptionHandler.handleUnexpectedException(e);
-            showError("Failed to load main Application, contact system administrator: " + e.getMessage());
+            showError("Failed to load main Application, contact system administrator");
         }
     }
 

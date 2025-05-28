@@ -1,5 +1,6 @@
 package dk.easv.belsign.GUI;
 
+import dk.easv.belsign.BLL.Util.ExceptionHandler;
 import dk.easv.belsign.Belsign;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -57,8 +58,8 @@ public class MainframeController {
                 mainPane.getChildren().clear();
                 mainPane.getChildren().add(root);
 
-            } catch (
-                    IOException e) {
+            } catch (IOException e) {
+                ExceptionHandler.handleUnexpectedException(e);
                 showError("Failed to go to real application - Contact System Administrator!");
             }
         }
@@ -71,7 +72,8 @@ public class MainframeController {
 
             setOrder("Belman");
         } catch (Exception e) {
-            showError("Failed to log out: " + e.getMessage());
+            ExceptionHandler.handleUnexpectedException(e);
+            showError("Failed to log out");
         }
     }
 
