@@ -53,8 +53,10 @@ public class OrderSelectionController implements IParentAware {
                 throw new IllegalArgumentException("Invalid order ID");
             }
         } catch (NumberFormatException e) {
+            ExceptionHandler.handleUnexpectedException(e);
             showError("Invalid input: Please enter a numeric order ID.");
         } catch (IllegalArgumentException e) {
+            ExceptionHandler.handleUnexpectedException(e);
             showError(e.getMessage());
         } catch (Exception e) {
             ExceptionHandler.handleUnexpectedException(e);

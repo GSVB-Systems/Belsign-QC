@@ -54,8 +54,7 @@ public class QCFrameController implements IParentAware{
 
         } catch (Exception e) {
             ExceptionHandler.handleUnexpectedException(e);
-            showError("Failed to initialize ProductsModel: " + e.getMessage());
-            e.printStackTrace();
+            showError("Failed to initialize ProductsModel");
         }
     }
 
@@ -212,7 +211,7 @@ public class QCFrameController implements IParentAware{
             photosModel.updatePhoto(photo);
         } catch (Exception e) {
             ExceptionHandler.handleUnexpectedException(e);
-            showError("Failed to update photo status: " + e.getMessage());
+            showError("Failed to update photo status");
         }
     }
 
@@ -224,7 +223,7 @@ public class QCFrameController implements IParentAware{
             productApprovalUtil.setProductStatus(products, approvedBy);
         } catch (Exception e) {
             ExceptionHandler.handleUnexpectedException(e);
-            showError("Failed to set product status: " + e.getMessage());
+            showError("Failed to set product status");
         } finally {
             String fxmlPath = "/dk/easv/belsign/ProductFrame.fxml";
             SceneService.loadCenterContent((StackPane) parent.getMainPane(), fxmlPath, parent);

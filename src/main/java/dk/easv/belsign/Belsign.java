@@ -1,6 +1,7 @@
 package dk.easv.belsign;
 
 import dk.easv.belsign.BLL.Util.CameraHandler;
+import dk.easv.belsign.BLL.Util.ExceptionHandler;
 import dk.easv.belsign.GUI.MainframeController;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
@@ -42,7 +43,7 @@ public class Belsign extends Application {
             mainframeController.fillMainPane(new FXMLLoader(getClass().getResource("/dk/easv/belsign/Login.fxml")));
 
         } catch (IOException e) {
-            e.printStackTrace();
+            ExceptionHandler.handleUnexpectedException(e);
             showError("Failed to load the main application window - contact the system administrator immediately");
         }
     }

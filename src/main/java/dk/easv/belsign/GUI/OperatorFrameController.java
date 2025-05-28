@@ -51,8 +51,7 @@ public class OperatorFrameController implements IParentAware {
         try {
             this.photosModel = new PhotosModel();
         } catch (Exception e) {
-            showError("Failed to initialize ProductsModel - Contact System Administrator: " + e.getMessage());
-            e.printStackTrace();
+            showError("Failed to initialize ProductsModel - Contact System Administrator");
         }
     }
 

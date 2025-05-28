@@ -81,7 +81,7 @@ public class ProductFrameController implements IParentAware {
             // Don't show images on init - wait for selection
         } catch (Exception e) {
             ExceptionHandler.handleUnexpectedException(e);
-            showError("Failed to initialize Productframe, contact system Administrator: " + e.getMessage());
+            showError("Failed to initialize Productframe, contact system Administrator");
 
         }
     }
@@ -131,7 +131,7 @@ public class ProductFrameController implements IParentAware {
             OrderApproval(productsList);
         } catch (Exception e) {
             ExceptionHandler.handleUnexpectedException(e);
-            showError("Failed to load products, contact system administrator: " + e.getMessage());
+            showError("Failed to load products, contact system administrator");
 
         }
     }
@@ -182,7 +182,7 @@ public class ProductFrameController implements IParentAware {
                 lblApprovedBy.setText("...");
             }        } catch (Exception e) {
             ExceptionHandler.handleUnexpectedException(e);
-            showError("Error updating order title, Contact system Administrator: " + e.getMessage());
+            showError("Error updating order title, Contact system Administrator");
         }
 
         // Clear previous selection highlight
@@ -275,8 +275,7 @@ public class ProductFrameController implements IParentAware {
             }
         } catch (Exception e) {
             ExceptionHandler.handleUnexpectedException(e);
-            showError("Error loading image, contact system Administrator: " + e.getMessage());
-            e.printStackTrace();
+            showError("Error loading image, contact system Administrator");
         }
     }
 
@@ -310,8 +309,7 @@ public class ProductFrameController implements IParentAware {
 
         } catch (Exception e) {
             ExceptionHandler.handleUnexpectedException(e);
-            showError("Error opening frame: " + e.getMessage());
-            e.printStackTrace();
+            showError("Error opening frame");
         }
     }
 
@@ -321,7 +319,7 @@ public class ProductFrameController implements IParentAware {
                 pdfGenerator.createPDF("src/main/resources/dk/easv/belsign/PDF/QCReport.pdf", selectedProduct);
             }catch (Exception e){
                 ExceptionHandler.handleUnexpectedException(e);
-                showError("PDF generation failed: " + e.getMessage());
+                showError("PDF generation failed");
             }
 
 

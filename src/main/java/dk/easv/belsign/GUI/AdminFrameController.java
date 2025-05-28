@@ -79,7 +79,7 @@ public class AdminFrameController implements IParentAware {
 
         } catch (Exception e) {
             ExceptionHandler.handleUnexpectedException(e);
-            showError("Failed to initialize OrdersModel - Contact System Administrator: ");
+            showError("Failed to initialize OrdersModel - Contact System Administrator");
 
         }
 
@@ -174,7 +174,7 @@ public class AdminFrameController implements IParentAware {
         try {
             parent.fillMainPane(new FXMLLoader(getClass().getResource("/dk/easv/belsign/AdminUserFrame.fxml")));
         } catch (Exception e) {
-            showError("Failed to load Admin User Frame, contact system administrator: " + e.getMessage());
+            showError("Failed to load Admin User Frame, contact system administrator");
         }
     }
 
@@ -185,7 +185,7 @@ public class AdminFrameController implements IParentAware {
             SceneService.openModalWindow(fxmlPath, "Create Order", 600, 400);
         } catch (Exception e) {
             ExceptionHandler.handleUnexpectedException(e);
-            showError("Failed to open the Create Order window: " + e.getMessage());
+            showError("Failed to open the Create Order window");
         }
     }
 }

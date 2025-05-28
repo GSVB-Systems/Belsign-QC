@@ -73,7 +73,7 @@ public class MainframeController {
             setOrder("Belman");
         } catch (Exception e) {
             ExceptionHandler.handleUnexpectedException(e);
-            showError("Failed to log out: " + e.getMessage());
+            showError("Failed to log out");
         }
     }
 

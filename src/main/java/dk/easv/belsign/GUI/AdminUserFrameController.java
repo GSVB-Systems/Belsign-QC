@@ -58,8 +58,7 @@ public class AdminUserFrameController implements IParentAware {
             this.usersModel = new UsersModel();
 
         } catch (Exception e) {
-            showError("Failed to initialize OrdersModel - Contact System Administrator: ");
-            e.printStackTrace();
+            showError("Failed to initialize OrdersModel - Contact System Administrator");
         }
 
         DisplayUsers();
@@ -87,7 +86,7 @@ public class AdminUserFrameController implements IParentAware {
             SceneService.openModalWindow(fxmlPath, "Create User", 300, 400);
         } catch (Exception e) {
             ExceptionHandler.handleUnexpectedException(e);
-            showError("Failed to open the Create User window: " + e.getMessage());
+            showError("Failed to open the Create User window");
         }
     }
 
@@ -118,7 +117,7 @@ public class AdminUserFrameController implements IParentAware {
             SceneService.openModalWindow(fxmlPath, "Delete User", 300, 200);
         } catch (Exception e) {
             ExceptionHandler.handleUnexpectedException(e);
-            showError("Failed to open the Delete User window: " + e.getMessage());
+            showError("Failed to open the Delete User window");
         }
     }
 }
