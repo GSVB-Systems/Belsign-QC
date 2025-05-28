@@ -1,5 +1,6 @@
 package dk.easv.belsign.GUI;
 
+import dk.easv.belsign.BLL.Util.ExceptionHandler;
 import dk.easv.belsign.BLL.Util.OrderValidator;
 import dk.easv.belsign.BLL.Util.SceneService;
 import javafx.event.ActionEvent;
@@ -56,6 +57,7 @@ public class OrderSelectionController implements IParentAware {
         } catch (IllegalArgumentException e) {
             showError(e.getMessage());
         } catch (Exception e) {
+            ExceptionHandler.handleUnexpectedException(e);
             showError("Order not found. Make sure you type the correct order ID without dashes.");
         }
     }

@@ -3,9 +3,7 @@ package dk.easv.belsign.GUI;
 import dk.easv.belsign.BE.Orders;
 import dk.easv.belsign.BE.Photos;
 import dk.easv.belsign.BE.Products;
-import dk.easv.belsign.BLL.Util.OrderSession;
-import dk.easv.belsign.BLL.Util.PDFGenerator;
-import dk.easv.belsign.BLL.Util.SceneService;
+import dk.easv.belsign.BLL.Util.*;
 import dk.easv.belsign.Models.OrdersModel;
 import dk.easv.belsign.Models.ProductsModel;
 import dk.easv.belsign.Models.UsersModel;
@@ -22,7 +20,6 @@ import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.SVGPath;
 import javafx.scene.image.Image;
-import dk.easv.belsign.BLL.Util.UserSession;
 import javafx.scene.shape.StrokeType;
 
 import java.io.File;
@@ -83,6 +80,7 @@ public class ProductFrameController implements IParentAware {
             showProducts();
             // Don't show images on init - wait for selection
         } catch (Exception e) {
+            ExceptionHandler.handleUnexpectedException(e);
             showError("Failed to initialize Productframe, contact system Administrator: " + e.getMessage());
 
         }
@@ -132,6 +130,7 @@ public class ProductFrameController implements IParentAware {
             }
             OrderApproval(productsList);
         } catch (Exception e) {
+            ExceptionHandler.handleUnexpectedException(e);
             showError("Failed to load products, contact system administrator: " + e.getMessage());
 
         }
@@ -157,6 +156,7 @@ public class ProductFrameController implements IParentAware {
             try {
                 ordersModel.createOrderApproval(order);
             } catch (Exception e) {
+                ExceptionHandler.handleUnexpectedException(e);
                 showError("Error creating order approval, Contact system Administrator");
 
 
@@ -181,6 +181,7 @@ public class ProductFrameController implements IParentAware {
             } else {
                 lblApprovedBy.setText("...");
             }        } catch (Exception e) {
+            ExceptionHandler.handleUnexpectedException(e);
             showError("Error updating order title, Contact system Administrator: " + e.getMessage());
         }
 
@@ -273,6 +274,7 @@ public class ProductFrameController implements IParentAware {
                 }
             }
         } catch (Exception e) {
+            ExceptionHandler.handleUnexpectedException(e);
             showError("Error loading image, contact system Administrator: " + e.getMessage());
             e.printStackTrace();
         }
@@ -307,6 +309,7 @@ public class ProductFrameController implements IParentAware {
             }
 
         } catch (Exception e) {
+            ExceptionHandler.handleUnexpectedException(e);
             showError("Error opening frame: " + e.getMessage());
             e.printStackTrace();
         }
@@ -317,6 +320,7 @@ public class ProductFrameController implements IParentAware {
             try{
                 pdfGenerator.createPDF("src/main/resources/dk/easv/belsign/PDF/QCReport.pdf", selectedProduct);
             }catch (Exception e){
+                ExceptionHandler.handleUnexpectedException(e);
                 showError("PDF generation failed: " + e.getMessage());
             }
 
