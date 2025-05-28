@@ -287,10 +287,16 @@ public class ProductFrameController implements IParentAware {
 
         try {
             int roleId = UserSession.getLoggedInUser().getRoleId();
+
+            if (roleId == 1 && "Approved".equals(selectedProduct.getProductStatus())) {
+                showError("You cannot modify an approved product");
+                return;
+            }
+
             String fxmlPath;
 
-            if (roleId == 1) {
-                fxmlPath = "/dk/easv/belsign/OperatorFrame.fxml";
+            if (roleId == 1 ) {
+                    fxmlPath = "/dk/easv/belsign/OperatorFrame.fxml";
             } else if (roleId == 2) {
                 fxmlPath = "/dk/easv/belsign/QCFrame.fxml";
             } else {

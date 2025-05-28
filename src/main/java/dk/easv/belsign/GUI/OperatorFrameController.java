@@ -118,7 +118,7 @@ public class OperatorFrameController implements IParentAware {
                     if (selectedTag != null) {
                         photoIndex.setPhotoName(selectedTag);
                     }
-                    System.out.println(photoIndex.getPhotoName());
+
                 });
             }
 
@@ -154,11 +154,7 @@ public class OperatorFrameController implements IParentAware {
             List<Photos> photos = products.getPhotos();
             photosModel.updatePhotoList(photos);
 
-            for (Photos photo : photos) {
-                if (photo.getPhotoPath() != null) {
-                    System.out.println("Photo path: " + photo.getPhotoPath() + " Photo name: " + photo.getPhotoName() + " Photo status: " + photo.getPhotoStatus());
-                }
-            }
+
 
 
     }
