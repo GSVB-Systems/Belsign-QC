@@ -32,12 +32,10 @@
         </rowConstraints>
 
         <Label text="First Name:" GridPane.columnIndex="0" GridPane.rowIndex="0" />
-        <TextField fx:id="firstNameField" promptText="Enter first name" GridPane.columnIndex="1" GridPane.rowIndex="0" />
+        <TextField fx:id="txtfirstNameField" promptText="Enter first name" GridPane.columnIndex="1" GridPane.rowIndex="0" />
 
         <Label text="Last Name:" GridPane.columnIndex="0" GridPane.rowIndex="1" />
-        <TextField fx:id="lastNameField" promptText="Enter last name" GridPane.columnIndex="1" GridPane.rowIndex="1" />
-
-        <Label text="Role:" GridPane.columnIndex="0" GridPane.rowIndex="2" />
+        <TextField fx:id="txtlastNameField" promptText="Enter last name" GridPane.columnIndex="1" GridPane.rowIndex="1" />
 
         <!-- Role Selection -->
         <Label text="Role:" GridPane.columnIndex="0" GridPane.rowIndex="2" />
@@ -52,12 +50,12 @@
 
 
         <Label text="Email:" GridPane.columnIndex="0" GridPane.rowIndex="3" />
-        <TextField fx:id="emailField" promptText="Enter email" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+        <TextField fx:id="txtemailField" promptText="Enter email" GridPane.columnIndex="1" GridPane.rowIndex="3" />
 
         <Label text="Password:" GridPane.columnIndex="0" GridPane.rowIndex="4" />
-        <PasswordField fx:id="passwordField" promptText="Enter password" GridPane.columnIndex="1" GridPane.rowIndex="4" />
+        <PasswordField fx:id="txtpasswordField" promptText="Enter password" GridPane.columnIndex="1" GridPane.rowIndex="4" />
 
-        <Button fx:id="submitButton" maxWidth="Infinity" text="Create User" GridPane.columnIndex="1" GridPane.halignment="RIGHT" GridPane.rowIndex="5" />
+        <Button fx:id="btnsubmit" onAction="#onSubmitButtonClicked" maxWidth="Infinity" text="Create User" GridPane.columnIndex="1" GridPane.halignment="RIGHT" GridPane.rowIndex="5" />
         <rowConstraints>
             <RowConstraints />
             <RowConstraints />
