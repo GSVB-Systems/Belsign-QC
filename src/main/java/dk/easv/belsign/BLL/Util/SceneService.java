@@ -54,7 +54,6 @@ public class SceneService {
         stage.setResizable(false);
         stage.initModality(Modality.APPLICATION_MODAL);
         stage.showAndWait(); // BLOCKING until closed
-
         return controller;
     }
 

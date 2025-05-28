@@ -30,9 +30,9 @@ public class ProductsDAO implements IProductDAO<Products> {
     }
 
     @Override
-    public CompletableFuture<Void> create(Products product) {
+    public CompletableFuture<Void> create(Products product) throws Exception {
         return CompletableFuture.runAsync(() -> {
-            String sql = "INSERT INTO products ( orderId, productName, quantity, size) VALUES (?, ?, ?, ?)";
+            String sql = "INSERT INTO products (orderId, productName, size) VALUES (?, ?, ?)";
             try (Connection conn = dbConnector.getConnection();
                  PreparedStatement statement = conn.prepareStatement(sql)) {
 
@@ -40,8 +40,7 @@ public class ProductsDAO implements IProductDAO<Products> {
 
                 statement.setInt(1, product.getOrderId());
                 statement.setString(2, product.getProductName());
-                statement.setInt(3, product.getQuantity());
-                statement.setInt(4, product.getSize());
+                statement.setInt(3, product.getSize());
 
                 statement.executeUpdate();
                 conn.commit(); // Commit transaktion hvis alt lykkes
@@ -59,9 +58,42 @@ public class ProductsDAO implements IProductDAO<Products> {
     }
 
     @Override
+    public CompletableFuture<Integer> createProducts(Products product) {
+        return CompletableFuture.supplyAsync(() -> {
+            String sql = "INSERT INTO products (orderId, productName, size) VALUES (?, ?, ?)";
+            try (Connection conn = dbConnector.getConnection();
+                 PreparedStatement statement = conn.prepareStatement(sql, PreparedStatement.RETURN_GENERATED_KEYS)) {
+
+                conn.setAutoCommit(false);
+
+                statement.setInt(1, product.getOrderId());
+                statement.setString(2, product.getProductName());
+                statement.setInt(3, product.getSize());
+
+                statement.executeUpdate();
+
+                // Get the generated ID
+                try (ResultSet generatedKeys = statement.getGeneratedKeys()) {
+                    if (generatedKeys.next()) {
+                        int productId = generatedKeys.getInt(1);
+                        conn.commit();
+                        return productId;
+                    } else {
+                        conn.rollback();
+                        throw new SQLException("Creating product failed, no ID obtained.");
+                    }
+                }
+            } catch (SQLException e) {
+                // Error handling
+                throw new RuntimeException("Error creating product", e);
+            }
+        }, executorService);
+    }
+
+    @Override
     public CompletableFuture<Void> delete(int id) throws Exception {
         return CompletableFuture.runAsync(() -> {
-            String sql = "DELETE FROM products WHERE productId = ?";
+            String sql = "DELETE FROM products WHERE orderId = ?";
 
             try (Connection conn = dbConnector.getConnection();
                  PreparedStatement statement = conn.prepareStatement(sql)) {

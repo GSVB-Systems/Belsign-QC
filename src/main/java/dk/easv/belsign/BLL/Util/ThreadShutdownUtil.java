@@ -31,7 +31,6 @@ public class ThreadShutdownUtil {
     }
 
     public void shutdownAll() {
-        ExceptionHandler.getLogger().info("Shutting down all executor services...");
         for (ExecutorService service : executorServices) {
             try {
                 shutdownExecutorService(service);

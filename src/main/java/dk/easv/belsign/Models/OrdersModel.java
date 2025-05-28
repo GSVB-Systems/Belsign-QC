@@ -16,11 +16,17 @@ public class OrdersModel {
     public OrdersModel() throws Exception {
         this.ordersManager = new OrdersManager();
         observableOrders = FXCollections.observableArrayList();
-        observableOrders.addAll(ordersManager.getAllOrders());
+
     }
 
-    public ObservableList<Orders> getObservableOrders() {
+    public ObservableList<Orders> getObservableOrders() throws Exception {
+        observableOrders.addAll(ordersManager.getAllOrders());
         return observableOrders;
+    }
+
+    public void createOrder(Orders order) throws Exception {
+        ordersManager.createOrder(order);
+
     }
 
     public void updateOrder(Orders order) throws Exception {
@@ -33,6 +39,10 @@ public class OrdersModel {
 
     public Orders getOrderById(int orderId) throws Exception {
         return ordersManager.getOrderById(orderId);
+    }
+
+    public void deleteOrder(int selectedOrderId) throws Exception {
+        ordersManager.deleteOrder(selectedOrderId);
     }
 }
 

@@ -1,14 +1,48 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.FlowPane?>
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.text.Font?>
+<?import javafx.scene.text.Text?>
 
-<?import javafx.scene.control.Button?>
-<AnchorPane prefHeight="561.0" prefWidth="967.0" xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1" fx:controller="dk.easv.belsign.GUI.CreateOrderController">
+<AnchorPane fx:id="lblOrderId" prefHeight="800.0" prefWidth="1200.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="dk.easv.belsign.GUI.CreateOrderController">
    <children>
-      <TextField fx:id="txfOrderId" layoutX="152.0" layoutY="29.0" />
-      <FlowPane fx:id="fpProducts" layoutX="158.0" layoutY="116.0" prefHeight="200.0" prefWidth="200.0" />
-      <Button onAction="#addProduct" layoutX="158.0" layoutY="88.0" mnemonicParsing="false" text="Add Product" />
+      <TextField fx:id="txtOrderId" layoutX="206.0" layoutY="31.0">
+         <font>
+            <Font size="18.0" />
+         </font></TextField>
+      <ScrollPane layoutX="158.0" layoutY="116.0" prefHeight="628.0" prefWidth="555.0" style="-fx-background-color: transparent;">
+         <content>
+            <FlowPane fx:id="fpProducts" />
+         </content>
+      </ScrollPane>
+      <Button layoutX="839.0" layoutY="708.0" mnemonicParsing="false" onAction="#addProduct" text="Add Product">
+         <font>
+            <Font size="24.0" />
+         </font></Button>
+      <Label layoutX="96.0" layoutY="33.0" text="Order ID :">
+         <font>
+            <Font size="24.0" />
+         </font>
+      </Label>
+      <Button fx:id="btnConfirm" layoutX="1062.0" layoutY="708.0" mnemonicParsing="false" onAction="#onConfirm" text="Confirm">
+         <font>
+            <Font size="24.0" />
+         </font>
+      </Button>
+      <Pane layoutX="839.0" layoutY="86.0" prefHeight="580.0" prefWidth="340.0" style="-fx-border-color: Black;">
+         <children>
+            <Text layoutX="14.0" layoutY="27.0" lineSpacing="3.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Small: &#10;Small template is 5 pictures consisting of &#10;1x Front, &#10;1x Back, &#10;1x Left, &#10;1x Right, &#10;1x Top&#10;&#10;Medium: &#10;Medium template is 10 pictures consisting of &#10;2x Front, &#10;2x Back, &#10;2x Left, &#10;2x Right, &#10;2x Top&#10;&#10;Large: &#10;Large template is 15 pictures consisting of &#10;3x Front, &#10;3x Back, &#10;3x Left, &#10;3x Right, &#10;3x Top">
+               <font>
+                  <Font size="16.0" />
+               </font>
+            </Text>
+         </children>
+      </Pane>
    </children>
 </AnchorPane>

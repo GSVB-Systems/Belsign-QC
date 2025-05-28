@@ -12,7 +12,7 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-public class OrdersDAO implements ICrudRepo<Orders> {
+public class OrdersDAO implements IOrderDAO<Orders> {
 
     private final DBConnector dbConnector;
     private final ExecutorService executorService;
@@ -33,7 +33,7 @@ public class OrdersDAO implements ICrudRepo<Orders> {
     @Override
     public CompletableFuture<Void> delete(int id) {
         return CompletableFuture.runAsync(() -> {
-            String sql = "DELETE FROM Orders WHERE orderNumber = ?";
+            String sql = "DELETE FROM Orders WHERE orderId = ?";
             Connection conn = null;
 
             try {
@@ -77,6 +77,29 @@ public class OrdersDAO implements ICrudRepo<Orders> {
 
     @Override
     public CompletableFuture<Void> create(Orders order) {
+        return CompletableFuture.runAsync(() -> {
+            String sql = "INSERT INTO Orders (orderId) VALUES (?)";
+            try (Connection conn = dbConnector.getConnection();
+                 PreparedStatement statement = conn.prepareStatement(sql)) {
+
+                statement.setInt(1, order.getOrderId());
+
+
+                int affectedRows = statement.executeUpdate();
+                if (affectedRows == 0) {
+                    throw new DALExceptions("Failed to create order: No rows affected.");
+                }
+
+            } catch (SQLException e) {
+                DALExceptions ex = new DALExceptions("Failed to create order in DB: ", e);
+                ExceptionHandler.handleDALException(ex);
+                throw ex;
+            }
+        }, executorService);
+    }
+
+    @Override
+    public CompletableFuture<Void> createOrderApproval(Orders order) {
         return CompletableFuture.runAsync(() -> {
             String checkSql = "SELECT 1 FROM orderApproval WHERE orderId = ?";
             String insertSql = "INSERT INTO orderApproval (orderId, approvalDate, orderStatus) VALUES (?, ?, ?)";
