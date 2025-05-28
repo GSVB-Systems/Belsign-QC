@@ -83,16 +83,18 @@ public class AdminFrameController implements IParentAware {
         }
 
         DisplayOrders();
-
     }
 
-
-
-
-
     private void DisplayOrders() {
+        tblOrders.getItems().clear();
 
-        tblOrders.setItems(ordersModel.getObservableOrders());
+        try {
+            tblOrders.setItems(ordersModel.getObservableOrders());
+        } catch (Exception e) {
+            showError("Failed to load orders: " + e.getMessage());
+            e.printStackTrace();
+            ExceptionHandler.handleUnexpectedException(e);
+        }
         colOrderId.setCellValueFactory(new PropertyValueFactory<>("orderId"));
 
         tblOrders.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
@@ -106,8 +108,6 @@ public class AdminFrameController implements IParentAware {
                 }
             }
         });
-
-
     }
 
     private void DisplayProducts() throws Exception {
@@ -177,10 +177,51 @@ public class AdminFrameController implements IParentAware {
     private void openCreateOrder(ActionEvent actionEvent) {
         try {
             String fxmlPath = "/dk/easv/belsign/CreateOrderPane.fxml";
-            SceneService.openModalWindow(fxmlPath, "Create Order", 600, 400);
+            Stage stage = SceneService.openModalWindow(fxmlPath, "Create Order", 1200, 800);
+            stage.setOnHidden(event -> {
+                reloadOrders();
+            });
         } catch (Exception e) {
             ExceptionHandler.handleUnexpectedException(e);
             showError("Failed to open the Create Order window: " + e.getMessage());
+        }
+
+    }
+
+    public void openDeleteOrder(ActionEvent actionEvent) {
+        try {
+            if (selectedOrder != null) {
+                 ObservableList<Products> products = productsModel.getObservableProducts(selectedOrderId);
+                    for (Products product : products) {
+                        photosModel.deletePhotos(product.getPhotos());
+                    }
+                    Thread.sleep(1000);
+                productsModel.deleteProductsByOrderId(selectedOrderId);
+                    Thread.sleep(1000);
+                ordersModel.deleteOrder(selectedOrderId);
+
+
+                tblOrders.getItems().remove(selectedOrder);
+                selectedOrder = null;
+                selectedOrderId = 0;
+                tblProducts.getItems().clear();
+                tblPhotos.getItems().clear();
+
+            } else {
+                showError("No order selected for deletion.");
+            }
+        } catch (Exception e) {
+            showError("Failed to delete the order: " + e.getMessage());
+            e.printStackTrace();
+        }
+    }
+
+    public void reloadOrders() {
+        try {
+            DisplayOrders();
+        } catch (Exception e) {
+            showError("Failed to reload orders: " + e.getMessage());
+            e.printStackTrace();
         }
     }
 }

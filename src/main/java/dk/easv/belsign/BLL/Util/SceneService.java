@@ -6,7 +6,6 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
-import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
@@ -42,7 +41,7 @@ public class SceneService {
     }
 
 
-    public static void openModalWindow(String fxmlPath, String title, int width, int height) throws IOException {
+    public static Stage openModalWindow(String fxmlPath, String title, int width, int height) throws IOException {
         FXMLLoader fxmlLoader = new FXMLLoader(SceneService.class.getResource(fxmlPath));
         Parent root = fxmlLoader.load();
         Scene scene = new Scene(root, width, height);
@@ -52,6 +51,7 @@ public class SceneService {
         stage.setResizable(false);
         stage.initModality(Modality.APPLICATION_MODAL);
         stage.show();
+        return stage;
     }
 
     public static <T> T fullscreen(String fxmlPath, String title) {

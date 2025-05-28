@@ -17,7 +17,7 @@ public enum PhotosTemplate {
 
     /**
      * Creates a list of Photos objects based on the template size
-     * @param productId The product ID to associate with the photos
+     *
      * @return List of Photos objects
      */
     public List<Photos> createPhotos(int productId) {

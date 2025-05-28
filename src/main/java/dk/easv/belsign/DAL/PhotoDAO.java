@@ -25,14 +25,14 @@ public class PhotoDAO implements IPhotoDAO<Photos> {
     @Override
     public CompletableFuture<Void> create(Photos photo) {
         return CompletableFuture.runAsync(() -> {
-            String sql = "INSERT INTO Photos (photoPath, photoName, photoStatus, productId, photoComments) VALUES (?, ?, ?, ?, ?)";
+            String sql = "INSERT INTO Photos (photoPath, photoName, photoStatus, productId) VALUES (?, ?, ?, ?)";
             try (Connection conn = dbConnector.getConnection();
                  PreparedStatement stmt = conn.prepareStatement(sql)) {
                 stmt.setString(1, photo.getPhotoPath());
                 stmt.setString(2, photo.getPhotoName());
                 stmt.setString(3, photo.getPhotoStatus());
                 stmt.setInt(4, photo.getProductId());
-                stmt.setString(5, photo.getPhotoComments());
+
                 stmt.executeUpdate();
             } catch (SQLException e) {
                 ExceptionHandler.handleDALException(new DALExceptions("Failed to create photo", e));
