@@ -26,17 +26,16 @@ public class UsersDAO implements ICrudRepo<Users> {
     @Override
     public CompletableFuture<Void> create(Users user) {
         return CompletableFuture.runAsync(() -> {
-            String sql = "INSERT INTO Users (userId, roleId, firstName, lastName, email, hashedPassword) VALUES (?, ?, ?, ?, ?, ?)";
+            String sql = "INSERT INTO Users (roleId, firstName, lastName, email, hashedPassword) VALUES (?, ?, ?, ?, ?)";
 
             try (Connection conn = dbConnector.getConnection();
-                 PreparedStatement stmt = conn.prepareStatement(sql)) {
+                 PreparedStatement stmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);) {
 
-                stmt.setInt(1, user.getUserId());
-                stmt.setInt(2, user.getRoleId());
-                stmt.setString(3, user.getFirstName());
-                stmt.setString(4, user.getLastName());
-                stmt.setString(5, user.getEmail());
-                stmt.setString(6, user.getHashedPassword());
+                stmt.setInt(1, user.getRoleId());
+                stmt.setString(2, user.getFirstName());
+                stmt.setString(3, user.getLastName());
+                stmt.setString(4, user.getEmail());
+                stmt.setString(5, user.getHashedPassword());
 
                 stmt.executeUpdate();
 

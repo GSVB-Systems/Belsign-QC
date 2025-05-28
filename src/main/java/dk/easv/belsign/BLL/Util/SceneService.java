@@ -42,16 +42,20 @@ public class SceneService {
     }
 
 
-    public static void openModalWindow(String fxmlPath, String title, int width, int height) throws IOException {
+    public static <T> T openModalWindow(String fxmlPath, String title, int width, int height) throws IOException {
         FXMLLoader fxmlLoader = new FXMLLoader(SceneService.class.getResource(fxmlPath));
         Parent root = fxmlLoader.load();
+        T controller = fxmlLoader.getController();
+
         Scene scene = new Scene(root, width, height);
         Stage stage = new Stage();
         stage.setScene(scene);
         stage.setTitle(title);
         stage.setResizable(false);
         stage.initModality(Modality.APPLICATION_MODAL);
-        stage.show();
+        stage.showAndWait(); // BLOCKING until closed
+
+        return controller;
     }
 
     public static <T> T fullscreen(String fxmlPath, String title) {
