@@ -43,6 +43,7 @@
                               <TableColumn fx:id="colSize" minWidth="120.0" prefWidth="-1.0" text="Size" />
                               <TableColumn fx:id="colApprovalDate" minWidth="120.0" prefWidth="-1.0" text="Approval date" />
                               <TableColumn fx:id="colProductStatus" minWidth="120.0" prefWidth="-1.0" text="Product status" />
+                              <TableColumn fx:id="colApprovedBy" minWidth="120.0" prefWidth="-1.0" text="Approved by" />
                           </columns>
                       </TableView>
                   </children>
@@ -55,7 +56,6 @@
                           <columns>
                               <TableColumn fx:id="colPhotoStatus" minWidth="120.0" prefWidth="-1.0" text="Photo status" />
                                 <TableColumn fx:id="colPhotoName" minWidth="120.0" prefWidth="-1.0" text="Photo Name" />
-                              <TableColumn fx:id="colApprovedBy" minWidth="120.0" prefWidth="-1.0" text="Approved by" />
                           </columns>
                       </TableView>
                   </children>

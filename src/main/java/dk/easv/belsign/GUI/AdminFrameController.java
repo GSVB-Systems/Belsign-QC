@@ -38,23 +38,23 @@ public class AdminFrameController implements IParentAware {
     @FXML
     private TableView<Photos> tblPhotos;
     @FXML
-    private TableColumn colOrderId;
+    private TableColumn<Orders, Integer> colOrderId;
     @FXML
-    private TableColumn colProductId;
+    private TableColumn<Products, Integer> colProductId;
     @FXML
-    private TableColumn colProductName;
+    private TableColumn<Products, String> colProductName;
     @FXML
-    private TableColumn colSize;
+    private TableColumn<Products, String> colSize;
     @FXML
-    private TableColumn colPhotoName;
+    private TableColumn<Photos, String> colPhotoName;
     @FXML
-    private TableColumn colPhotoStatus;
+    private TableColumn<Photos, String> colPhotoStatus;
     @FXML
-    private TableColumn colApprovedBy;
+    private TableColumn<Products, String> colApprovedBy;
     @FXML
-    private TableColumn colApprovalDate;
+    private TableColumn<Products, String> colApprovalDate;
     @FXML
-    private TableColumn colProductStatus;
+    private TableColumn<Products, String> colProductStatus;
 
     private Orders selectedOrder;
     private Products selectedProduct;
@@ -123,6 +123,19 @@ public class AdminFrameController implements IParentAware {
          colApprovalDate.setCellValueFactory(new PropertyValueFactory<>("approvalDate"));
          colProductStatus.setCellValueFactory(new PropertyValueFactory<>("productStatus"));
 
+        colApprovedBy.setCellValueFactory(cellData -> {
+            Products product = cellData.getValue();
+            int approvedById = product.getApprovedBy();
+            try {
+                String approvedByName = usersModel.getUserById(approvedById).getLastName() + ", "
+                        + usersModel.getUserById(approvedById).getFirstName();
+                return new javafx.beans.property.SimpleStringProperty(approvedByName);
+            } catch (Exception e) {
+                ExceptionHandler.handleUnexpectedException(e);
+                return new javafx.beans.property.SimpleStringProperty("Unknown");
+            }
+        });
+
         tblProducts.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
             if (newValue != null) {
                 selectedProduct = newValue;
@@ -147,17 +160,7 @@ public class AdminFrameController implements IParentAware {
         tblPhotos.setItems(productsModel.getObservablePhotos(selectedProduct));
         colPhotoName.setCellValueFactory(new PropertyValueFactory<>("photoName"));
         colPhotoStatus.setCellValueFactory(new PropertyValueFactory<>("photoStatus"));
-        colApprovedBy.setCellValueFactory(cellData -> {
-            int approvedById = selectedProduct.getApprovedBy();
-            try {
-                String approvedByName = usersModel.getUserById(approvedById).getLastName() + ", "
-                        + usersModel.getUserById(approvedById).getFirstName();
-                return new javafx.beans.property.SimpleStringProperty(approvedByName);
-            } catch (Exception e) {
-                ExceptionHandler.handleUnexpectedException(e);
-                return new javafx.beans.property.SimpleStringProperty("Unknown");
-            }
-        });    }
+    }
 
 
     //Til Exception handeling - prompter en Alarm popup til GUI
@@ -182,7 +185,7 @@ public class AdminFrameController implements IParentAware {
     private void openCreateOrder(ActionEvent actionEvent) {
         try {
             String fxmlPath = "/dk/easv/belsign/CreateOrderPane.fxml";
-            SceneService.openModalWindow(fxmlPath, "Create Order", 600, 400);
+            SceneService.openModalWindow(fxmlPath, "Create Order", 1200, 800);
         } catch (Exception e) {
             ExceptionHandler.handleUnexpectedException(e);
             showError("Failed to open the Create Order window");
