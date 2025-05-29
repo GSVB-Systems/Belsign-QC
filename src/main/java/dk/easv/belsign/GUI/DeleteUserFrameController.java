@@ -1,8 +1,10 @@
 package dk.easv.belsign.GUI;
 
+import dk.easv.belsign.BLL.Util.ExceptionHandler;
 import dk.easv.belsign.Models.UsersModel;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
@@ -46,8 +48,16 @@ public class DeleteUserFrameController {
                 parentController.refreshUsers();
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            ExceptionHandler.handleUnexpectedException(e);
+            showError("Failed to delete user");
         }
         ((Stage) btnConfirm.getScene().getWindow()).close();
+    }
+    private void showError(String message) {
+        Alert alert = new Alert(Alert.AlertType.ERROR);
+        alert.setTitle("Admin Alert");
+        alert.setHeaderText(null);
+        alert.setContentText(message);
+        alert.showAndWait();
     }
 }

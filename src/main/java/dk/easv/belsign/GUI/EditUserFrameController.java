@@ -1,6 +1,7 @@
     package dk.easv.belsign.GUI;
 
     import dk.easv.belsign.BE.Users;
+    import dk.easv.belsign.BLL.Util.ExceptionHandler;
     import dk.easv.belsign.Models.UsersModel;
     import javafx.fxml.FXML;
     import javafx.scene.control.*;
@@ -22,7 +23,8 @@
             try {
                 usersModel = new UsersModel();
             } catch (Exception e) {
-                showError("Error initializing user model: " + e.getMessage());
+                ExceptionHandler.handleUnexpectedException(e);
+                showError("Failed to load the edit page, if problem persists you should contact IT");
             }
         }
 
@@ -64,14 +66,17 @@
                 if (parentController != null) parentController.refreshUsers();
 
             } catch (Exception e) {
-                showError("Could not update user: " + e.getMessage());
-                e.printStackTrace();
+                ExceptionHandler.handleUnexpectedException(e);
+                showError("Failed to change the user");
             }
         }
 
 
         private void showError(String message) {
-            Alert alert = new Alert(Alert.AlertType.ERROR, message, ButtonType.OK);
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setTitle("Admin Alert");
+            alert.setHeaderText(null);
+            alert.setContentText(message);
             alert.showAndWait();
         }
     }

@@ -1,6 +1,7 @@
 package dk.easv.belsign.GUI;
 
 import dk.easv.belsign.BE.Users;
+import dk.easv.belsign.BLL.Util.ExceptionHandler;
 import dk.easv.belsign.Models.UsersModel;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
@@ -56,7 +57,8 @@ public class CreateUserFrameController {
             usersModel.createUser(newUser);
             showAlert(Alert.AlertType.INFORMATION, "User Created", "User has been created");
         } catch (Exception e) {
-            showAlert(Alert.AlertType.ERROR, "Creation Failed", e.getMessage());
+            ExceptionHandler.handleUnexpectedException(e);
+            showError("Failed to open the Create User window");
         }
         if (parentController != null) {
             parentController.refreshUsers();
@@ -69,6 +71,13 @@ public class CreateUserFrameController {
         alert.setTitle(title);
         alert.setHeaderText(null);
         alert.setContentText(content);
+        alert.showAndWait();
+    }
+    private void showError(String message) {
+        Alert alert = new Alert(Alert.AlertType.ERROR);
+        alert.setTitle("Admin Alert");
+        alert.setHeaderText(null);
+        alert.setContentText(message);
         alert.showAndWait();
     }
 }

@@ -102,7 +102,7 @@ public class AdminUserFrameController implements IParentAware {
             SceneService.loadCenterContent((StackPane) parent.getMainPane(), fxmlPath, parent);
         } catch (Exception e) {
             ExceptionHandler.handleUnexpectedException(e);
-            showError("Failed to load the Admin Frame, you should probably contact IT : " + e.getMessage());
+            showError("Failed to load the Admin Frame, if problem persists you should contact IT");
         }
     }
 
@@ -148,13 +148,7 @@ public class AdminUserFrameController implements IParentAware {
             showError("Failed to open the Delete User window");
         }
     }
-    public void deleteUserConfirm(){
-        try{
-            usersModel.deleteUser(tblUsers.getSelectionModel().getSelectedItem().getUserId());
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-    }
+
     public void refreshUsers() {
         try {
             // Clear existing observableUsers and add updated users
@@ -166,7 +160,8 @@ public class AdminUserFrameController implements IParentAware {
             tblUsers.refresh();
 
         } catch (Exception e) {
-            showError("Failed to refresh users: " + e.getMessage());
+            ExceptionHandler.handleUnexpectedException(e);
+            showError("Failed to refresh users");
         }
     }
     public void onEditUserButtonClicked(ActionEvent actionEvent) {
@@ -198,7 +193,7 @@ public class AdminUserFrameController implements IParentAware {
 
         } catch (Exception e) {
             ExceptionHandler.handleUnexpectedException(e);
-            showError("Failed to open the Edit User window: " + e.getMessage());
+            showError("Failed to open the Edit User window");
         }
     }
 
