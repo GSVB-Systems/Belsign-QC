@@ -21,6 +21,7 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.SVGPath;
 import javafx.scene.image.Image;
 import javafx.scene.shape.StrokeType;
+import javafx.stage.Stage;
 
 import java.io.File;
 import java.util.List;
@@ -322,11 +323,17 @@ public class ProductFrameController implements IParentAware {
     public void onPDFButtonPressed(ActionEvent actionEvent) {
         if(OrderSession.getEnteredOrder().getApprovalStatus() == "Approved") {
             try{
-                pdfGenerator.createPDF("src/main/resources/dk/easv/belsign/PDF/QCReport.pdf", selectedProduct);
+                String pdfPath = "src/main/resources/dk/easv/belsign/PDF/QCReport.pdf";
+                pdfGenerator.createPDF(pdfPath, selectedProduct);
+                File pdfFile = new File(pdfPath);
+                PDFPreviewer.showPDFPreview(pdfFile, (Stage) btnGeneratePDF.getScene().getWindow());
             }catch (Exception e){
+                e.printStackTrace();
                 ExceptionHandler.handleUnexpectedException(e);
                 showError("PDF generation failed");
+
             }
+
 
 
         }else
