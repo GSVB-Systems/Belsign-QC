@@ -43,3 +43,4 @@ application.log
 application.log.lck
 tokens/StoredCredential
 src/main/resources/dk/easv/belsign/mail/Client_Secret.json
+/src/main/tokens/StoredCredential
