@@ -55,6 +55,8 @@
                           <columns>
                               <TableColumn fx:id="colPhotoStatus" minWidth="120.0" prefWidth="-1.0" text="Photo status" />
                                 <TableColumn fx:id="colPhotoName" minWidth="120.0" prefWidth="-1.0" text="Photo Name" />
+                              <TableColumn fx:id="colPhotoComment" minWidth="120.0" prefWidth="-1.0" text="Photo Comments" />
+
                           </columns>
                       </TableView>
                   </children>
