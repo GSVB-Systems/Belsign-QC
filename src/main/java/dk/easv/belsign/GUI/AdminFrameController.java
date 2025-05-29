@@ -50,6 +50,8 @@ public class AdminFrameController implements IParentAware {
     @FXML
     private TableColumn<Photos, String> colPhotoStatus;
     @FXML
+    private TableColumn<Photos, String> colPhotoComment;
+    @FXML
     private TableColumn<Products, String> colApprovedBy;
     @FXML
     private TableColumn<Products, String> colApprovalDate;
@@ -119,11 +121,15 @@ public class AdminFrameController implements IParentAware {
 
     }
 
-    private void DisplayProducts() throws Exception {
+    private void DisplayProducts()  {
         // Implement the logic to display products in the tblProducts TableView
 
-         tblProducts.setItems(productsModel.getObservableProducts(selectedOrderId));
-         colProductId.setCellValueFactory(new PropertyValueFactory<>("productId"));
+        try {
+            tblProducts.setItems(productsModel.getObservableProducts(selectedOrderId));
+        } catch (Exception e) {
+            ExceptionHandler.handleUnexpectedException(e);
+        }
+        colProductId.setCellValueFactory(new PropertyValueFactory<>("productId"));
          colProductName.setCellValueFactory(new PropertyValueFactory<>("productName"));
          colSize.setCellValueFactory(new PropertyValueFactory<>("size"));
          colApprovedBy.setCellValueFactory(new PropertyValueFactory<>("approvedBy"));
@@ -162,7 +168,7 @@ public class AdminFrameController implements IParentAware {
 
     }
 
-    private void DisplayPhotos() throws Exception {
+    private void DisplayPhotos()  {
 
         tblPhotos.setItems(productsModel.getObservablePhotos(selectedProduct));
         colPhotoName.setCellValueFactory(new PropertyValueFactory<>("photoName"));
@@ -177,7 +183,10 @@ public class AdminFrameController implements IParentAware {
                 ExceptionHandler.handleUnexpectedException(e);
                 return new javafx.beans.property.SimpleStringProperty("Unknown");
             }
-        });    }
+        });
+        colPhotoComment.setCellValueFactory(new PropertyValueFactory<>("photoComments"));
+        
+    }
 
 
     //Til Exception handeling - prompter en Alarm popup til GUI
