@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.String?>
+<?import javafx.collections.FXCollections?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.PasswordField?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.layout.VBox?>
+
+<VBox fillWidth="true" spacing="10" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="dk.easv.belsign.GUI.CreateUserFrameController">
+
+    <GridPane hgap="5.0" vgap="10.0" VBox.vgrow="ALWAYS" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1">
+
+        <columnConstraints>
+            <ColumnConstraints halignment="RIGHT" minWidth="100.0" />
+            <ColumnConstraints hgrow="ALWAYS" />
+        </columnConstraints>
+
+        <rowConstraints>
+            <RowConstraints vgrow="ALWAYS" />
+            <RowConstraints vgrow="ALWAYS" />
+            <RowConstraints vgrow="ALWAYS" />
+            <RowConstraints vgrow="ALWAYS" />
+            <RowConstraints vgrow="ALWAYS" />
+            <RowConstraints vgrow="ALWAYS" />
+        </rowConstraints>
+
+        <Label text="First Name:" GridPane.columnIndex="0" GridPane.rowIndex="0" />
+        <TextField fx:id="txtfirstNameField" promptText="Enter first name" GridPane.columnIndex="1" GridPane.rowIndex="0" />
+
+        <Label text="Last Name:" GridPane.columnIndex="0" GridPane.rowIndex="1" />
+        <TextField fx:id="txtlastNameField" promptText="Enter last name" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+
+        <!-- Role Selection -->
+        <Label text="Role:" GridPane.columnIndex="0" GridPane.rowIndex="2" />
+        <ComboBox fx:id="roleComboBox" promptText="Select role" GridPane.columnIndex="1" GridPane.rowIndex="2">
+            <items>
+                <FXCollections fx:factory="observableArrayList">
+                    <String fx:value="Operator" />
+                    <String fx:value="Quality Control" />
+                </FXCollections>
+            </items>
+        </ComboBox>
+
+
+        <Label text="Email:" GridPane.columnIndex="0" GridPane.rowIndex="3" />
+        <TextField fx:id="txtemailField" promptText="Enter email" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+
+        <Label text="Password:" GridPane.columnIndex="0" GridPane.rowIndex="4" />
+        <PasswordField fx:id="txtpasswordField" promptText="Enter password" GridPane.columnIndex="1" GridPane.rowIndex="4" />
+
+        <Button fx:id="btnsubmit" onAction="#onSubmitButtonClicked" maxWidth="Infinity" text="Create User" GridPane.columnIndex="1" GridPane.halignment="RIGHT" GridPane.rowIndex="5" />
+        <rowConstraints>
+            <RowConstraints />
+            <RowConstraints />
+            <RowConstraints />
+            <RowConstraints />
+            <RowConstraints />
+            <RowConstraints />
+         <RowConstraints />
+         <RowConstraints />
+         <RowConstraints />
+         <RowConstraints />
+         <RowConstraints />
+         <RowConstraints />
+        </rowConstraints>
+
+    </GridPane>
+   <padding>
+      <Insets right="50.0" />
+   </padding>
+</VBox>

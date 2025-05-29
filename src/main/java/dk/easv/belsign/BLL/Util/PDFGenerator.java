@@ -55,8 +55,6 @@ public class PDFGenerator {
             document.add(new Paragraph("Report made: " + convertDateToString(date)).setFontSize(16).setBold());
             document.add(new Paragraph("QC: " + UserSession.getLoggedInUser().getFirstName() + " " + UserSession.getLoggedInUser().getLastName()).setFontSize(16).setBold());
 
-             int orderSize = OrderSession.getEnteredOrder().getProductQuantity();
-
             for (int i = 0; i < productsModel.getObservableProducts(OrderSession.getEnteredOrder().getOrderId()).size(); i++) {
                 products = productsModel.getProductsByOrder().get(i);
                 String productName = products.getProductName();

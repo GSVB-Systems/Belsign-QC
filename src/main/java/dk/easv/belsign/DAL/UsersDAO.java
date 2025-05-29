@@ -1,6 +1,7 @@
 package dk.easv.belsign.DAL;
 
 import dk.easv.belsign.BE.Users;
+import dk.easv.belsign.BLL.Util.ExceptionHandler;
 import dk.easv.belsign.BLL.Util.ThreadShutdownUtil;
 
 import java.io.IOException;
@@ -12,7 +13,7 @@ import java.util.concurrent.*;
 public class UsersDAO implements ICrudRepo<Users> {
 
     private final DBConnector dbConnector;
-    private ExecutorService executorService;
+    private final ExecutorService executorService;
     private final ThreadShutdownUtil threadShutdownUtil;
 
     public UsersDAO() throws IOException {
@@ -22,40 +23,39 @@ public class UsersDAO implements ICrudRepo<Users> {
         threadShutdownUtil.registerExecutorService(executorService);
     }
 
-
     @Override
-    public CompletableFuture<Void> create(Users user) throws Exception {
+    public CompletableFuture<Void> create(Users user) {
         return CompletableFuture.runAsync(() -> {
-            String sql = "INSERT INTO users (userId, roleId, firstName, lastName, email, hashedPassword) VALUES (?, ?, ?)";
+            String sql = "INSERT INTO Users (roleId, firstName, lastName, email, hashedPassword) VALUES (?, ?, ?, ?, ?)";
 
             try (Connection conn = dbConnector.getConnection();
-                 PreparedStatement stmt = conn.prepareStatement(sql)) {
+                 PreparedStatement stmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);) {
 
-                stmt.setInt(1, user.getUserId());
-                stmt.setInt(2, user.getRoleId());
-                stmt.setString(3, user.getEmail());
-                stmt.setString(4, user.getFirstName());
-                stmt.setString(5, user.getLastName());
-                stmt.setString(6, user.getEmail());
-                stmt.setString(7, user.getHashedPassword());
+                stmt.setInt(1, user.getRoleId());
+                stmt.setString(2, user.getFirstName());
+                stmt.setString(3, user.getLastName());
+                stmt.setString(4, user.getEmail());
+                stmt.setString(5, user.getHashedPassword());
 
                 stmt.executeUpdate();
 
             } catch (SQLException e) {
-                throw new RuntimeException("Error inserting user into database", e);
+                DALExceptions ex = new DALExceptions("Failed to insert User into DB: ", e);
+                ExceptionHandler.handleDALException(ex);
+                throw ex;
             }
-        });
+        }, executorService);
     }
 
     @Override
     public CompletableFuture<List<Users>> readAll() {
         return CompletableFuture.supplyAsync(() -> {
-            ArrayList<Users> users = new ArrayList<>();
-            String sql = "SELECT * FROM users";
+            List<Users> users = new ArrayList<>();
+            String sql = "SELECT * FROM Users";
 
             try (Connection conn = dbConnector.getConnection();
-                 PreparedStatement statement = conn.prepareStatement(sql)) {
-                ResultSet rs = statement.executeQuery(sql);
+                 PreparedStatement statement = conn.prepareStatement(sql);
+                 ResultSet rs = statement.executeQuery()) {
 
                 while (rs.next()) {
                     int userId = rs.getInt("userId");
@@ -69,8 +69,11 @@ public class UsersDAO implements ICrudRepo<Users> {
                     users.add(user);
                 }
                 return users;
+
             } catch (SQLException e) {
-                throw new RuntimeException("Error fetching users from database", e);
+                DALExceptions ex = new DALExceptions("Failed to read all Users: ", e);
+                ExceptionHandler.handleDALException(ex);
+                throw ex;
             }
         }, executorService);
     }
@@ -78,7 +81,8 @@ public class UsersDAO implements ICrudRepo<Users> {
     @Override
     public CompletableFuture<Void> update(Users user) {
         return CompletableFuture.runAsync(() -> {
-            String sql = "UPDATE users SET roleId = ?, firstName = ?, lastName = ?, hashedPassword = ?, email = ? WHERE userId = ?";
+            String sql = "UPDATE Users SET roleId = ?, firstName = ?, lastName = ?, hashedPassword = ?, email = ? WHERE userId = ?";
+
             try (Connection conn = dbConnector.getConnection()) {
                 conn.setAutoCommit(false);
 
@@ -94,31 +98,31 @@ public class UsersDAO implements ICrudRepo<Users> {
                     conn.commit();
                 } catch (SQLException e) {
                     conn.rollback();
-                    throw new RuntimeException("Error updating user in database", e);
+                    DALExceptions ex = new DALExceptions("Failed to update DB: ", e);
+                    ExceptionHandler.handleDALException(ex);
+                    throw ex;
                 }
+
             } catch (SQLException e) {
-                throw new RuntimeException("Database connection error", e);
+                DALExceptions ex = new DALExceptions("USER - Connection issue: ", e);
+                ExceptionHandler.handleDALException(ex);
+                throw ex;
             }
         }, executorService);
     }
 
     @Override
-    public CompletableFuture<Void> delete(int id) throws Exception {
-        return null;
-    }
-
-    // In UsersDAO.java
-    @Override
-    public CompletableFuture<Users> read(int UserId) {
+    public CompletableFuture<Users> read(int userId) {
         return CompletableFuture.supplyAsync(() -> {
-            String sql = "SELECT * FROM users WHERE UserId = ?";
+            String sql = "SELECT * FROM Users WHERE userId = ?";
+
             try (Connection conn = dbConnector.getConnection();
                  PreparedStatement statement = conn.prepareStatement(sql)) {
-                statement.setInt(1, UserId);
+
+                statement.setInt(1, userId);
                 ResultSet rs = statement.executeQuery();
 
                 if (rs.next()) {
-                    int userId = rs.getInt("userId");
                     int roleId = rs.getInt("roleId");
                     String firstName = rs.getString("firstName");
                     String lastName = rs.getString("lastName");
@@ -127,9 +131,38 @@ public class UsersDAO implements ICrudRepo<Users> {
 
                     return new Users(userId, roleId, firstName, lastName, email, storedPassword);
                 }
+
                 return null;
+
             } catch (SQLException e) {
-                throw new RuntimeException("Error retrieving user", e);
+                DALExceptions ex = new DALExceptions("Failed to get User ", e);
+                ExceptionHandler.handleDALException(ex);
+                throw ex;
+            }
+        }, executorService);
+    }
+
+    @Override
+    public CompletableFuture<Void> delete(int id) {
+        return CompletableFuture.runAsync(() -> {
+            String sql = "DELETE FROM Users WHERE userId = ?";
+
+            try (Connection conn = dbConnector.getConnection();
+                 PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+                stmt.setInt(1, id);
+                int affected = stmt.executeUpdate();
+
+                if (affected == 0) {
+                    DALExceptions ex = new DALExceptions("No user matching with ID: " + id);
+                    ExceptionHandler.handleDALException(ex);
+                    throw ex;
+                }
+
+            } catch (SQLException e) {
+                DALExceptions ex = new DALExceptions("Failed to delete user from DB: ", e);
+                ExceptionHandler.handleDALException(ex);
+                throw ex;
             }
         }, executorService);
     }

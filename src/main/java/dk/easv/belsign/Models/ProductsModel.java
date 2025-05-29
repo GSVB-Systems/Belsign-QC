@@ -6,11 +6,13 @@ import dk.easv.belsign.BLL.ProductsManager;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class ProductsModel {
 
     private final ObservableList<Products> observableProducts;
+    private ObservableList<Photos> observablePhotos;
     private final ProductsManager productsManager;
 
 
@@ -18,6 +20,12 @@ public class ProductsModel {
         this.productsManager = new ProductsManager();
         observableProducts = FXCollections.observableArrayList();
 
+
+    }
+
+    public ObservableList<Photos> getObservablePhotos(Products product) {
+        observablePhotos = FXCollections.observableArrayList(product.getPhotos());
+        return observablePhotos;
     }
 
 
@@ -32,9 +40,21 @@ public class ProductsModel {
 
     }
 
+    public void create(Products product) throws Exception {
+            productsManager.create(product);
+
+    }
+
+    public List<Integer> createProducts(ArrayList<Products> productList) throws Exception {
+        return productsManager.createProducts(productList);
+    }
+
     public void updateProduct(Products product) throws Exception {
         productsManager.updateProduct(product);
 
     }
 
+    public void deleteProductsByOrderId(int selectedOrderId) throws Exception {
+        productsManager.deleteProductsByOrderId(selectedOrderId);
+    }
 }

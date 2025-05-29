@@ -1,23 +1,21 @@
 package dk.easv.belsign.DAL;
 
 import dk.easv.belsign.BE.Orders;
+import dk.easv.belsign.BLL.Util.ExceptionHandler;
 import dk.easv.belsign.BLL.Util.ThreadShutdownUtil;
 
 import java.io.IOException;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-public class OrdersDAO implements ICrudRepo<Orders> {
+public class OrdersDAO implements IOrderDAO<Orders> {
 
     private final DBConnector dbConnector;
-    private ExecutorService executorService;
+    private final ExecutorService executorService;
     private final ThreadShutdownUtil threadShutdownUtil;
 
     public OrdersDAO() throws IOException {
@@ -29,153 +27,162 @@ public class OrdersDAO implements ICrudRepo<Orders> {
 
     @Override
     public CompletableFuture<Void> update(Orders order) {
-        return CompletableFuture.runAsync(() -> {
-            String sql = "UPDATE orders SET productQuantity = ? WHERE orderId = ?";
-
-            try (Connection conn = dbConnector.getConnection()) {
-                conn.setAutoCommit(false);
-
-                try (PreparedStatement stmt = conn.prepareStatement(sql)) {
-                    stmt.setInt(1, order.getProductQuantity());
-                    stmt.setInt(2, order.getOrderId());
-
-                    stmt.executeUpdate();
-                    conn.commit();
-                } catch (SQLException e) {
-                    try {
-                        conn.rollback();
-                    } catch (SQLException ex) {
-                        throw new RuntimeException("Error rolling back transaction", ex);
-                    }
-                    throw new RuntimeException("Error updating order in database", e);
-                }
-            } catch (SQLException e) {
-                throw new RuntimeException("Database connection error", e);
-            }
-        }, executorService);
+        return null; // Not implemented yet
     }
 
     @Override
-    public CompletableFuture<Void> delete(int id) throws Exception {
+    public CompletableFuture<Void> delete(int id) {
         return CompletableFuture.runAsync(() -> {
-            String sql = "DELETE FROM orders WHERE orderNumber = ?";
-
+            String sql = "DELETE FROM Orders WHERE orderId = ?";
             Connection conn = null;
+
             try {
                 conn = dbConnector.getConnection();
-                conn.setAutoCommit(false); // Start transaktion
+                conn.setAutoCommit(false);
 
                 try (PreparedStatement statement = conn.prepareStatement(sql)) {
                     statement.setInt(1, id);
                     int affectedRows = statement.executeUpdate();
 
                     if (affectedRows == 0) {
-                        conn.rollback(); // Rollback hvis intet blev slettet
-                        throw new RuntimeException("No order found with ID: " + id);
+                        conn.rollback();
+                        throw new DALExceptions("No order with matching ID: " + id);
                     }
 
-                    conn.commit(); // Alt ok, commit
+                    conn.commit();
                 }
-
-                conn.setAutoCommit(true); // Valgfrit: gendan autocommit
-
             } catch (SQLException e) {
-                if (conn != null) {
-                    try {
-                        conn.rollback(); // Rollback hvis fejl
-                    } catch (SQLException rollbackEx) {
-                        throw new RuntimeException("Rollback failed after delete error", rollbackEx);
-                    }
+                try {
+                    if (conn != null) conn.rollback();
+                } catch (SQLException rollbackEx) {
+                    DALExceptions rollbackError = new DALExceptions("Order deletion rollback failed: ", rollbackEx);
+                    ExceptionHandler.handleDALException(rollbackError);
+                    throw rollbackError;
                 }
-                throw new RuntimeException("Error deleting order from database", e);
+
+                DALExceptions ex = new DALExceptions("Failed to delete order from DB: ", e);
+                ExceptionHandler.handleDALException(ex);
+                throw ex;
+            } finally {
+                try {
+                    if (conn != null) conn.setAutoCommit(true);
+                } catch (SQLException e) {
+                    DALExceptions ex = new DALExceptions("autocommit reset failed: ", e);
+                    ExceptionHandler.handleDALException(ex);
+                    throw ex;
+                }
             }
         }, executorService);
     }
 
-
-    public void shutdown() {
-        executorService.shutdown();
-    }
-
     @Override
-    public CompletableFuture<Void> create(Orders order) throws Exception {
+    public CompletableFuture<Void> create(Orders order) {
         return CompletableFuture.runAsync(() -> {
-            String sql = "INSERT INTO orders (orderId, productQuantity) VALUES (?, ?)";
-            Connection conn = null;
+            String sql = "INSERT INTO Orders (orderId) VALUES (?)";
+            try (Connection conn = dbConnector.getConnection();
+                 PreparedStatement statement = conn.prepareStatement(sql)) {
 
-            try {
-                conn = dbConnector.getConnection();
-                conn.setAutoCommit(false); // Start transaktion
+                statement.setInt(1, order.getOrderId());
 
-                try (PreparedStatement statement = conn.prepareStatement(sql)) {
-                    statement.setInt(1, order.getOrderId());
-                    statement.setInt(2, order.getProductQuantity());
 
-                    statement.executeUpdate(); // Udfør INSERT
+                int affectedRows = statement.executeUpdate();
+                if (affectedRows == 0) {
+                    throw new DALExceptions("Failed to create order: No rows affected.");
                 }
-
-                conn.commit(); // Commit hvis alt lykkes
-                conn.setAutoCommit(true); // (Valgfrit) gendan autocommit
 
             } catch (SQLException e) {
-                if (conn != null) {
-                    try {
-                        conn.rollback(); // Rollback hvis fejl
-                    } catch (SQLException rollbackEx) {
-                        throw new RuntimeException("Rollback failed after insert error", rollbackEx);
-                    }
-                }
-                throw new RuntimeException("Error inserting order into database", e);
+                DALExceptions ex = new DALExceptions("Failed to create order in DB: ", e);
+                ExceptionHandler.handleDALException(ex);
+                throw ex;
             }
         }, executorService);
     }
 
+    @Override
+    public CompletableFuture<Void> createOrderApproval(Orders order) {
+        return CompletableFuture.runAsync(() -> {
+            String checkSql = "SELECT 1 FROM orderApproval WHERE orderId = ?";
+            String insertSql = "INSERT INTO orderApproval (orderId, approvalDate, orderStatus) VALUES (?, ?, ?)";
+
+            try (Connection conn = dbConnector.getConnection()) {
+                conn.setAutoCommit(false);
+
+                boolean orderExists;
+                try (PreparedStatement checkStatement = conn.prepareStatement(checkSql)) {
+                    checkStatement.setInt(1, order.getOrderId());
+                    try (ResultSet rs = checkStatement.executeQuery()) {
+                        orderExists = rs.next();
+                    }
+                }
+
+                if (!orderExists) {
+                    try (PreparedStatement insertStatement = conn.prepareStatement(insertSql)) {
+                        insertStatement.setInt(1, order.getOrderId());
+                        insertStatement.setObject(2, order.getApprovalDate());
+                        insertStatement.setString(3, order.getApprovalStatus());
+                        insertStatement.executeUpdate();
+                    }
+                }
+
+                conn.commit();
+            } catch (SQLException e) {
+                DALExceptions ex = new DALExceptions("Failed to create Approval: ", e);
+                ExceptionHandler.handleDALException(ex);
+                throw ex;
+            }
+        }, executorService);
+    }
 
     @Override
-    public CompletableFuture<Orders> read(int id) throws Exception {
+    public CompletableFuture<Orders> read(int id) {
         return CompletableFuture.supplyAsync(() -> {
-            String sql = "SELECT * FROM orders WHERE orderId = ?";
+            String sql = "SELECT * FROM Orders WHERE orderId = ?";
+
             try (Connection conn = dbConnector.getConnection();
                  PreparedStatement statement = conn.prepareStatement(sql)) {
 
                 statement.setInt(1, id);
-                ResultSet rs = statement.executeQuery();
-
-                if (rs.next()) {
-                    int orderId = rs.getInt("orderId");
-                    int productQuantity = rs.getInt("productQuantity");
-                    return new Orders(orderId, productQuantity);
-                } else {
-                    return null; // or throw an exception if preferred
+                try (ResultSet rs = statement.executeQuery()) {
+                    if (rs.next()) {
+                        return new Orders(rs.getInt("orderId"));
+                    } else {
+                        return null;
+                    }
                 }
 
             } catch (SQLException e) {
-                throw new RuntimeException("Error reading order from database", e);
+                DALExceptions ex = new DALExceptions("Failed to read order from DB: ", e);
+                ExceptionHandler.handleDALException(ex);
+                throw ex;
             }
-        });
+        }, executorService);
     }
 
     @Override
     public CompletableFuture<List<Orders>> readAll() {
         return CompletableFuture.supplyAsync(() -> {
-            ArrayList<Orders> orders = new ArrayList<>();
-            String sql = "SELECT * FROM orders";
+            List<Orders> orders = new ArrayList<>();
+            String sql = "SELECT * FROM Orders";
 
             try (Connection conn = dbConnector.getConnection();
-                 PreparedStatement statement = conn.prepareStatement(sql)) {
-                ResultSet rs = statement.executeQuery(sql);
+                 PreparedStatement statement = conn.prepareStatement(sql);
+                 ResultSet rs = statement.executeQuery()) {
 
                 while (rs.next()) {
-                    int orderId = rs.getInt("orderId");
-                    int productQuantity = rs.getInt("productQuantity");
-
-                    Orders order = new Orders(orderId, productQuantity);
-                    orders.add(order);
+                    orders.add(new Orders(rs.getInt("orderId")));
                 }
+
                 return orders;
+
             } catch (SQLException e) {
-                throw new RuntimeException("Error fetching orders from database", e);
+                DALExceptions ex = new DALExceptions("Failed to get all orders from DB: ", e);
+                ExceptionHandler.handleDALException(ex);
+                throw ex;
             }
         }, executorService);
+    }
+
+    public void shutdown() {
+        executorService.shutdown();
     }
 }

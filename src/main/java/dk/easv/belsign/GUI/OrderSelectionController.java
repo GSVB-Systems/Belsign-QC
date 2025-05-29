@@ -1,12 +1,15 @@
 package dk.easv.belsign.GUI;
 
+import dk.easv.belsign.BLL.Util.ExceptionHandler;
 import dk.easv.belsign.BLL.Util.OrderValidator;
+import dk.easv.belsign.BLL.Util.SceneService;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
+import javafx.scene.layout.StackPane;
 
 import java.io.IOException;
 
@@ -23,6 +26,7 @@ public class OrderSelectionController implements IParentAware {
     @Override
     public void setParent(MainframeController parent) {
         this.parent = parent;
+        parent.setBtnLogout(true);
     }
 
     public void initialize() {
@@ -38,19 +42,25 @@ public class OrderSelectionController implements IParentAware {
 
     public void onSearchButtonClick(javafx.event.ActionEvent actionEvent) {
         try {
+            String orderInput = txtSearch.getText();
             OrderValidator orderValidator = new OrderValidator();
 
-
-            order = txtSearch.getText();
-            if (orderValidator.validateOrder(Integer.parseInt(order))) {
-                parent.setOrder(order);
-                parent.fillMainPane(new FXMLLoader(getClass().getResource("/dk/easv/belsign/ProductFrame.fxml")));
-
-            } else throw new Exception();
-
-
+            if (orderValidator.validateOrder(Integer.parseInt(orderInput))) {
+                parent.setOrder(orderInput);
+                String fxmlPath = "/dk/easv/belsign/ProductFrame.fxml";
+                SceneService.loadCenterContent((StackPane) parent.getMainPane(), fxmlPath, parent);
+            } else {
+                throw new IllegalArgumentException("Invalid order ID");
+            }
+        } catch (NumberFormatException e) {
+            ExceptionHandler.handleUnexpectedException(e);
+            showError("Invalid input: Please enter a numeric order ID.");
+        } catch (IllegalArgumentException e) {
+            ExceptionHandler.handleUnexpectedException(e);
+            showError(e.getMessage());
         } catch (Exception e) {
-            showError("order not found");
+            ExceptionHandler.handleUnexpectedException(e);
+            showError("Order not found. Make sure you type the correct order ID without dashes.");
         }
     }
     //Til Exception handeling - prompter en Alarm popup til GUI

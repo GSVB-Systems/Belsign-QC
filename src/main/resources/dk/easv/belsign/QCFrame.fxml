@@ -7,13 +7,13 @@
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.FlowPane?>
 <?import javafx.scene.layout.HBox?>
-<?import javafx.scene.layout.VBox?>
 <?import javafx.scene.layout.Region?>
-<?import javafx.scene.layout.Priority?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
 
-<BorderPane xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1" fx:controller="dk.easv.belsign.GUI.QCFrameController" stylesheets="@style.css">
+<BorderPane stylesheets="@style.css" xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1" fx:controller="dk.easv.belsign.GUI.QCFrameController">
     <bottom>
-        <HBox alignment="CENTER_LEFT" prefHeight="100.0" prefWidth="200.0" BorderPane.alignment="CENTER">
+        <HBox alignment="BOTTOM_LEFT" prefHeight="100.0" prefWidth="200.0" BorderPane.alignment="CENTER">
             <children>
                 <VBox prefHeight="200.0" prefWidth="100.0">
                     <children>
@@ -32,15 +32,13 @@
                     </children>
                 </VBox>
                 <Region HBox.hgrow="ALWAYS" />
-                <Button alignment="CENTER" mnemonicParsing="false" onAction="#onGeneratePDFPressed" prefHeight="50.0" prefWidth="150.0" style="-fx-background-color: D9D9D9;" text="Generate PDF">
-                    <HBox.margin>
-                        <Insets right="10.0" />
-                    </HBox.margin>
-                </Button>
-                <Button alignment="CENTER" mnemonicParsing="false" onAction="#onConfirmPressed" prefHeight="50.0" prefWidth="150.0" text="Confirm">
+                <Button alignment="CENTER" mnemonicParsing="false" onAction="#onConfirmPressed" prefHeight="125.0" style="-fx-background-color: D9D9D9;" prefWidth="300.0" text="Confirm">
                     <HBox.margin>
                         <Insets bottom="10.0" left="50.0" right="10.0" top="10.0" />
                     </HBox.margin>
+               <font>
+                  <Font size="24.0" />
+               </font>
                 </Button>
             </children>
             <padding>

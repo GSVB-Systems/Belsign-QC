@@ -3,12 +3,22 @@
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.Pane?>
+<?import javafx.scene.text.Font?>
 <?import javafx.scene.text.Text?>
 
-<Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="dk.easv.belsign.GUI.OrderSelectionController">
+<Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1" fx:controller="dk.easv.belsign.GUI.OrderSelectionController">
    <children>
-      <Text layoutX="248.0" layoutY="173.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Enter order number" />
-      <TextField fx:id="txtSearch" layoutX="226.0" layoutY="188.0" />
-      <Button fx:id="btnSearch" layoutX="375.0" layoutY="188.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="33.0" onAction="#onSearchButtonClick" />
+      <Text layoutX="231.0" layoutY="172.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Enter order number">
+         <font>
+            <Font size="16.0" />
+         </font></Text>
+      <TextField fx:id="txtSearch" layoutX="203.0" layoutY="188.0" prefHeight="36.0" prefWidth="194.0">
+         <font>
+            <Font size="16.0" />
+         </font></TextField>
+      <Button fx:id="btnSearch" layoutX="203.0" layoutY="233.0" mnemonicParsing="false" onAction="#onSearchButtonClick" prefHeight="45.0" prefWidth="194.0">
+         <font>
+            <Font size="24.0" />
+         </font></Button>
    </children>
 </Pane>

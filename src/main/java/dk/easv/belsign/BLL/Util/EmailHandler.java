@@ -97,6 +97,8 @@ public class EmailHandler {
      * @param toEmailAddress The recipient's email address
      * @throws Exception If there's an error creating or sending the email
      */
+
+
     public void send(String subject, String message, File attachment, String toEmailAddress) throws Exception {
         // Encode as MIME message
         Properties props = new Properties();

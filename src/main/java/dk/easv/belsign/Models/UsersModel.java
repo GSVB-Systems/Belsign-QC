@@ -7,6 +7,7 @@ import javafx.collections.ObservableList;
 
 import java.io.IOException;
 import java.sql.SQLException;
+import java.util.List;
 
 public class UsersModel {
 
@@ -24,12 +25,21 @@ public class UsersModel {
         return observableUsers;
     }
 
+    public List<Users> getAllUsersFromDB() throws Exception {
+        return usersManager.getAllUsers();
+    }
+
     public void updateUser(Users user) throws Exception {
         usersManager.updateUser(user);
     }
 
-    public Users getUserByd(int userId) throws Exception {
+    public Users getUserById(int userId) throws Exception {
         return usersManager.getUserById(userId);
     }
-
+    public void createUser(Users user) throws Exception {
+        usersManager.createUser(user);
+    }
+    public void deleteUser(int userId) throws Exception {
+        usersManager.deleteUser(userId);
+    }
 }

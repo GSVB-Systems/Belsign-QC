@@ -11,7 +11,13 @@ public class ThreadShutdownUtil {
 
     private ThreadShutdownUtil() {
         // Keep the shutdown hook as a backup
-        Runtime.getRuntime().addShutdownHook(new Thread(this::shutdownAll));
+        Runtime.getRuntime().addShutdownHook(new Thread(() -> {
+            try {
+                shutdownAll();
+            } catch (Exception e) {
+                ExceptionHandler.handleUnexpectedException(e);
+            }
+        }));
     }
 
     public static ThreadShutdownUtil getInstance() {
@@ -25,9 +31,12 @@ public class ThreadShutdownUtil {
     }
 
     public void shutdownAll() {
-        System.out.println("Shutting down all executor services...");
         for (ExecutorService service : executorServices) {
-            shutdownExecutorService(service);
+            try {
+                shutdownExecutorService(service);
+            } catch (Exception e) {
+                ExceptionHandler.handleUnexpectedException(e);
+            }
         }
         executorServices.clear();
     }
@@ -38,12 +47,15 @@ public class ThreadShutdownUtil {
             if (!service.awaitTermination(3, TimeUnit.SECONDS)) {
                 service.shutdownNow();
                 if (!service.awaitTermination(3, TimeUnit.SECONDS)) {
-                    System.err.println("ExecutorService did not terminate");
+                    ExceptionHandler.getLogger().severe("ExecutorService did not terminate");
                 }
             }
         } catch (InterruptedException e) {
             service.shutdownNow();
             Thread.currentThread().interrupt();
+            ExceptionHandler.handleUnexpectedException(e);
+        } catch (Exception e) {
+            ExceptionHandler.handleUnexpectedException(e);
         }
     }
 }
