@@ -361,4 +361,10 @@ public class ProductFrameController implements IParentAware {
         alert.setContentText(message);
         alert.showAndWait();
     }
+
+    @FXML
+    private void handleBack(ActionEvent event) {
+        String fxmlPath = "/dk/easv/belsign/OrderSelection.fxml";
+        SceneService.loadCenterContent((StackPane) parent.getMainPane(), fxmlPath, parent);
+    }
 }
