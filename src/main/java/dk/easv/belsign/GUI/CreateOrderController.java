@@ -128,12 +128,12 @@ public class CreateOrderController {
 
                 for (Node node : fpProducts.getChildren()) {
                         if (node instanceof Pane) {
-                                // Extract product data as before
+
                                 Pane productPane = (Pane) node;
                                 TextField txtProductName = (TextField) productPane.lookup("#txtProductName");
                                 String productName = txtProductName.getText();
 
-                                // Get size information
+
                                 String selectedSize = getSelectedSize(productPane);
                                 int size = 0;
 
@@ -145,21 +145,21 @@ public class CreateOrderController {
                                         size = 15;
                                 }
 
-                                // Create and add product to the list
-                                Products product = new Products(orderId, productName, size);
-                                productsToCreate.add(product);
+
+                            Products product = new Products(orderId, productName, size);
+                            productsToCreate.add(product);
                         }
                 }
 
-                // Create all products at once and get IDs
+
                 List<Integer> productIds = productsModel.createProducts(new ArrayList<>(productsToCreate));
 
-                // Now create photos with the product IDs
+
                 for (int i = 0; i < productsToCreate.size(); i++) {
                         Products product = productsToCreate.get(i);
                         Integer productId = productIds.get(i);
 
-                        // Determine template based on size
+
                         PhotosTemplate template = null;
                         if (product.getSize() == 5) {
                                 template = PhotosTemplate.SMALL;
@@ -169,7 +169,7 @@ public class CreateOrderController {
                                 template = PhotosTemplate.LARGE;
                         }
 
-                        // Create photos for this product
+
                         if (template != null) {
                                 List<Photos> photos = template.createPhotos(productId);
                                 for (Photos photo : photos) {

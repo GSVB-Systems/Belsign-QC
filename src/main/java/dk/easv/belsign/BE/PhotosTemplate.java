@@ -37,7 +37,5 @@ public enum PhotosTemplate {
         return photosList;
     }
 
-    public int getPhotoCount() {
-        return photoNames.size();
-    }
+
 }

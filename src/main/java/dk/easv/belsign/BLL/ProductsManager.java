@@ -23,22 +23,22 @@ public class ProductsManager {
     }
 
     public List<Integer> createProducts(List<Products> products) throws Exception {
-        // Create a list to hold all the futures
+
         List<CompletableFuture<Integer>> futures = new ArrayList<>();
 
-        // Submit all products for creation and collect their futures
+
         for (Products product : products) {
             futures.add(productsDataAccess.createProducts(product));
         }
 
-        // Wait for all futures to complete and collect the results
+
         CompletableFuture<Void> allFutures = CompletableFuture.allOf(
                 futures.toArray(new CompletableFuture[0]));
 
-        // Block until all are done
+
         allFutures.join();
 
-        // Extract results from the futures
+
         return futures.stream()
                 .map(CompletableFuture::join)
                 .collect(Collectors.toList());

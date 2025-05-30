@@ -72,7 +72,7 @@ public class ProductsDAO implements IProductDAO<Products> {
 
                 statement.executeUpdate();
 
-                // Get the generated ID
+
                 try (ResultSet generatedKeys = statement.getGeneratedKeys()) {
                     if (generatedKeys.next()) {
                         int productId = generatedKeys.getInt(1);
