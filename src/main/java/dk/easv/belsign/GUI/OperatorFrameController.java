@@ -37,6 +37,7 @@ public class OperatorFrameController implements IParentAware {
 
     private Products products;
     private PhotosModel photosModel;
+    private MainframeController parent;
 
     public void initialize() {
         // Set appropriate properties for better layout behavior
@@ -54,6 +55,9 @@ public class OperatorFrameController implements IParentAware {
             showError("Failed to initialize ProductsModel - Contact System Administrator");
         }
     }
+
+
+
 
     public void setProduct(Products selectedProduct) {
         this.products = selectedProduct;
@@ -177,4 +181,10 @@ public class OperatorFrameController implements IParentAware {
     }
 
 
+    @FXML
+    private void handleBack(ActionEvent event) {
+        String fxmlPath = "/dk/easv/belsign/ProductFrame.fxml";
+        SceneService.loadCenterContent((StackPane) mainframeController.getMainPane(), fxmlPath, mainframeController);
+
+    }
 }
