@@ -10,7 +10,6 @@ public class Products {
 
     private int orderId;
     private String productName;
-    private int quantity;
     private int size;
     private String photoPath;
     private String photoName;
@@ -98,14 +97,6 @@ public class Products {
         this.productName = productName;
     }
 
-    public int getQuantity() {
-        return quantity;
-    }
-
-    public void setQuantity(int quantity) {
-        this.quantity = quantity;
-    }
-
     public int getSize() {
         return size;
     }
@@ -117,19 +108,17 @@ public class Products {
         this.size = size;
     }
 
-    public Products(int productId, int orderId, String productName, int quantity, int size) {
+    public Products(int productId, int orderId, String productName, int size) {
         this.productId = productId;
         this.orderId = orderId;
         this.productName = productName;
-        this.quantity = quantity;
         this.size = size;
     }
 
-    public Products(int productId, int orderId, String productName, int quantity, int size, String photoPath, int approvedBy, LocalDateTime approvalDate, String productStatus) {
+    public Products(int productId, int orderId, String productName, int size, String photoPath, int approvedBy, LocalDateTime approvalDate, String productStatus) {
         this.productId = productId;
         this.orderId = orderId;
         this.productName = productName;
-        this.quantity = quantity;
         this.size = size;
         this.photoPath = photoPath;
         this.photos = new ArrayList<>();

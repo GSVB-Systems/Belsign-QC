@@ -137,10 +137,9 @@ public class ProductsDAO implements IProductDAO<Products> {
                     int photoId = rs.getInt("photoId");
                     int orderId = rs.getInt("orderId");
                     String productName = rs.getString("productName");
-                    int quantity = rs.getInt("quantity");
                     int size = rs.getInt("size");
 
-                    return new Products(productId, orderId, productName, quantity, size);
+                    return new Products(productId, orderId, productName, size);
                 } else {
                     return null;
                 }
@@ -166,10 +165,9 @@ public class ProductsDAO implements IProductDAO<Products> {
                     int productId = rs.getInt("productId");
                     int orderId = rs.getInt("orderId");
                     String productName = rs.getString("productName");
-                    int quantity = rs.getInt("quantity");
                     int size = rs.getInt("size");
 
-                    Products product = new Products(productId, orderId, productName, quantity, size);
+                    Products product = new Products(productId, orderId, productName, size);
                     products.add(product);
                 }
                 return products;
@@ -182,7 +180,7 @@ public class ProductsDAO implements IProductDAO<Products> {
     @Override
     public CompletableFuture<Void> update(Products product) {
         return CompletableFuture.runAsync(() -> {
-            String productsSql = "UPDATE Products SET orderId = ?, productName = ?, quantity = ?, size = ? WHERE productId = ?";
+            String productsSql = "UPDATE Products SET orderId = ?, productName = ?, size = ? WHERE productId = ?";
             String approvalSql = "UPDATE ProductApproval SET userId = ?, approvalDate = ?, productStatus = ? WHERE productId = ?";
             String insertApprovalSql = "INSERT INTO ProductApproval (productId, userId, approvalDate, productStatus) VALUES (?, ?, ?, ?)";
 
@@ -195,9 +193,8 @@ public class ProductsDAO implements IProductDAO<Products> {
                 try (PreparedStatement stmt = conn.prepareStatement(productsSql)) {
                     stmt.setInt(1, product.getOrderId());
                     stmt.setString(2, product.getProductName());
-                    stmt.setInt(3, product.getQuantity());
-                    stmt.setInt(4, product.getSize());
-                    stmt.setInt(5, product.getProductId());
+                    stmt.setInt(3, product.getSize());
+                    stmt.setInt(4, product.getProductId());
 
                     stmt.executeUpdate();
                 }
@@ -279,7 +276,6 @@ public class ProductsDAO implements IProductDAO<Products> {
                 while (rs.next()) {
                     int productId = rs.getInt("productId");
                     String productName = rs.getString("productName");
-                    int quantity = rs.getInt("quantity");
                     int size = rs.getInt("size");
 
                     // Get approval date and product status
@@ -290,7 +286,7 @@ public class ProductsDAO implements IProductDAO<Products> {
                     // Find or create the product
                     Products product = null;
                     if (!processedProductIds.contains(productId)) {
-                        product = new Products(productId, orderId, productName, quantity, size);
+                        product = new Products(productId, orderId, productName, size);
                         product.setPhotos(new ArrayList<>());
 
                         // Set approval date and product status
