@@ -136,17 +136,13 @@ public class CreateOrderController {
                                 // Get size information
                                 String selectedSize = getSelectedSize(productPane);
                                 int size = 0;
-                                PhotosTemplate template = null;
 
-                                if(Objects.equals(selectedSize, "Small")){
+                            if(Objects.equals(selectedSize, "Small")){
                                         size = 5;
-                                        template = PhotosTemplate.SMALL;
                                 } else if (Objects.equals(selectedSize, "Medium")){
                                         size = 10;
-                                        template = PhotosTemplate.MEDIUM;
                                 } else if (Objects.equals(selectedSize, "Large")){
                                         size = 15;
-                                        template = PhotosTemplate.LARGE;
                                 }
 
                                 // Create and add product to the list
