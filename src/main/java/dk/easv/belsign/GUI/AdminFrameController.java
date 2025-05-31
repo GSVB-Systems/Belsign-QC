@@ -100,7 +100,6 @@ public class AdminFrameController implements IParentAware {
             tblOrders.setItems(ordersModel.getObservableOrders());
         } catch (Exception e) {
             showError("Failed to load orders: " + e.getMessage());
-            e.printStackTrace();
             ExceptionHandler.handleUnexpectedException(e);
         }
         colOrderId.setCellValueFactory(new PropertyValueFactory<>("orderId"));
@@ -211,10 +210,8 @@ public class AdminFrameController implements IParentAware {
     private void openCreateOrder(ActionEvent actionEvent) {
         try {
             String fxmlPath = "/dk/easv/belsign/CreateOrderPane.fxml";
-            Stage stage = SceneService.openModalWindow(fxmlPath, "Create Order", 1200, 800);
-            stage.setOnHidden(event -> {
-                reloadOrders();
-            });
+            SceneService.openModalWindow(fxmlPath, "Create Order", 1200, 800);
+            reloadOrders();
         } catch (Exception e) {
             ExceptionHandler.handleUnexpectedException(e);
             showError("Failed to open the Create Order window");
@@ -225,13 +222,6 @@ public class AdminFrameController implements IParentAware {
     public void openDeleteOrder(ActionEvent actionEvent) {
         try {
             if (selectedOrder != null) {
-                 ObservableList<Products> products = productsModel.getObservableProducts(selectedOrderId);
-                    for (Products product : products) {
-                        photosModel.deletePhotos(product.getPhotos());
-                    }
-                    Thread.sleep(1000);
-                productsModel.deleteProductsByOrderId(selectedOrderId);
-                    Thread.sleep(1000);
                 ordersModel.deleteOrder(selectedOrderId);
 
 
