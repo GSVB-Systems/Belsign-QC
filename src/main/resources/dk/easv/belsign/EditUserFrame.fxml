@@ -55,7 +55,7 @@
         <Label text="Password:" GridPane.columnIndex="0" GridPane.rowIndex="4" />
         <PasswordField fx:id="txtpasswordField" promptText="Enter password" GridPane.columnIndex="1" GridPane.rowIndex="4" />
 
-        <Button fx:id="btnsubmit" onAction="#onSubmitButtonClicked" maxWidth="Infinity" text="Create User" GridPane.columnIndex="1" GridPane.halignment="RIGHT" GridPane.rowIndex="5" />
+        <Button fx:id="btnsubmit" onAction="#onSubmitButtonClicked" maxWidth="Infinity" text="Edit User" GridPane.columnIndex="1" GridPane.halignment="RIGHT" GridPane.rowIndex="5" />
         <rowConstraints>
             <RowConstraints />
             <RowConstraints />

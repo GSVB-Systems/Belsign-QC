@@ -37,7 +37,7 @@ public class AdminUserFrameController implements IParentAware {
     @FXML
     private TableColumn colId;
     @FXML
-    private TableColumn colRole;
+    private TableColumn<Users, String> colRole;
     @FXML
     private TableColumn colFirstName;
     @FXML
@@ -67,7 +67,17 @@ public class AdminUserFrameController implements IParentAware {
     private void DisplayUsers() {
         tblUsers.setItems(usersModel.getObservableUsers());
         colId.setCellValueFactory(new PropertyValueFactory<>("userId"));
-        colRole.setCellValueFactory(new PropertyValueFactory<>("roleId"));
+        //colRole.setCellValueFactory(new PropertyValueFactory<>("roleId"));
+        colRole.setCellValueFactory(celldata -> {
+            if (celldata.getValue().getRoleId() == 1) {
+                return new javafx.beans.property.SimpleStringProperty("Operator");
+            } else if (celldata.getValue().getRoleId() == 2) {
+                return new javafx.beans.property.SimpleStringProperty("QC");
+            } else if (celldata.getValue().getRoleId() == 3) {
+                return new javafx.beans.property.SimpleStringProperty("Admin");
+            }
+            return new javafx.beans.property.SimpleStringProperty("Role Unknown");
+        });;
         colFirstName.setCellValueFactory(new PropertyValueFactory<>("firstName"));
         colLastName.setCellValueFactory(new PropertyValueFactory<>("lastName"));
         colEmail.setCellValueFactory(new PropertyValueFactory<>("email"));
