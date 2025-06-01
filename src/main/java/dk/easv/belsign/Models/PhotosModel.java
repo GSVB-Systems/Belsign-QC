@@ -27,6 +27,10 @@ public class PhotosModel {
         photoManager.updatePhoto(photo);
     }
 
+    public void createPhoto(Photos photo) throws Exception {
+        photoManager.createPhoto(photo);
+    }
+
     public Photos getPhotoById(int photoId) throws Exception {
         return photoManager.getPhotoById(photoId);
     }
@@ -37,5 +41,15 @@ public class PhotosModel {
 
     public void updatePhotoList(List<Photos> photos) {
         photoManager.updatePhotoList(photos);
+    }
+
+
+    public void deletePhotos(List<Photos> Photos) throws Exception {
+        for (Photos photo : Photos) {
+
+            photoManager.deletePhoto(photo);
+
+        }
+
     }
 }

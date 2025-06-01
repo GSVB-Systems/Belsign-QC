@@ -61,7 +61,7 @@ public class PDFGenerator {
                 document.add(new Paragraph("Product: " + productName).setBold());
                 for(Photos photo : products.getPhotos()) {
                     String productImagePath = photo.getPhotoPath();
-                    InputStream imagePath = getClass().getResourceAsStream(productImagePath);
+                    InputStream imagePath = new File (productImagePath).toURI().toURL().openStream();
                     Image productImage = new Image(ImageDataFactory.create(imagePath.readAllBytes()));
                     document.add(productImage);
                     String imageName = photo.getPhotoName();

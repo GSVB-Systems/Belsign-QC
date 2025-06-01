@@ -27,11 +27,4 @@ public class OrderValidator {
         } else return false;
 
     }
-
-
-
-
-
-
-
 }

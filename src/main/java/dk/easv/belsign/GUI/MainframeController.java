@@ -1,5 +1,6 @@
 package dk.easv.belsign.GUI;
 
+import dk.easv.belsign.BLL.Util.ExceptionHandler;
 import dk.easv.belsign.Belsign;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -12,6 +13,7 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.layout.Pane;
+import javafx.scene.layout.StackPane;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 
@@ -20,8 +22,9 @@ import java.io.IOException;
 
 public class MainframeController {
 
-    @FXML
-        private Pane mainPane;
+
+        @FXML
+        private StackPane mainPane;
         @FXML
         private Text txtOrder;
         @FXML
@@ -55,11 +58,24 @@ public class MainframeController {
                 mainPane.getChildren().clear();
                 mainPane.getChildren().add(root);
 
-            } catch (
-                    IOException e) {
-                showError("Failed to go to real app, sums up");
+            } catch (IOException e) {
+                ExceptionHandler.handleUnexpectedException(e);
+                showError("Failed to go to real application - Contact System Administrator!");
             }
         }
+
+
+    @FXML
+    private void handleLogOut(ActionEvent event) throws IOException {
+        try {
+            fillMainPane(new FXMLLoader(getClass().getResource("/dk/easv/belsign/Login.fxml")));
+
+            setOrder("Belman");
+        } catch (Exception e) {
+            ExceptionHandler.handleUnexpectedException(e);
+            showError("Failed to log out");
+        }
+    }
 
     //Til Exception handeling - prompter en Alarm popup til GUI
     private void showError(String message) {
@@ -70,15 +86,9 @@ public class MainframeController {
         alert.showAndWait();
     }
 
-    @FXML
-    private void handleLogOut(ActionEvent event) throws IOException {
-        try {
-            fillMainPane(new FXMLLoader(getClass().getResource("/dk/easv/belsign/Login.fxml")));
-
-            setOrder("Belman");
-        } catch (Exception e) {
-            showError("Failed to log out: " + e.getMessage());
-        }
+    public Pane getMainPane() {
+        return mainPane;
     }
+
 }
 

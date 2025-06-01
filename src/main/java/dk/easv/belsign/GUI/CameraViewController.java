@@ -8,6 +8,7 @@ import dk.easv.belsign.BLL.Util.ProductSession;
 import javafx.animation.AnimationTimer;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.control.Alert;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.StackPane;
@@ -40,7 +41,7 @@ public class CameraViewController implements Initializable {
 
         boolean opened = CameraHandler.getInstance().openCamera();
         if (!opened) {
-            System.err.println("Cant Open!");
+            showError("Cant Open Camera - Contact system Administrator!");
             return;
         }
 
@@ -58,6 +59,7 @@ public class CameraViewController implements Initializable {
         timer.start();
     }
 
+
     @FXML
     private void onCap() {
         timer.stop();
@@ -65,7 +67,7 @@ public class CameraViewController implements Initializable {
 
         int orderId = OrderSession.getEnteredOrder().getOrderId();
         int productId = ProductSession.getEnteredProduct().getProductId();
-        String photoName = "photo_" + PhotoSession.getCurrentPhoto().getPhotoName();
+        String photoName = PhotoSession.getCurrentPhoto().getPhotoName();
 
         String path = CameraHandler.getInstance().saveImagesToOrders(capturedImage, orderId, productId, photoName);
         close();
@@ -76,6 +78,10 @@ public class CameraViewController implements Initializable {
 
 
             // 2. Optional: store in controller too
+            capturedPhoto = new Photos();
+            capturedPhoto.setPhotoPath(path);
+            capturedPhoto.setPhotoName(photoName);
+            capturedPhoto.setProductId(productId);
 
         }
     }
@@ -92,6 +98,15 @@ public class CameraViewController implements Initializable {
 
     public Photos getCapturedPhoto() {
         return capturedPhoto;
+    }
+
+    //Til Exception handeling - prompter en Alarm popup til GUI
+    private void showError(String message) {
+        Alert alert = new Alert(Alert.AlertType.ERROR);
+        alert.setTitle("Camera Error");
+        alert.setHeaderText(null);
+        alert.setContentText(message);
+        alert.showAndWait();
     }
 
 }

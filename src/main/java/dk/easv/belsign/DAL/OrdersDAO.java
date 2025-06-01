@@ -1,7 +1,7 @@
 package dk.easv.belsign.DAL;
 
 import dk.easv.belsign.BE.Orders;
-import dk.easv.belsign.BE.Photos;
+import dk.easv.belsign.BLL.Util.ExceptionHandler;
 import dk.easv.belsign.BLL.Util.ThreadShutdownUtil;
 
 import java.io.IOException;
@@ -12,10 +12,10 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-public class OrdersDAO implements ICrudRepo<Orders> {
+public class OrdersDAO implements IOrderDAO<Orders> {
 
     private final DBConnector dbConnector;
-    private ExecutorService executorService;
+    private final ExecutorService executorService;
     private final ThreadShutdownUtil threadShutdownUtil;
 
     public OrdersDAO() throws IOException {
@@ -27,53 +27,79 @@ public class OrdersDAO implements ICrudRepo<Orders> {
 
     @Override
     public CompletableFuture<Void> update(Orders order) {
-        return null;
+        return null; // Not implemented yet
     }
 
     @Override
-    public CompletableFuture<Void> delete(int id) throws Exception {
+    public CompletableFuture<Void> delete(int id) {
         return CompletableFuture.runAsync(() -> {
-            String sql = "DELETE FROM Orders WHERE orderNumber = ?";
-
+            String sql = "DELETE FROM Orders WHERE orderId = ?";
             Connection conn = null;
+
             try {
                 conn = dbConnector.getConnection();
-                conn.setAutoCommit(false); // Start transaktion
+                conn.setAutoCommit(false);
 
                 try (PreparedStatement statement = conn.prepareStatement(sql)) {
                     statement.setInt(1, id);
                     int affectedRows = statement.executeUpdate();
 
                     if (affectedRows == 0) {
-                        conn.rollback(); // Rollback hvis intet blev slettet
-                        throw new RuntimeException("No order found with ID: " + id);
+                        conn.rollback();
+                        throw new DALExceptions("No order with matching ID: " + id);
                     }
 
-                    conn.commit(); // Alt ok, commit
+                    conn.commit();
                 }
-
-                conn.setAutoCommit(true); // Valgfrit: gendan autocommit
-
             } catch (SQLException e) {
-                if (conn != null) {
-                    try {
-                        conn.rollback(); // Rollback hvis fejl
-                    } catch (SQLException rollbackEx) {
-                        throw new RuntimeException("Rollback failed after delete error", rollbackEx);
-                    }
+                try {
+                    if (conn != null) conn.rollback();
+                } catch (SQLException rollbackEx) {
+                    DALExceptions rollbackError = new DALExceptions("Order deletion rollback failed: ", rollbackEx);
+                    ExceptionHandler.handleDALException(rollbackError);
+                    throw rollbackError;
                 }
-                throw new RuntimeException("Error deleting order from database", e);
+
+                DALExceptions ex = new DALExceptions("Failed to delete order from DB: ", e);
+                ExceptionHandler.handleDALException(ex);
+                throw ex;
+            } finally {
+                try {
+                    if (conn != null) conn.setAutoCommit(true);
+                } catch (SQLException e) {
+                    DALExceptions ex = new DALExceptions("autocommit reset failed: ", e);
+                    ExceptionHandler.handleDALException(ex);
+                    throw ex;
+                }
             }
         }, executorService);
     }
 
+    @Override
+    public CompletableFuture<Void> create(Orders order) {
+        return CompletableFuture.runAsync(() -> {
+            String sql = "INSERT INTO Orders (orderId) VALUES (?)";
+            try (Connection conn = dbConnector.getConnection();
+                 PreparedStatement statement = conn.prepareStatement(sql)) {
 
-    public void shutdown() {
-        executorService.shutdown();
+                statement.setInt(1, order.getOrderId());
+
+
+                int affectedRows = statement.executeUpdate();
+                if (affectedRows == 0) {
+                    throw new DALExceptions("Failed to create order: No rows affected.");
+                }
+
+            } catch (SQLException e) {
+                DALExceptions ex = new DALExceptions("Failed to create order in DB: ", e);
+                ExceptionHandler.handleDALException(ex);
+                throw ex;
+            }
+        }, executorService);
     }
 
     @Override
-    public CompletableFuture<Void> create(Orders order) {
+    public CompletableFuture<Void> createOrderApproval(Orders order) {
         return CompletableFuture.runAsync(() -> {
             String checkSql = "SELECT 1 FROM orderApproval WHERE orderId = ?";
             String insertSql = "INSERT INTO orderApproval (orderId, approvalDate, orderStatus) VALUES (?, ?, ?)";
@@ -81,8 +107,7 @@ public class OrdersDAO implements ICrudRepo<Orders> {
             try (Connection conn = dbConnector.getConnection()) {
                 conn.setAutoCommit(false);
 
-                // Check if orderId already exists
-                boolean orderExists = false;
+                boolean orderExists;
                 try (PreparedStatement checkStatement = conn.prepareStatement(checkSql)) {
                     checkStatement.setInt(1, order.getOrderId());
                     try (ResultSet rs = checkStatement.executeQuery()) {
@@ -90,7 +115,6 @@ public class OrdersDAO implements ICrudRepo<Orders> {
                     }
                 }
 
-                // Only insert if order doesn't exist
                 if (!orderExists) {
                     try (PreparedStatement insertStatement = conn.prepareStatement(insertSql)) {
                         insertStatement.setInt(1, order.getOrderId());
@@ -102,61 +126,42 @@ public class OrdersDAO implements ICrudRepo<Orders> {
 
                 conn.commit();
             } catch (SQLException e) {
-                throw new RuntimeException("Error creating order approval", e);
+                DALExceptions ex = new DALExceptions("Failed to create Approval: ", e);
+                ExceptionHandler.handleDALException(ex);
+                throw ex;
             }
         }, executorService);
     }
 
-
-
-/*
     @Override
-    public CompletableFuture<Void> create(Orders order) {
-        return CompletableFuture.runAsync(() -> {
-            String sql = "INSERT INTO OrderApproval (orderId, approvalDate, orderStatus) VALUES (?, ?, ?)";
-            try (Connection conn = dbConnector.getConnection();
-                 PreparedStatement stmt = conn.prepareStatement(sql)) {
-                stmt.setString(1, toString().valueOf(order.getOrderId()));
-                stmt.setObject(2, order.getApprovalDate());
-                stmt.setString(3, order.getApprovalStatus());
-                stmt.executeUpdate();
-            } catch (SQLException e) {
-                throw new RuntimeException(e);
-            }
-        }, executorService);
-    }
-
- */
-
-
-    @Override
-    public CompletableFuture<Orders> read(int id) throws Exception {
+    public CompletableFuture<Orders> read(int id) {
         return CompletableFuture.supplyAsync(() -> {
             String sql = "SELECT * FROM Orders WHERE orderId = ?";
+
             try (Connection conn = dbConnector.getConnection();
                  PreparedStatement statement = conn.prepareStatement(sql)) {
 
                 statement.setInt(1, id);
-                ResultSet rs = statement.executeQuery();
-
-                if (rs.next()) {
-                    int orderId = rs.getInt("orderId");
-                    return new Orders(orderId);
-                } else {
-                    return null; // or throw an exception if preferred
+                try (ResultSet rs = statement.executeQuery()) {
+                    if (rs.next()) {
+                        return new Orders(rs.getInt("orderId"));
+                    } else {
+                        return null;
+                    }
                 }
 
             } catch (SQLException e) {
-                throw new RuntimeException("Error reading order from database", e);
+                DALExceptions ex = new DALExceptions("Failed to read order from DB: ", e);
+                ExceptionHandler.handleDALException(ex);
+                throw ex;
             }
-        });
+        }, executorService);
     }
-
 
     @Override
     public CompletableFuture<List<Orders>> readAll() {
         return CompletableFuture.supplyAsync(() -> {
-            ArrayList<Orders> orders = new ArrayList<>();
+            List<Orders> orders = new ArrayList<>();
             String sql = "SELECT * FROM Orders";
 
             try (Connection conn = dbConnector.getConnection();
@@ -164,14 +169,20 @@ public class OrdersDAO implements ICrudRepo<Orders> {
                  ResultSet rs = statement.executeQuery()) {
 
                 while (rs.next()) {
-                    int orderId = rs.getInt("orderId");
-                    Orders order = new Orders(orderId);
-                    orders.add(order);
+                    orders.add(new Orders(rs.getInt("orderId")));
                 }
+
                 return orders;
+
             } catch (SQLException e) {
-                throw new RuntimeException("Error fetching orders from database", e);
+                DALExceptions ex = new DALExceptions("Failed to get all orders from DB: ", e);
+                ExceptionHandler.handleDALException(ex);
+                throw ex;
             }
         }, executorService);
     }
+
+    public void shutdown() {
+        executorService.shutdown();
     }
+}

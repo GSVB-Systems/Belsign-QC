@@ -47,4 +47,12 @@ public class PhotoManager {
             }
         }
     }
+
+    public void createPhoto(Photos photo) throws Exception {
+        photoDataAccess.create(photo);
+    }
+
+    public void deletePhoto(Photos photo) throws Exception {
+        photoDataAccess.delete(photo.getPhotoId());
+    }
 }

@@ -17,9 +17,11 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.Pane;
+import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import org.opencv.photo.Photo;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.List;
 import java.util.Objects;
@@ -35,6 +37,7 @@ public class OperatorFrameController implements IParentAware {
 
     private Products products;
     private PhotosModel photosModel;
+    private MainframeController parent;
 
     public void initialize() {
         // Set appropriate properties for better layout behavior
@@ -49,10 +52,12 @@ public class OperatorFrameController implements IParentAware {
         try {
             this.photosModel = new PhotosModel();
         } catch (Exception e) {
-            showError("Failed to initialize ProductsModel: " + e.getMessage());
-            e.printStackTrace();
+            showError("Failed to initialize ProductsModel - Contact System Administrator");
         }
     }
+
+
+
 
     public void setProduct(Products selectedProduct) {
         this.products = selectedProduct;
@@ -79,12 +84,9 @@ public class OperatorFrameController implements IParentAware {
     private void handleUpload(ActionEvent event) {
         savePhotosToDatabase();
         CameraHandler.getInstance().releaseCam();
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("/dk/easv/belsign/ProductFrame.fxml"));
-        mainframeController.fillMainPane(loader);
-        Object controller = loader.getController();
-        if (controller instanceof IParentAware) {
-            ((IParentAware) controller).setParent(mainframeController);
-        }
+
+        String fxmlPath = "/dk/easv/belsign/ProductFrame.fxml";
+        SceneService.loadCenterContent((StackPane) mainframeController.getMainPane(), fxmlPath, mainframeController);
     }
 
     public void setParent(MainframeController mainframeController) {
@@ -94,7 +96,7 @@ public class OperatorFrameController implements IParentAware {
     private Photos openCameraAndCapturePhoto() {
         CameraViewController controller = SceneService.fullscreen("CameraView.fxml", "Camera");
         if (controller == null) {
-            System.err.println("Failed to load Camera view.");
+            showError("Failed to load Camera - Contact System Administrator");
             return null;
         }
 
@@ -103,56 +105,50 @@ public class OperatorFrameController implements IParentAware {
 
 
     private Pane createImageBox(boolean includeComboBox, boolean allowAddNewBox, Photos photoIndex) {
-        Pane customPane = null;
-        customPane = new Pane();
-            customPane.setPrefSize(550, 310);
-            customPane.getStyleClass().add("custom-pane");
+        Pane customPane = new Pane();
+        customPane.setPrefSize(550, 310);
+        customPane.getStyleClass().add("custom-pane");
 
-            VBox vbox = new VBox();
-            vbox.setPrefWidth(customPane.getPrefWidth());
-            customPane.getChildren().add(vbox);
+        VBox vbox = new VBox();
+        vbox.setPrefWidth(customPane.getPrefWidth());
+        customPane.getChildren().add(vbox);
 
             if (includeComboBox) {
                 ComboBox<String> comboBox = new ComboBox<>();
-                comboBox.getItems().addAll("tag1", "tag2", "tag3");
+                comboBox.getItems().addAll("Front 2", "Back 2", "Left 2", "Right 2", "Top 2", "Cosmetic Damage", "Other");
                 vbox.getChildren().add(comboBox);
                 comboBox.setOnAction(event -> {
                     String selectedTag = comboBox.getValue();
                     if (selectedTag != null) {
                         photoIndex.setPhotoName(selectedTag);
                     }
-                    System.out.println(photoIndex.getPhotoName());
+
                 });
             }
 
             ImageView imageView = new ImageView();
             imageView.setFitWidth(customPane.getPrefWidth());
             imageView.setFitHeight(260);
-            imageView.setImage(new Image(getClass().getResourceAsStream(photoIndex.getPhotoPath())));
+            imageView.setImage(new Image(new File(photoIndex.getPhotoPath()).toURI().toString()));
             vbox.getChildren().add(imageView);
 
             customPane.setOnMouseClicked(event -> {
                 PhotoSession.setCurrentPhoto(photoIndex);
-
-                Photos newPhoto = openCameraAndCapturePhoto(); // Updated method returning Photos object
-
-                if (newPhoto != null) {
-                    photoIndex.setPhotoPath(newPhoto.getPhotoPath());
-                    System.out.println(photoIndex.getPhotoPath() + "  " + newPhoto.getPhotoPath());
-                    imageView.setImage(new Image(getClass().getResourceAsStream(photoIndex.getPhotoPath())));
-
-
+                CameraViewController controller = SceneService.fullscreen("CameraView.fxml", "Camera");
+                if (controller != null) {
+                    Image capturedImage = controller.getCapturedImage();
+                    Photos capturedPhotoData = controller.getCapturedPhoto();
+                    if (capturedImage != null) {
+                        photoIndex.setPhotoPath(capturedPhotoData.getPhotoPath());
+                        photoIndex.setPhotoName(capturedPhotoData.getPhotoName());
+                        imageView.setImage(capturedImage);
+                    }
                 }
-
                 if (allowAddNewBox) {
-                    Pane newBox = createImageBox(true, true, newPhoto() );
+                    Pane newBox = createImageBox(true, true, newPhoto());
                     fpFlowpane.getChildren().add(newBox);
-
                 }
-
-
             });
-
 
 
         return customPane;
@@ -162,11 +158,7 @@ public class OperatorFrameController implements IParentAware {
             List<Photos> photos = products.getPhotos();
             photosModel.updatePhotoList(photos);
 
-            for (Photos photo : photos) {
-                if (photo.getPhotoPath() != null) {
-                    System.out.println("Photo path: " + photo.getPhotoPath() + " Photo name: " + photo.getPhotoName() + " Photo status: " + photo.getPhotoStatus());
-                }
-            }
+
 
 
     }
@@ -174,7 +166,7 @@ public class OperatorFrameController implements IParentAware {
     private Photos newPhoto() {
         Photos photo = new Photos();
         photo.setPhotoName(" ");
-        photo.setPhotoPath("/dk/easv/belsign/images/belmanlogo.png");
+        photo.setPhotoPath("/dk/easv/belsign/images/addPhoto.png");
         photo.setProductId(products.getProductId());
         products.getPhotos().add(photo);
         return photo;
@@ -182,11 +174,17 @@ public class OperatorFrameController implements IParentAware {
 
     private void showError(String message) {
         Alert alert = new Alert(Alert.AlertType.ERROR);
-        alert.setTitle("Error");
+        alert.setTitle("Operator Error!");
         alert.setHeaderText(null);
         alert.setContentText(message);
         alert.showAndWait();
     }
 
 
+    @FXML
+    private void handleBack(ActionEvent event) {
+        String fxmlPath = "/dk/easv/belsign/ProductFrame.fxml";
+        SceneService.loadCenterContent((StackPane) mainframeController.getMainPane(), fxmlPath, mainframeController);
+
+    }
 }

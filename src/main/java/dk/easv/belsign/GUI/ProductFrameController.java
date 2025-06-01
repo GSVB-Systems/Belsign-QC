@@ -3,8 +3,7 @@ package dk.easv.belsign.GUI;
 import dk.easv.belsign.BE.Orders;
 import dk.easv.belsign.BE.Photos;
 import dk.easv.belsign.BE.Products;
-import dk.easv.belsign.BLL.Util.OrderSession;
-import dk.easv.belsign.BLL.Util.PDFGenerator;
+import dk.easv.belsign.BLL.Util.*;
 import dk.easv.belsign.Models.OrdersModel;
 import dk.easv.belsign.Models.ProductsModel;
 import dk.easv.belsign.Models.UsersModel;
@@ -15,15 +14,18 @@ import javafx.geometry.Insets;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.Separator;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.SVGPath;
 import javafx.scene.image.Image;
-import dk.easv.belsign.BLL.Util.UserSession;
 import javafx.scene.shape.StrokeType;
+import javafx.stage.Stage;
 
 import java.io.File;
+import java.io.IOException;
+import java.security.GeneralSecurityException;
 import java.util.List;
 import java.util.Objects;
 
@@ -45,11 +47,18 @@ public class ProductFrameController implements IParentAware {
 
 
     private PDFGenerator pdfGenerator;
+    private EmailHandler emailHandler;
     private Products products;
     @FXML
     private Button btnGeneratePDF;
 
-    public ProductFrameController() {
+    public ProductFrameController() throws GeneralSecurityException, IOException {
+        try {
+         this.emailHandler = new EmailHandler();
+        } catch (GeneralSecurityException e) {
+            ExceptionHandler.handleUnexpectedException(e);
+            showError("Failed to initialize Productframe, contact system Administrator");
+        }
         this.pdfGenerator = new PDFGenerator();
         this.products = selectedProduct;
     }
@@ -63,6 +72,7 @@ public class ProductFrameController implements IParentAware {
 
     public void initialize() {
         try {
+
             productsModel = new ProductsModel();
             productsModel.getObservableProducts(OrderSession.getEnteredOrder().getOrderId());
             ordersModel = new OrdersModel();
@@ -80,8 +90,9 @@ public class ProductFrameController implements IParentAware {
             showProducts();
             // Don't show images on init - wait for selection
         } catch (Exception e) {
-            showError("Error initializing: " + e.getMessage());
-            e.printStackTrace();
+            ExceptionHandler.handleUnexpectedException(e);
+            showError("Failed to initialize Productframe, contact system Administrator");
+
         }
     }
 
@@ -129,8 +140,9 @@ public class ProductFrameController implements IParentAware {
             }
             OrderApproval(productsList);
         } catch (Exception e) {
-            showError("Error loading products: " + e.getMessage());
-            e.printStackTrace();
+            ExceptionHandler.handleUnexpectedException(e);
+            showError("Failed to load products, contact system administrator");
+
         }
     }
 
@@ -146,17 +158,17 @@ public class ProductFrameController implements IParentAware {
             }
 
         }
-        System.out.println(productSize + " " + approvedProducts);
+
         if (productSize == approvedProducts) {
             Orders order = OrderSession.getEnteredOrder();
             order.setApprovalStatus("Approved");
             order.setApprovalDate(java.time.LocalDateTime.now());
             try {
-                System.out.println(order.getApprovalStatus() + " " + order.getApprovalDate() + " " + order.getOrderId() );
                 ordersModel.createOrderApproval(order);
             } catch (Exception e) {
-                showError("Error creating order approval: ");
-                e.printStackTrace();
+                ExceptionHandler.handleUnexpectedException(e);
+                showError("Error creating order approval, Contact system Administrator");
+
 
             }
         }
@@ -173,9 +185,14 @@ public class ProductFrameController implements IParentAware {
             String productName = product.getProductName();
             parent.setOrder(orderNumber + "-" + productName);
             lblApproval.setText(product.getProductStatus());
-            lblApprovedBy.setText(usersModel.getUserById(product.getApprovedBy()).getFirstName() + " " + usersModel.getUserById(product.getApprovedBy()).getLastName());
-        } catch (Exception e) {
-            showError("Error updating order title: " + e.getMessage());
+            if (product.getApprovedBy() > 0) {
+                lblApprovedBy.setText(usersModel.getUserById(product.getApprovedBy()).getFirstName() + " " +
+                        usersModel.getUserById(product.getApprovedBy()).getLastName());
+            } else {
+                lblApprovedBy.setText("...");
+            }        } catch (Exception e) {
+            ExceptionHandler.handleUnexpectedException(e);
+            showError("Error updating order title, Contact system Administrator");
         }
 
         // Clear previous selection highlight
@@ -216,49 +233,59 @@ public class ProductFrameController implements IParentAware {
             // If no product is selected, return
             if (selectedProduct == null) return;
 
-          for(Photos photo : selectedProduct.getPhotos()) {
-              HBox container = new HBox();
-              container.setSpacing(10);
-              container.setPadding(new Insets(0, 50, 0, 50));
+            List<Photos> photos = selectedProduct.getPhotos();
+            int photoCount = photos.size();
 
+            for(int i = 0; i < photoCount; i++) {
+                Photos photo = photos.get(i);
+                HBox container = new HBox();
+                container.setSpacing(10);
+                container.setPadding(new Insets(0, 50, 0, 50));
 
-              Label label1 = new Label(photo.getPhotoName());
+                Label label1 = new Label(photo.getPhotoName());
 
-              String statusOrComment;
-              if ("Approved".equals(photo.getPhotoStatus()) || "Declined".equals(photo.getPhotoStatus())) {
-                  if (photo.getPhotoComments() != null && !photo.getPhotoComments().isEmpty()) {
-                      statusOrComment = photo.getPhotoStatus() + ", " + photo.getPhotoComments();
-                  } else {
-                      statusOrComment = photo.getPhotoStatus();
-                  }
-              } else {
-                  statusOrComment = photo.getPhotoComments();
-              }
-              Label label2 = new Label(statusOrComment);
+                String statusOrComment;
+                if ("Approved".equals(photo.getPhotoStatus()) || "Declined".equals(photo.getPhotoStatus())) {
+                    if (photo.getPhotoComments() != null && !photo.getPhotoComments().isEmpty()) {
+                        statusOrComment = photo.getPhotoStatus() + ", " + photo.getPhotoComments();
+                    } else {
+                        statusOrComment = photo.getPhotoStatus();
+                    }
+                } else {
+                    statusOrComment = photo.getPhotoComments();
+                }
+                Label label2 = new Label(statusOrComment);
 
+                VBox labelContainer = new VBox();
+                label1.setStyle("-fx-font-size: 24px;");
+                label2.setStyle("-fx-font-size: 24px;");
+                labelContainer.getChildren().addAll(label1, label2);
+                labelContainer.setSpacing(5);
 
-              VBox labelContainer = new VBox();
-              labelContainer.getChildren().addAll(label1, label2);
-              labelContainer.setSpacing(5);
+                ImageView imageView = new ImageView();
+                String photoPath = photo.getPhotoPath();
+                if(photoPath != null) {
+                    imageView.setImage(new Image(new File(photoPath).toURI().toString()));
+                }
+                imageView.setFitWidth(90);
+                imageView.setFitHeight(90);
+                imageView.setPreserveRatio(true);
 
+                container.getChildren().addAll(labelContainer, imageView);
+                HBox.setHgrow(labelContainer, Priority.ALWAYS);
 
-              ImageView imageView = new ImageView();
-              String photoPath = photo.getPhotoPath();
-              if( photoPath != null) {
-                  imageView.setImage(new Image(new File(photoPath).toString()));
-              }
-              imageView.setFitWidth(50);
-              imageView.setFitHeight(50);
-              imageView.setPreserveRatio(true);
+                vbRight.getChildren().add(container);
 
-              container.getChildren().addAll(labelContainer, imageView);
-              HBox.setHgrow(labelContainer, Priority.ALWAYS);
-
-              vbRight.getChildren().add(container);
-          }
+                // Add separator after each container except the last one
+                if (i < photoCount - 1) {
+                    Separator separator = new Separator();
+                    separator.setPadding(new Insets(10, 0, 10, 0));
+                    vbRight.getChildren().add(separator);
+                }
+            }
         } catch (Exception e) {
-            showError("Error loading image: " + e.getMessage());
-            e.printStackTrace();
+            ExceptionHandler.handleUnexpectedException(e);
+            showError("Error loading image, contact system Administrator");
         }
     }
 
@@ -269,50 +296,55 @@ public class ProductFrameController implements IParentAware {
         }
 
         try {
-            FXMLLoader loader = null;
             int roleId = UserSession.getLoggedInUser().getRoleId();
 
-            if (roleId == 1) {
-                loader = new FXMLLoader(getClass().getResource("/dk/easv/belsign/OperatorFrame.fxml"));
-            } else if(roleId == 2) {
-                loader = new FXMLLoader(getClass().getResource("/dk/easv/belsign/QCFrame.fxml"));
+            if (roleId == 1 && "Approved".equals(selectedProduct.getProductStatus())) {
+                showError("You cannot modify an approved product");
+                return;
             }
 
-            if (loader == null) {
+            String fxmlPath;
+
+            if (roleId == 1 ) {
+                    fxmlPath = "/dk/easv/belsign/OperatorFrame.fxml";
+            } else if (roleId == 2) {
+                fxmlPath = "/dk/easv/belsign/QCFrame.fxml";
+            } else {
                 showError("Invalid role ID");
                 return;
             }
 
-            parent.fillMainPane(loader);
+            SceneService.loadCenterContent((StackPane) parent.getMainPane(), fxmlPath, parent);
 
-            if (roleId == 1) {
-                OperatorFrameController controller = loader.getController();
-                controller.setProduct(selectedProduct);
-            } else if(roleId == 2) {
-                QCFrameController controller = loader.getController();
-                controller.setProduct(selectedProduct);
+            Object controller = SceneService.getLastLoadedController();
+            if (roleId == 1 && controller instanceof OperatorFrameController) {
+                ((OperatorFrameController) controller).setProduct(selectedProduct);
+            } else if (roleId == 2 && controller instanceof QCFrameController) {
+                ((QCFrameController) controller).setProduct(selectedProduct);
             }
 
         } catch (Exception e) {
-            showError("Error opening frame: " + e.getMessage());
-            e.printStackTrace();
+            ExceptionHandler.handleUnexpectedException(e);
+            showError("Error opening frame");
         }
     }
 
-    private void showError(String message) {
-        Alert alert = new Alert(Alert.AlertType.ERROR);
-        alert.setTitle("PDF Generation Error");
-        alert.setHeaderText(null);
-        alert.setContentText(message);
-        alert.showAndWait();
-    }
     public void onPDFButtonPressed(ActionEvent actionEvent) {
         if(OrderSession.getEnteredOrder().getApprovalStatus() == "Approved") {
             try{
-                pdfGenerator.createPDF("src/main/resources/dk/easv/belsign/PDF/QCReport.pdf", selectedProduct);
+                String pdfPath = "src/main/resources/dk/easv/belsign/PDF/QCReport"+ OrderSession.getEnteredOrder().getOrderId() +".pdf";
+                pdfGenerator.createPDF(pdfPath, selectedProduct);
+                File pdfFile = new File(pdfPath);
+                PDFPreviewer.showPDFPreview(pdfFile, (Stage) btnGeneratePDF.getScene().getWindow());
+                emailHandler.send("QCReport for order: " + OrderSession.getEnteredOrder().getOrderId(), "the pdf has been generated by: "+ UserSession.getLoggedInUser().getFirstName() + " " + UserSession.getLoggedInUser().getLastName() + """
+                                best regards Belman"""
+                        ,pdfFile,"gsvbsystems@gmail.com");
             }catch (Exception e){
-                showError("PDF generation failed: " + e.getMessage());
+                ExceptionHandler.handleUnexpectedException(e);
+                showError("PDF generation failed");
+
             }
+
 
 
         }else
@@ -320,5 +352,19 @@ public class ProductFrameController implements IParentAware {
             showError("Order not approved - Order needs to be approved before generating PDF");
         }
 
+    }
+
+    private void showError(String message) {
+        Alert alert = new Alert(Alert.AlertType.ERROR);
+        alert.setTitle("Product Selection Error");
+        alert.setHeaderText(null);
+        alert.setContentText(message);
+        alert.showAndWait();
+    }
+
+    @FXML
+    private void handleBack(ActionEvent event) {
+        String fxmlPath = "/dk/easv/belsign/OrderSelection.fxml";
+        SceneService.loadCenterContent((StackPane) parent.getMainPane(), fxmlPath, parent);
     }
 }

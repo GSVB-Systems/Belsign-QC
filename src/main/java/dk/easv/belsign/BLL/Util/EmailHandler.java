@@ -49,13 +49,13 @@ public class EmailHandler {
         NetHttpTransport httpTransport = GoogleNetHttpTransport.newTrustedTransport();
         GsonFactory jsonFactory = GsonFactory.getDefaultInstance();
         service = new Gmail.Builder(httpTransport, jsonFactory, getCredentials(httpTransport, jsonFactory))
-                .setApplicationName("EventHub")
+                .setApplicationName("Belsign")
                 .build();
 
     }
 
-    private final Gmail service;                                                // Gmail API service instance
-    private static final String fromEmailAddress = "eventhubticket@gmail.com";  // Sender email address
+    private final Gmail service; // Gmail API service instance
+    private static final String fromEmailAddress = "gsvbsystems@gmail.com";  // Sender email address
 
 
 
@@ -73,7 +73,7 @@ public class EmailHandler {
             throws IOException {
         // Load client secrets from resource file
         GoogleClientSecrets clientSecrets = GoogleClientSecrets.load(jsonFactory, new InputStreamReader(Objects.requireNonNull(EmailHandler.class.
-                getResourceAsStream("insert name of our clientsecrets file"))));
+                getResourceAsStream("/dk/easv/belsign/mail/Client_Secret.json"))));
 
         // Build flow and trigger user authorization request
         GoogleAuthorizationCodeFlow flow = new GoogleAuthorizationCodeFlow.Builder(
@@ -97,6 +97,8 @@ public class EmailHandler {
      * @param toEmailAddress The recipient's email address
      * @throws Exception If there's an error creating or sending the email
      */
+
+
     public void send(String subject, String message, File attachment, String toEmailAddress) throws Exception {
         // Encode as MIME message
         Properties props = new Properties();
@@ -117,7 +119,7 @@ public class EmailHandler {
         mimeBodyPart = new MimeBodyPart();
         DataSource source = new FileDataSource(attachment);
         mimeBodyPart.setDataHandler(new DataHandler(source));
-        mimeBodyPart.setFileName("ticket.pdf");
+        mimeBodyPart.setFileName("QCReport.pdf");
         multipart.addBodyPart(mimeBodyPart);
         email.setContent(multipart);
 

@@ -17,6 +17,7 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
 
+import java.io.File;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -52,8 +53,8 @@ public class QCFrameController implements IParentAware{
             this.photosModel = new PhotosModel();
 
         } catch (Exception e) {
-            showError("Failed to initialize ProductsModel: " + e.getMessage());
-            e.printStackTrace();
+            ExceptionHandler.handleUnexpectedException(e);
+            showError("Failed to initialize ProductsModel");
         }
     }
 
@@ -104,7 +105,7 @@ public class QCFrameController implements IParentAware{
             hbox1.getChildren().add(label);
 
             String imagePath = photo.getPhotoPath();
-            Image finalImage = new Image(Objects.requireNonNull(getClass().getResourceAsStream(imagePath)));
+            Image finalImage = new Image(new File(imagePath).toURI().toString());
 
             Photos currentPhoto = photo;
 
@@ -162,6 +163,7 @@ public class QCFrameController implements IParentAware{
                     try {
                         photosModel.updatePhotoComment(photo);
                     } catch (Exception e) {
+                        ExceptionHandler.handleUnexpectedException(e);
                         showError("Failed to update product: " + e.getMessage());
                     }
                 }
@@ -170,7 +172,7 @@ public class QCFrameController implements IParentAware{
             ImageView imageViewEvent = new ImageView();
             imageViewEvent.setFitWidth(customPane1.getPrefWidth());
             imageViewEvent.setFitHeight(260);
-            image = new Image(Objects.requireNonNull(getClass().getResourceAsStream(photo.getPhotoPath())));
+            image = new Image(new File(photo.getPhotoPath()).toURI().toString());
             imageViewEvent.setImage(image);
             vbox1.getChildren().add(imageViewEvent);
 
@@ -203,30 +205,13 @@ public class QCFrameController implements IParentAware{
         imageStage.show();
     }
 
-
-    public void onGeneratePDFPressed(ActionEvent actionEvent) {
-        try{
-
-       // pdfGenerator.createPDF("src/main/resources/dk/easv/belsign/PDF/QCReport.pdf", products);
-        }catch (Exception e){
-            showError("PDF generation failed: " + e.getMessage());
-        }
-    }
-
-    private void showError(String message) {
-        Alert alert = new Alert(Alert.AlertType.ERROR);
-        alert.setTitle("PDF Generation Error");
-        alert.setHeaderText(null);
-        alert.setContentText(message);
-        alert.showAndWait();
-    }
-
     private void updatePhotoStatus(Photos photo, String status) {
         try {
             photo.setPhotoStatus(status);
             photosModel.updatePhoto(photo);
         } catch (Exception e) {
-            showError("Failed to update photo status: " + e.getMessage());
+            ExceptionHandler.handleUnexpectedException(e);
+            showError("Failed to update photo status");
         }
     }
 
@@ -237,15 +222,25 @@ public class QCFrameController implements IParentAware{
         try {
             productApprovalUtil.setProductStatus(products, approvedBy);
         } catch (Exception e) {
-            showError("Failed to set product status: " + e.getMessage());
-        }finally {
-
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/dk/easv/belsign/ProductFrame.fxml"));
-            parent.fillMainPane(loader);
-            Object controller = loader.getController();
-            if (controller instanceof IParentAware) {
-                ((IParentAware) controller).setParent(parent);
-            }
+            ExceptionHandler.handleUnexpectedException(e);
+            showError("Failed to set product status");
+        } finally {
+            String fxmlPath = "/dk/easv/belsign/ProductFrame.fxml";
+            SceneService.loadCenterContent((StackPane) parent.getMainPane(), fxmlPath, parent);
         }
+    }
+
+    private void showError(String message) {
+        Alert alert = new Alert(Alert.AlertType.ERROR);
+        alert.setTitle("Quality Controller Error");
+        alert.setHeaderText(null);
+        alert.setContentText(message);
+        alert.showAndWait();
+    }
+
+    @FXML
+    private void handleBack(ActionEvent event) {
+        String fxmlPath = "/dk/easv/belsign/ProductFrame.fxml";
+        SceneService.loadCenterContent((StackPane) parent.getMainPane(), fxmlPath, parent);
     }
 }
